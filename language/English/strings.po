@@ -250,7 +250,13 @@ msgctxt "#755"
 msgid "Auto share external drives / partitions"
 msgstr ""
 
-#empty strings from id 756 to 32000
+msgctxt "#760"
+msgid "Select an update channel"
+msgstr ""
+
+msgctxt "#761"
+msgid "Select an available version"
+msgstr ""
 
 msgctxt "#32001"
 msgid "Services"
@@ -296,7 +302,13 @@ msgctxt "#32014"
 msgid "Automatic Updates"
 msgstr ""
 
-#empty strings from id 32015 to 32099
+msgctxt "#32015"
+msgid "Update Channel"
+msgstr ""
+
+msgctxt "#32020"
+msgid "Available Versions"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -493,7 +505,7 @@ msgid "Initialize Archive File"
 msgstr ""
 
 msgctxt "#32187"
-msgid "Latest Version"
+msgid "New Version"
 msgstr ""
 
 msgctxt "#32188"
