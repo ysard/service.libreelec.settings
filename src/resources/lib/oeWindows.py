@@ -277,7 +277,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                 if strTyp == 'multivalue':
                     items1 = []
                     items2 = []
-                    for item in selectedItem.getProperty('values').split('|'):
+                    for item in sorted(selectedItem.getProperty('values').split('|'), reverse=True):
                         if item != ':':
                             boo = item.split(':')
                             if len(boo) > 1:
