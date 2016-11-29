@@ -1,3 +1,6 @@
+2016-11-29 v0.7.4
+  (add) support for update channels
+
 2016-04-26 v0.7.3
   (rebrand) change new LibreELEC branding
 
