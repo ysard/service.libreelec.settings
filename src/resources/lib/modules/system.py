@@ -153,13 +153,31 @@ class system:
                             'InfoText': 715,
                             'order': 2,
                             },
-                        'CheckUpdate': {
-                            'name': 32362,
+                        'Channel': {
+                            'name': 32015,
                             'value': '',
-                            'action': 'manual_check_update',
-                            'type': 'button',
-                            'InfoText': 716,
+                            'action': 'set_channel',
+                            'type': 'multivalue',
+                            'parent': {
+                                'entry': 'AutoUpdate',
+                                'value': ['manual'],
+                                },
+                            'values': [],
+                            'InfoText': 760,
                             'order': 3,
+                            },
+                        'Build': {
+                            'name': 32020,
+                            'value': '',
+                            'action': 'do_manual_update',
+                            'type': 'multivalue',
+                            'parent': {
+                                'entry': 'AutoUpdate',
+                                'value': ['manual'],
+                                },
+                            'values': [],
+                            'InfoText': 761,
+                            'order': 4,
                             },
                         },
                     },
@@ -316,6 +334,16 @@ class system:
             if os.path.isfile('%s/SYSTEM' % self.LOCAL_UPDATE_DIR):
                 self.update_in_progress = True
 
+            # Manual Update
+
+            value = self.oe.read_setting('system', 'Channel')
+            if not value is None:
+                self.struct['update']['settings']['Channel']['value'] = value
+
+            self.update_json = self.get_json()
+            self.struct['update']['settings']['Channel']['values'] = self.get_channels()
+            self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
+
             # AutoUpdate = manual by environment var.
 
             if os.path.exists('/dev/.update_disabled'):
@@ -425,14 +453,6 @@ class system:
             self.oe.set_busy(0)
             self.oe.dbg_log('system::set_hostname', 'ERROR: (' + repr(e) + ')')
 
-    def manual_check_update(self, listItem=None):
-        try:
-            self.oe.dbg_log('system::manual_check_update', 'enter_function', 0)
-            self.check_updates_v2(True)
-            self.oe.dbg_log('system::manual_check_update', 'exit_function', 0)
-        except Exception, e:
-            self.oe.dbg_log('system::manual_check_update', 'ERROR: (' + repr(e) + ')')
-
     def set_auto_update(self, listItem=None):
         try:
             self.oe.dbg_log('system::set_auto_update', 'enter_function', 0)
@@ -506,7 +526,7 @@ class system:
                 arrTypes = None
             else:
                 self.oe.dbg_log('system::get_keyboard_layouts', 'exit_function (no keyboard layouts found)', 0)
-                return (None, None)
+                return (None, None, None)
             self.oe.dbg_log('system::get_keyboard_layouts', 'exit_function', 0)
             return (
                 arrLayouts,
@@ -515,6 +535,73 @@ class system:
                 )
         except Exception, e:
             self.oe.dbg_log('system::get_keyboard_layouts', 'ERROR: (' + repr(e) + ')')
+
+    def set_channel(self, listItem=None):
+        try:
+            self.oe.dbg_log('system::set_channel', 'enter_function', 0)
+            if not listItem == None:
+                self.set_value(listItem)
+            self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
+            self.oe.dbg_log('system::set_channel', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('system::set_channel', 'ERROR: (' + repr(e) + ')')
+
+    def get_channels(self):
+        try:
+            self.oe.dbg_log('system::get_channels', 'enter_function', 0)
+            channels = []
+            for channel in self.update_json:
+                channels.append(channel)
+            return channels
+            self.oe.dbg_log('system::get_channels', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('system::get_channels', 'ERROR: (' + repr(e) + ')')
+
+    def do_manual_update(self, listItem=None):
+        try:
+            self.oe.dbg_log('system::do_manual_update', 'enter_function', 0)
+            if not listItem == None:
+                self.struct['update']['settings']['Build']['value'] = listItem.getProperty('value')
+            if self.struct['update']['settings']['Build']['value'] != '':
+                self.update_file = self.UPDATE_DOWNLOAD_URL % ('releases', self.struct['update']['settings']['Build']['value'])
+                xbmcDialog = xbmcgui.Dialog()
+                answer = xbmcDialog.yesno('LibreELEC Update', self.oe._(32188).encode('utf-8') + ':  ' + self.oe.VERSION,
+                                      self.oe._(32187).encode('utf-8') + ':  ' + self.struct['update']['settings']['Build']['value'].split('-'
+                                      )[-1].replace('.tar', '').encode('utf-8'), self.oe._(32180).encode('utf-8'))
+                xbmcDialog = None
+                del xbmcDialog
+                if answer:
+                    self.update_in_progress = True
+                    self.do_autoupdate()
+            self.struct['update']['settings']['Build']['value'] = ''
+            self.oe.dbg_log('system::do_manual_update', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('system::do_manual_update', 'ERROR: (' + repr(e) + ')')
+
+    def get_json(self):
+        try:
+            self.oe.dbg_log('system::get_json', 'enter_function', 0)
+            url = self.UPDATE_DOWNLOAD_URL % ('releases', 'releases.json')
+            update_json = json.loads(self.oe.load_url(url))
+            return update_json
+            self.oe.dbg_log('system::get_json', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('system::get_json', 'ERROR: (' + repr(e) + ')')
+
+    def get_available_builds(self):
+        try:
+            self.oe.dbg_log('system::get_available_builds', 'enter_function', 0)
+            channel = self.struct['update']['settings']['Channel']['value']
+            update_files = []
+            if channel != '':
+                if channel in self.update_json:
+                    for i in self.update_json[channel]['project'][self.oe.ARCHITECTURE]['releases']:
+                        update_files.append(self.update_json[channel]['project'][self.oe.ARCHITECTURE]['releases'][i]['file']['name'])
+
+            return update_files
+            self.oe.dbg_log('system::get_available_builds', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('system::get_available_builds', 'ERROR: (' + repr(e) + ')')
 
     def check_updates_v2(self, force=False):
         try:
@@ -536,23 +623,10 @@ class system:
             if update_json != '':
                 update_json = json.loads(update_json)
                 self.last_update_check = time.time()
-                silent = True
-                answer = 0
                 if 'update' in update_json['data'] and 'folder' in update_json['data']:
                     self.update_file = self.UPDATE_DOWNLOAD_URL % (update_json['data']['folder'], update_json['data']['update'])
                     if self.struct['update']['settings']['UpdateNotify']['value'] == '1':
                         self.oe.notify(self.oe._(32363).encode('utf-8'), self.oe._(32364).encode('utf-8'))
-                    if self.struct['update']['settings']['AutoUpdate']['value'] == 'manual' and force == True:
-                        silent = False
-                        xbmcDialog = xbmcgui.Dialog()
-                        answer = xbmcDialog.yesno('LibreELEC Update', self.oe._(32188).encode('utf-8') + ':  ' + self.oe.VERSION,
-                                                  self.oe._(32187).encode('utf-8') + ':  ' + update_json['data']['update'].split('-'
-                                                  )[-1].replace('.tar', '').encode('utf-8'), self.oe._(32180).encode('utf-8'))
-                        xbmcDialog = None
-                        del xbmcDialog
-                        if answer == 1:
-                            self.update_in_progress = True
-                            self.do_autoupdate()
                     if self.struct['update']['settings']['AutoUpdate']['value'] == 'auto' and force == False:
                         self.update_in_progress = True
                         self.do_autoupdate(None, True)
