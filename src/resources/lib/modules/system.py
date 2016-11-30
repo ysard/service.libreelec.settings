@@ -550,10 +550,11 @@ class system:
         try:
             self.oe.dbg_log('system::get_channels', 'enter_function', 0)
             channels = []
-            for channel in self.update_json:
-                channels.append(channel)
-            return channels
+            if not self.update_json is None:
+                for channel in self.update_json:
+                    channels.append(channel)
             self.oe.dbg_log('system::get_channels', 'exit_function', 0)
+            return channels
         except Exception, e:
             self.oe.dbg_log('system::get_channels', 'ERROR: (' + repr(e) + ')')
 
@@ -582,7 +583,11 @@ class system:
         try:
             self.oe.dbg_log('system::get_json', 'enter_function', 0)
             url = self.UPDATE_DOWNLOAD_URL % ('releases', 'releases.json')
-            update_json = json.loads(self.oe.load_url(url))
+            data = self.oe.load_url(url)
+            if not data is None:
+                update_json = json.loads(data)
+            else:
+                update_json = None
             return update_json
             self.oe.dbg_log('system::get_json', 'exit_function', 0)
         except Exception, e:
@@ -593,13 +598,13 @@ class system:
             self.oe.dbg_log('system::get_available_builds', 'enter_function', 0)
             channel = self.struct['update']['settings']['Channel']['value']
             update_files = []
-            if channel != '':
-                if channel in self.update_json:
-                    for i in self.update_json[channel]['project'][self.oe.ARCHITECTURE]['releases']:
-                        update_files.append(self.update_json[channel]['project'][self.oe.ARCHITECTURE]['releases'][i]['file']['name'])
-
-            return update_files
+            if not self.update_json is None:
+                if channel != '':
+                    if channel in self.update_json:
+                        for i in self.update_json[channel]['project'][self.oe.ARCHITECTURE]['releases']:
+                            update_files.append(self.update_json[channel]['project'][self.oe.ARCHITECTURE]['releases'][i]['file']['name'])
             self.oe.dbg_log('system::get_available_builds', 'exit_function', 0)
+            return update_files
         except Exception, e:
             self.oe.dbg_log('system::get_available_builds', 'ERROR: (' + repr(e) + ')')
 
