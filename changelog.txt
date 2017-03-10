@@ -1,3 +1,6 @@
+2017-03-10 v0.8.10
+  (update) use https for update checks
+
 2017-02-17 v0.8.9
   (fix) restore bluetooth 'connect and trust' option
 
