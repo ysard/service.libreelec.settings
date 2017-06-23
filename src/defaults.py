@@ -74,7 +74,8 @@ services = {
     'D_SSH_DISABLE_PW_AUTH': '0',
     'AVAHI_DAEMON': '/usr/sbin/avahi-daemon',
     'CRON_DAEMON': '/sbin/crond',
-    'LIRCD_UEVENT_FILE': '/sys/class/lirc/lirc0/uevent',
+    'LIRCD_DAEMON': '/usr/sbin/lircd',
+    'LIRCD_UINPUT_DAEMON': '/usr/sbin/lircd-uinput',
     }
 
 system = {
@@ -111,4 +112,5 @@ _services = {
     'bluez': ['bluetooth.service'],
     'obexd': ['obex.service'],
     'crond': ['cron.service'],
+    'lircd': ['lircd.service', 'lircd-uinput.service'],
     }

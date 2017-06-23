@@ -44,7 +44,8 @@ class services:
     OPT_SSH_NOPASSWD = None
     AVAHI_DAEMON = None
     CRON_DAEMON = None
-    LIRCD_UEVENT_FILE = None
+    LIRCD_DAEMON = None
+    LIRCD_UINPUT_DAEMON = None
     menu = {'4': {
         'name': 32001,
         'menuLoader': 'load_menu',
@@ -346,7 +347,7 @@ class services:
 
             # LIRCD
 
-            if os.path.isfile(self.LIRCD_UEVENT_FILE):
+            if os.path.isfile(self.LIRCD_DAEMON) and os.path.isfile(self.LIRCD_UINPUT_DAEMON):
                 self.struct['lircd']['settings']['lircd_autostart']['value'] = self.oe.get_service_state('lircd')
             else:
                 self.struct['lircd']['hidden'] = 'true'
@@ -501,14 +502,7 @@ class services:
                 self.set_value(kwargs['listItem'])
             state = 1
             options = {}
-            if self.struct['lircd']['settings']['lircd_autostart']['value'] == '1':
-                if os.path.exists(self.LIRCD_UEVENT_FILE):
-                    with open(self.LIRCD_UEVENT_FILE, 'w') as f:
-                        f.write('add')
-            else:
-                if os.path.exists(self.LIRCD_UEVENT_FILE):
-                    with open(self.LIRCD_UEVENT_FILE, 'w') as f:
-                        f.write('remove')
+            if self.struct['lircd']['settings']['lircd_autostart']['value'] != '1':
                 state = 0
             self.oe.set_service('lircd', options, state)
             self.oe.set_busy(0)
