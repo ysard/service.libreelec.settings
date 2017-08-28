@@ -405,6 +405,8 @@ class bluetooth:
 
     def menu_connections(self, focusItem=None):
         try:
+            if self.oe.is_busy():
+                return 0
             if not hasattr(self.oe, 'winOeMain'):
                 return 0
             if not self.oe.winOeMain.visible:
