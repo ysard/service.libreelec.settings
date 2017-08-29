@@ -439,6 +439,11 @@ def copy_file(source, destination, silent=False):
         dbg_log('oe::copy_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
 
 
+def is_busy():
+    global __busy__
+    return __busy__ > 0
+
+
 def set_busy(state):
     global __busy__, __oe__, input_request, is_service
     try:
