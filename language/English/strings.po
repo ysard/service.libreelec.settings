@@ -224,6 +224,18 @@ msgctxt "#755"
 msgid "Auto share external drives / partitions"
 msgstr ""
 
+msgctxt "#756"
+msgid "Disable older SMB protocols by specifying the minimum supported protocol."
+msgstr ""
+
+msgctxt "#757"
+msgid "Disable more recent SMB protocols for backward compatability with legacy clients."
+msgstr ""
+
+msgctxt "#758"
+msgid "NetBIOS group to which the server belongs. Default is WORKGROUP."
+msgstr ""
+
 msgctxt "#760"
 msgid "Select an update channel"
 msgstr ""
@@ -552,8 +564,20 @@ msgctxt "#32212"
 msgid "Cancel"
 msgstr ""
 
+msgctxt "#32215"
+msgid "Workgroup name"
+msgstr ""
+
 msgctxt "#32216"
 msgid "Auto-Share External Drives"
+msgstr ""
+
+msgctxt "#32217"
+msgid "Minimum supported protocol"
+msgstr ""
+
+msgctxt "#32218"
+msgid "Maximum supported protocol"
 msgstr ""
 
 msgctxt "#32300"
