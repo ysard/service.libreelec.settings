@@ -35,8 +35,11 @@ class services:
     SAMBA_NMDB = None
     SAMBA_SMDB = None
     D_SAMBA_SECURE = None
+    D_SAMBA_WORKGROUP = None
     D_SAMBA_USERNAME = None
     D_SAMBA_PASSWORD = None
+    D_SAMBA_MINPROTOCOL = None
+    D_SAMBA_MAXPROTOCOL = None
     D_SAMBA_AUTOSHARE = None
     KERNEL_CMD = None
     SSH_DAEMON = None
@@ -70,8 +73,20 @@ class services:
                             'type': 'bool',
                             'InfoText': 738,
                             },
-                        'samba_secure': {
+                        'samba_workgroup': {
                             'order': 2,
+                            'name': 32215,
+                            'value': "WORKGROUP",
+                            'action': 'initialize_samba',
+                            'type': 'text',
+                            'parent': {
+                                'entry': 'samba_autostart',
+                                'value': ['1'],
+                                },
+                            'InfoText': 758,
+                            },
+                        'samba_secure': {
+                            'order': 3,
                             'name': 32202,
                             'value': None,
                             'action': 'initialize_samba',
@@ -83,7 +98,7 @@ class services:
                             'InfoText': 739,
                             },
                         'samba_username': {
-                            'order': 3,
+                            'order': 4,
                             'name': 32106,
                             'value': None,
                             'action': 'initialize_samba',
@@ -95,7 +110,7 @@ class services:
                             'InfoText': 740,
                             },
                         'samba_password': {
-                            'order': 4,
+                            'order': 5,
                             'name': 32107,
                             'value': None,
                             'action': 'initialize_samba',
@@ -106,8 +121,42 @@ class services:
                                 },
                             'InfoText': 741,
                             },
+                        'samba_minprotocol': {
+                            'order': 6,
+                            'name': 32217,
+                            'value': 'SMB2',
+                            'action': 'initialize_samba',
+                            'type': 'multivalue',
+                            'values': [
+                                'SMB1',
+                                'SMB2',
+                                'SMB3',
+                                ],
+                            'parent': {
+                                'entry': 'samba_autostart',
+                                'value': ['1'],
+                                },
+                            'InfoText': 756,
+                            },
+                        'samba_maxprotocol': {
+                            'order': 7,
+                            'name': 32218,
+                            'value': 'SMB3',
+                            'action': 'initialize_samba',
+                            'type': 'multivalue',
+                            'values': [
+                                'SMB1',
+                                'SMB2',
+                                'SMB3',
+                                ],
+                            'parent': {
+                                'entry': 'samba_autostart',
+                                'value': ['1'],
+                                },
+                            'InfoText': 757,
+                            },
                         'samba_autoshare': {
-                            'order': 5,
+                            'order': 8,
                             'name': 32216,
                             'value': None,
                             'action': 'initialize_samba',
@@ -287,12 +336,18 @@ class services:
 
             if os.path.isfile(self.SAMBA_NMDB) and os.path.isfile(self.SAMBA_SMDB):
                 self.struct['samba']['settings']['samba_autostart']['value'] = self.oe.get_service_state('samba')
+                self.struct['samba']['settings']['samba_workgroup']['value'] = self.oe.get_service_option('samba', 'SAMBA_WORKGROUP',
+                        self.D_SAMBA_WORKGROUP).replace('"', '')
                 self.struct['samba']['settings']['samba_secure']['value'] = self.oe.get_service_option('samba', 'SAMBA_SECURE',
                         self.D_SAMBA_SECURE).replace('true', '1').replace('false', '0').replace('"', '')
                 self.struct['samba']['settings']['samba_username']['value'] = self.oe.get_service_option('samba', 'SAMBA_USERNAME',
                         self.D_SAMBA_USERNAME).replace('"', '')
                 self.struct['samba']['settings']['samba_password']['value'] = self.oe.get_service_option('samba', 'SAMBA_PASSWORD',
                         self.D_SAMBA_PASSWORD).replace('"', '')
+                self.struct['samba']['settings']['samba_minprotocol']['value'] = self.oe.get_service_option('samba', 'SAMBA_MINPROTOCOL',
+                        self.D_SAMBA_MINPROTOCOL).replace('"', '')
+                self.struct['samba']['settings']['samba_maxprotocol']['value'] = self.oe.get_service_option('samba', 'SAMBA_MAXPROTOCOL',
+                        self.D_SAMBA_MAXPROTOCOL).replace('"', '')
                 self.struct['samba']['settings']['samba_autoshare']['value'] = self.oe.get_service_option('samba', 'SAMBA_AUTOSHARE',
                         self.D_SAMBA_AUTOSHARE).replace('true', '1').replace('false', '0').replace('"', '')
             else:
@@ -377,8 +432,11 @@ class services:
                     val_autoshare = 'true'
                 else:
                     val_autoshare = 'false'
+                options['SAMBA_WORKGROUP'] = '"%s"' % self.struct['samba']['settings']['samba_workgroup']['value']
                 options['SAMBA_SECURE'] = '"%s"' % val_secure
                 options['SAMBA_AUTOSHARE'] = '"%s"' % val_autoshare
+                options['SAMBA_MINPROTOCOL'] = '"%s"' % self.struct['samba']['settings']['samba_minprotocol']['value']
+                options['SAMBA_MAXPROTOCOL'] = '"%s"' % self.struct['samba']['settings']['samba_maxprotocol']['value']
                 options['SAMBA_USERNAME'] = '"%s"' % self.struct['samba']['settings']['samba_username']['value']
                 options['SAMBA_PASSWORD'] = '"%s"' % self.struct['samba']['settings']['samba_password']['value']
             else:
