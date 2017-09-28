@@ -885,7 +885,7 @@ class system:
             if bckDir and os.path.exists(bckDir): 
                 # free space check
                 try:
-                    folder_stat = os.statvfs("/storage")
+                    folder_stat = os.statvfs(bckDir)
                     free_space = folder_stat.f_bsize * folder_stat.f_bavail
                     if self.total_backup_size > free_space:
                         txt = self.oe.split_dialog_text(self.oe._(32379).encode('utf-8'))
