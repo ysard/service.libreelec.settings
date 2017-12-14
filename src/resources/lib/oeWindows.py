@@ -635,6 +635,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                             self.is_last_wizard = False
                             break
                 if self.is_last_wizard == True:
+                    xbmc.executebuiltin('UpdateAddonRepos')
                     self.oe.write_setting('libreelec', 'wizard_completed', 'True')
                     self.close()
             self.oe.dbg_log('wizard::onClick(' + unicode(controlID) + ')', 'exit_function', 0)
