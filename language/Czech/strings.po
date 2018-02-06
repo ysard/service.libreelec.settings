@@ -111,8 +111,8 @@ msgid "Set to ON and an on-screen notification will be displayed when a new upda
 msgstr "Nastavte do polohy povolit, aby se  na obrazovce zobrazila informace o nové aktualizaci"
 
 msgctxt "#718"
-msgid "Send config.txt, cmdline.txt, shutdown.sh, autostart.sh, and kodi.log to http://sprunge.us and display the short URL"
-msgstr "Poslat config.txt, cmdline.txt, shutdown.sh, autostart.sh a kodi.log k http://sprunge.us a zobrazí krátký URL"
+msgid "Send config.txt, cmdline.txt, shutdown.sh, autostart.sh, and kodi.log to http://ix.io and display the short URL"
+msgstr "Poslat config.txt, cmdline.txt, shutdown.sh, autostart.sh a kodi.log k http://ix.io a zobrazí krátký URL"
 
 msgctxt "#720"
 msgid "Set to ON and Bluetooth devices will be disabled during power-saving modes"
