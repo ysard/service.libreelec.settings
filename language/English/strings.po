@@ -101,7 +101,7 @@ msgid "Set to ON and an on-screen notification will be displayed when a new upda
 msgstr ""
 
 msgctxt "#718"
-msgid "Send config.txt, cmdline.txt, shutdown.sh, autostart.sh, and kodi.log to http://sprunge.us and display the short URL"
+msgid "Send config.txt, cmdline.txt, shutdown.sh, autostart.sh, and kodi.log to http://ix.io and display the short URL"
 msgstr ""
 
 msgctxt "#720"

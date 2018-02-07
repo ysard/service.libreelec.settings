@@ -111,8 +111,8 @@ msgid "Set to ON and an on-screen notification will be displayed when a new upda
 msgstr "Schakel in om notificaties op het scherm te krijgen wanneer er een nieuwe update beschikbaar is"
 
 msgctxt "#718"
-msgid "Send config.txt, cmdline.txt, shutdown.sh, autostart.sh, and kodi.log to http://sprunge.us and display the short URL"
-msgstr "Stuur config.txt, cmdline.txt, shutdown.sh, autostart.sh, en kodi.log naar http://sprunge.us en laat de verkorte URL zien"
+msgid "Send config.txt, cmdline.txt, shutdown.sh, autostart.sh, and kodi.log to http://ix.io and display the short URL"
+msgstr "Stuur config.txt, cmdline.txt, shutdown.sh, autostart.sh, en kodi.log naar http://ix.io en laat de verkorte URL zien"
 
 msgctxt "#720"
 msgid "Set to ON and Bluetooth devices will be disabled during power-saving modes"
