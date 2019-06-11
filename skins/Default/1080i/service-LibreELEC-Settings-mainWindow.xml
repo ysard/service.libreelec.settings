@@ -11,18 +11,9 @@
                 <animation effect="fade" start="100" end="bg_alpha" time="0" condition="Player.HasMedia + String.IsEmpty(Window(videolibrary).Property(PlayingBackgroundMedia))">Conditional</animation>
                 <animation effect="fade" start="0" end="100" time="300" condition="Window.Previous(fullscreenvideo) | Window.Previous(startup)">WindowOpen</animation>
                 <texture>bg.jpg</texture>
+
             </control>
         </control>
-        <include>DefaultBackground</include>
-
-        <!-- topbar -->
-        <include content="TopBar">
-            <param name="breadcrumbs_label" value="$LOCALIZE[5]$INFO[Control.GetLabel(2), / ]" />
-            <param name="breadcrumbs_icon" value="$VAR[SettingsSectionIcon]" />
-        </include>
-
-        <!-- bottombar -->
-        <include>BottomBar</include>
 
         <control type="group">
             <left>110</left>
@@ -1216,4 +1207,3 @@
         </control>
     </controls>
 </window>
-
