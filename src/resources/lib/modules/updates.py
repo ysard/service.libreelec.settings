@@ -16,7 +16,7 @@ import threading
 import subprocess
 import shutil
 from xml.dom import minidom
-
+import datetime
 
 class updates:
 
@@ -139,8 +139,30 @@ class updates:
                             'InfoText': 770,
                             'order': 9,
                             },
-                        }
-                    }
+                        },
+                    },
+                'rpibootloader': {
+                    'order': 2,
+                    'name': 32022,
+                    'settings': {
+                        'SPIBootloader': {
+                            'name': 'dummy',
+                            'value': '',
+                            'action': 'set_rpi_bootloader',
+                            'type': 'bool',
+                            'InfoText': 32025,
+                            'order': 1,
+                            },
+                        'VIAUSB3': {
+                            'name': 32026,
+                            'value': '',
+                            'action': 'set_rpi_usb3',
+                            'type': 'bool',
+                            'InfoText': 32027,
+                            'order': 1,
+                            },
+                        },
+                    },
                 }
 
             self.keyboard_layouts = False
@@ -308,7 +330,22 @@ class updates:
                 self.struct['update']['hidden'] = 'true'
                 self.struct['update']['settings']['AutoUpdate']['value'] = 'manual'
                 self.struct['update']['settings']['UpdateNotify']['value'] = '0'
+
+            # RPi Flash
+            if os.path.exists('/usr/lib/libreelec/rpi-flash-firmware') == False:
+                self.struct['rpibootloader']['hidden'] = 'true'
+            else:
+                self.rpi_spi_state = self.get_rpi_flash_state()
+                self.struct['rpibootloader']['settings']['SPIBootloader']['value'] = self.get_rpi_flash('BOOTLOADER')
+                self.struct['rpibootloader']['settings']['SPIBootloader']['name'] = self.oe._(32024).encode('utf-8') + ' (' + self.rpi_spi_state["state"] + ')'
+
+                if os.path.exists('/usr/bin/vl805') == False:
+                    self.struct['rpibootloader']['settings']['VIAUSB3']['hidden'] = 'true'
+                else:
+                    self.struct['rpibootloader']['settings']['VIAUSB3']['value'] = self.get_rpi_flash('USB3')
+
             self.oe.dbg_log('updates::load_values', 'exit_function', 0)
+
         except Exception, e:
             self.oe.dbg_log('updates::load_values', 'ERROR: (' + repr(e) + ')')
 
@@ -329,7 +366,6 @@ class updates:
         except Exception, e:
             self.oe.dbg_log('updates::set_value', 'ERROR: (' + repr(e) + ')')
 
-
     def set_auto_update(self, listItem=None):
         try:
             self.oe.dbg_log('updates::set_auto_update', 'enter_function', 0)
@@ -345,7 +381,6 @@ class updates:
             self.oe.dbg_log('updates::set_auto_update', 'exit_function', 0)
         except Exception, e:
             self.oe.dbg_log('updates::set_auto_update', 'ERROR: (' + repr(e) + ')')
-
 
     def set_channel(self, listItem=None):
         try:
@@ -555,6 +590,98 @@ class updates:
         except Exception, e:
             self.oe.dbg_log('updates::do_autoupdate', 'ERROR: (' + repr(e) + ')')
 
+    def get_rpi_flash(self, device):
+        try:
+            self.oe.dbg_log('updates::get_rpi_flash', 'enter_function', 0)
+            values = []
+            if os.path.exists(self.RPI_FLASHING_TRIGGER):
+                with open(self.RPI_FLASHING_TRIGGER, 'r') as trigger:
+                    values = trigger.read().split('\n')
+            self.oe.dbg_log('updates::get_rpi_flash', 'values: %s' % values, 0)
+            self.oe.dbg_log('updates::get_rpi_flash', 'exit_function', 0)
+            return 'true' if ('%s="yes"' % device) in values else 'false'
+        except Exception, e:
+            self.oe.dbg_log('updates::get_rpi_flash', 'ERROR: (' + repr(e) + ')')
+
+    def get_rpi_flash_state(self):
+        try:
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'enter_function', 0)
+            values = self.oe.execute('/usr/bin/rpi-eeprom-update', get_result=1).split('\n')
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'values: %s' % values, 0)
+
+            state = {'update': False, 'corrupt': False, 'state': '', 'current': 'unknown', 'latest': 'unknown', 'current_ts': 0, 'latest_ts': 0}
+            if len(values) < 1 or values[0].startswith("Found recovery.bin"):
+                state["corrupt"] = True
+                state["update"] = True
+                state["state"] = self.oe._(32028).encode('utf-8')
+            elif len(values) >= 3:
+                if values[1].startswith("CURRENT:"):
+                    state["current_ts"] = int(values[1][values[1].find("(")+1:-1])
+                    if state["current_ts"] != 0:
+                        state["current"] = datetime.datetime.utcfromtimestamp(state["current_ts"]).strftime("%Y-%m-%d")
+                if values[2].startswith(" LATEST:"):
+                    state["latest_ts"] = int(values[2][values[2].find("(")+1:-1])
+                    if state["latest_ts"] != 0:
+                        state["latest"] = datetime.datetime.utcfromtimestamp(state["latest_ts"]).strftime("%Y-%m-%d")
+                if "UPDATE REQUIRED" in values[0]:
+                    state["update"] = True
+                    state["state"] = self.oe._(32029).encode('utf-8') % (state["current"], state["latest"])
+                elif "up to date" in values[0]:
+                    state["update"] = False
+                    state["state"] = self.oe._(32030).encode('utf-8') % state["current"]
+
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'state: %s' % state, 0)
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'exit_function', 0)
+            return state
+        except Exception, e:
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'ERROR: (' + repr(e) + ')')
+
+    def set_rpi_flash(self):
+        try:
+            self.oe.dbg_log('updates::set_rpi_flash', 'enter_function', 0)
+            bootloader = (self.struct['rpibootloader']['settings']['SPIBootloader']['value'] == 'true')
+            usb3 = (self.struct['rpibootloader']['settings']['VIAUSB3']['value'] == 'true')
+            self.oe.dbg_log('updates::set_rpi_flash', 'states: [%s], [%s]' % (bootloader, usb3), 0)
+            if bootloader or usb3:
+                values = []
+                values.append('MODE="init"')
+                values.append('BOOTLOADER="' + ('yes' if bootloader else 'no') + '"')
+                values.append('USB3="' + ('yes' if usb3 else 'no') + '"')
+                with open(self.RPI_FLASHING_TRIGGER, 'w') as trigger:
+                    trigger.write('\n'.join(values))
+            else:
+                if os.path.exists(self.RPI_FLASHING_TRIGGER):
+                    os.remove(self.RPI_FLASHING_TRIGGER)
+
+            self.oe.dbg_log('updates::set_rpi_flash', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('updates::set_rpi_flash', 'ERROR: (' + repr(e) + ')')
+
+    def set_rpi_bootloader(self, listItem):
+        try:
+            self.oe.dbg_log('updates::set_rpi_bootloader', 'enter_function', 0)
+            value = 'false'
+            if listItem.getProperty('value') == 'true':
+                if xbmcgui.Dialog().yesno("Update RPi Bootloader", "%s\n\n%s" % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
+                    value = 'true'
+            self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
+            self.set_rpi_flash()
+            self.oe.dbg_log('updates::set_rpi_bootloader', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('updates::set_rpi_bootloader', 'ERROR: (' + repr(e) + ')')
+
+    def set_rpi_usb3(self, listItem):
+        try:
+            self.oe.dbg_log('updates::set_rpi_usb3', 'enter_function', 0)
+            value = 'false'
+            if listItem.getProperty('value') == 'true':
+                if xbmcgui.Dialog().yesno("Update RPi USB3 Firmware", "%s\n\n%s" % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
+                    value = 'true'
+            self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
+            self.set_rpi_flash()
+            self.oe.dbg_log('updates::set_rpi_usb3', 'exit_function', 0)
+        except Exception, e:
+            self.oe.dbg_log('updates::set_rpi_usb3', 'ERROR: (' + repr(e) + ')')
 
 class updateThread(threading.Thread):
 
