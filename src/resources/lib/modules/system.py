@@ -668,7 +668,14 @@ class system:
                 else:
                     self.oe.execute('echo "Firmware Boot Mode: BIOS" >> /storage/.kodi/temp/paste.tmp')
 
+            if os.path.exists('/usr/lib/libreelec/rpi-flash-firmware') and os.path.exists('/flash/recovery.bin'):
+                self.oe.execute('echo "WARNING: /flash/recovery.bin is present - bootloader in safe-mode!" >> /storage/.kodi/temp/paste.tmp')
+
+            if self.oe.PROJECT == "RPi":
+                self.oe.execute('grep "^Revision" /proc/cpuinfo | sed "s/Revision[[:space:]]*:/RPi Hardware Revision:/" >> /storage/.kodi/temp/paste.tmp')
+
             self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/config.txt') # RPi
+            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/distroconfig.txt') # RPi
             self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/cmdline.txt') # RPi
             self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/syslinux.cfg') # x86 BIOS
             self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/EFI/BOOT/syslinux.cfg') # x86 EFI
