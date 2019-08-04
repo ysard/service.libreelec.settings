@@ -340,6 +340,42 @@ msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr ""
 
+msgctxt "#32022"
+msgid "Raspberry Pi Flashing"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr ""
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr ""
+
+msgctxt "#32025"
+msgid "Update the Raspberry Pi Bootloader EEPROM to the latest version. This option is automatically disabled after rebooting. Reboot the system to apply the update."
+msgstr ""
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr ""
+
+msgctxt "#32027"
+msgid "Update the Raspberry Pi VIA USB3 firmware to the latest version. This option is automatically disabled after rebooting. Reboot the system to apply the update."
+msgstr ""
+
+msgctxt "#32028"
+msgid "[COLOR FFFF0000]BOOTLOADER CORRUPT: update required![/COLOR]"
+msgstr ""
+
+msgctxt "#32029"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32030"
+msgid "up to date: %s"
+msgstr ""
+
 msgctxt "#32100"
 msgid "Connections"
 msgstr ""
