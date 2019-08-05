@@ -17,6 +17,7 @@ import subprocess
 import shutil
 from xml.dom import minidom
 import datetime
+import tempfile
 from functools import cmp_to_key
 
 class updates:
@@ -337,13 +338,16 @@ class updates:
                 self.struct['rpibootloader']['hidden'] = 'true'
             else:
                 self.rpi_spi_state = self.get_rpi_flash_state()
-                self.struct['rpibootloader']['settings']['SPIBootloader']['value'] = self.get_rpi_flash('BOOTLOADER')
-                self.struct['rpibootloader']['settings']['SPIBootloader']['name'] = self.oe._(32024).encode('utf-8') + ' (' + self.rpi_spi_state["state"] + ')'
-
-                if os.path.exists('/usr/bin/vl805') == False:
-                    self.struct['rpibootloader']['settings']['VIAUSB3']['hidden'] = 'true'
+                if self.rpi_spi_state['incompatible']:
+                    self.struct['rpibootloader']['hidden'] = 'true'
                 else:
-                    self.struct['rpibootloader']['settings']['VIAUSB3']['value'] = self.get_rpi_flash('USB3')
+                    self.struct['rpibootloader']['settings']['SPIBootloader']['value'] = self.get_rpi_flash('BOOTLOADER')
+                    self.struct['rpibootloader']['settings']['SPIBootloader']['name'] = self.oe._(32024).encode('utf-8') + ' (' + self.rpi_spi_state["state"] + ')'
+
+                    if os.path.exists('/usr/bin/vl805') == False:
+                        self.struct['rpibootloader']['settings']['VIAUSB3']['hidden'] = 'true'
+                    else:
+                        self.struct['rpibootloader']['settings']['VIAUSB3']['value'] = self.get_rpi_flash('USB3')
 
             self.oe.dbg_log('updates::load_values', 'exit_function', 0)
 
@@ -621,35 +625,47 @@ class updates:
     def get_rpi_flash_state(self):
         try:
             self.oe.dbg_log('updates::get_rpi_flash_status', 'enter_function', 0)
-            values = self.oe.execute('/usr/bin/rpi-eeprom-update', get_result=1).split('\n')
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'values: %s' % values, 0)
 
-            state = {'update': False, 'corrupt': False, 'state': '', 'current': 'unknown', 'latest': 'unknown', 'current_ts': 0, 'latest_ts': 0}
-            if len(values) < 1 or values[0].startswith("Found recovery.bin"):
+            jdata = {'EXITCODE': 'EXIT_FAILED', 'CURRENT_TS': 0, 'LATEST_TS': 0}
+            state = {'incompatible': True, 'update': False, 'corrupt': False,
+                     'state': '',
+                     'current_ts': 0, 'current': 'unknown',
+                     'latest_ts': 0, 'latest': 'unknown'}
+
+            with tempfile.NamedTemporaryFile(mode='r', delete=True) as machine_out:
+                console_output = self.oe.execute('/usr/bin/rpi-eeprom-update -j -m "%s"' % machine_out.name, get_result=1).split('\n')
+                if os.path.getsize(machine_out.name) != 0:
+                    state['incompatible'] = False
+                    jdata = json.load(machine_out)
+
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'console output: %s' % console_output, 0)
+            self.oe.dbg_log('updates::get_rpi_flash_status', 'json values: %s' % jdata, 0)
+
+            if jdata['CURRENT_TS'] != 0:
+                state["current_ts"] = jdata['CURRENT_TS']
+                state["current"] = datetime.datetime.utcfromtimestamp(state["current_ts"]).strftime("%Y-%m-%d")
+
+            if jdata['LATEST_TS'] != 0:
+                state["latest_ts"] = jdata['LATEST_TS']
+                state["latest"] = datetime.datetime.utcfromtimestamp(state["latest_ts"]).strftime("%Y-%m-%d")
+
+            if jdata['EXITCODE'] == 'EXIT_SUCCESS':
+                state["update"] = False
+                state["state"] = self.oe._(32030).encode('utf-8') % state["current"]
+            elif jdata['EXITCODE'] == 'EXIT_UPDATE_REQUIRED':
+                state["update"] = True
+                state["state"] = self.oe._(32029).encode('utf-8') % (state["current"], state["latest"])
+            elif jdata['EXITCODE'] == 'EXIT_PREVIOUS_UPDATE_FAILED':
                 state["corrupt"] = True
                 state["update"] = True
                 state["state"] = self.oe._(32028).encode('utf-8')
-            elif len(values) >= 3:
-                if values[1].startswith("CURRENT:"):
-                    state["current_ts"] = int(values[1][values[1].find("(")+1:-1])
-                    if state["current_ts"] != 0:
-                        state["current"] = datetime.datetime.utcfromtimestamp(state["current_ts"]).strftime("%Y-%m-%d")
-                if values[2].startswith(" LATEST:"):
-                    state["latest_ts"] = int(values[2][values[2].find("(")+1:-1])
-                    if state["latest_ts"] != 0:
-                        state["latest"] = datetime.datetime.utcfromtimestamp(state["latest_ts"]).strftime("%Y-%m-%d")
-                if "UPDATE REQUIRED" in values[0]:
-                    state["update"] = True
-                    state["state"] = self.oe._(32029).encode('utf-8') % (state["current"], state["latest"])
-                elif "up to date" in values[0]:
-                    state["update"] = False
-                    state["state"] = self.oe._(32030).encode('utf-8') % state["current"]
 
             self.oe.dbg_log('updates::get_rpi_flash_status', 'state: %s' % state, 0)
             self.oe.dbg_log('updates::get_rpi_flash_status', 'exit_function', 0)
             return state
         except Exception, e:
             self.oe.dbg_log('updates::get_rpi_flash_status', 'ERROR: (' + repr(e) + ')')
+            return {'incompatible': True}
 
     def set_rpi_flash(self):
         try:
