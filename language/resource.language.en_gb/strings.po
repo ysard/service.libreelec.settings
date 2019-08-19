@@ -365,14 +365,10 @@ msgid "Update the Raspberry Pi VIA USB3 firmware to the latest version. This opt
 msgstr ""
 
 msgctxt "#32028"
-msgid "[COLOR FFFF0000]BOOTLOADER CORRUPT: update required![/COLOR]"
-msgstr ""
-
-msgctxt "#32029"
 msgid "update from %s to %s"
 msgstr ""
 
-msgctxt "#32030"
+msgctxt "#32029"
 msgid "up to date: %s"
 msgstr ""
 

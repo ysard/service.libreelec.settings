@@ -627,7 +627,7 @@ class updates:
             self.oe.dbg_log('updates::get_rpi_flash_status', 'enter_function', 0)
 
             jdata = {'EXITCODE': 'EXIT_FAILED', 'CURRENT_TS': 0, 'LATEST_TS': 0}
-            state = {'incompatible': True, 'update': False, 'corrupt': False,
+            state = {'incompatible': True, 'update': False,
                      'state': '',
                      'current_ts': 0, 'current': 'unknown',
                      'latest_ts': 0, 'latest': 'unknown'}
@@ -651,14 +651,10 @@ class updates:
 
             if jdata['EXITCODE'] == 'EXIT_SUCCESS':
                 state["update"] = False
-                state["state"] = self.oe._(32030).encode('utf-8') % state["current"]
+                state["state"] = self.oe._(32029).encode('utf-8') % state["current"]
             elif jdata['EXITCODE'] == 'EXIT_UPDATE_REQUIRED':
                 state["update"] = True
-                state["state"] = self.oe._(32029).encode('utf-8') % (state["current"], state["latest"])
-            elif jdata['EXITCODE'] == 'EXIT_PREVIOUS_UPDATE_FAILED':
-                state["corrupt"] = True
-                state["update"] = True
-                state["state"] = self.oe._(32028).encode('utf-8')
+                state["state"] = self.oe._(32028).encode('utf-8') % (state["current"], state["latest"])
 
             self.oe.dbg_log('updates::get_rpi_flash_status', 'state: %s' % state, 0)
             self.oe.dbg_log('updates::get_rpi_flash_status', 'exit_function', 0)
