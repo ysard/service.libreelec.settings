@@ -17,6 +17,7 @@ import subprocess
 import shutil
 from xml.dom import minidom
 import datetime
+from functools import cmp_to_key
 
 class updates:
 
@@ -407,6 +408,20 @@ class updates:
         except Exception, e:
             self.oe.dbg_log('updates::set_custom_channel', 'ERROR: (' + repr(e) + ')')
 
+    def custom_sort_train(self, a, b):
+        a_items = a.split('-')
+        b_items = b.split('-')
+
+        a_builder = a_items[0]
+        b_builder = b_items[0]
+
+        if (a_builder == b_builder):
+          return (float(b_items[1]) - float(a_items[1]))
+        elif (a_builder < b_builder):
+          return -1
+        elif (a_builder > b_builder):
+          return +1
+
     def get_channels(self):
         try:
             self.oe.dbg_log('updates::get_channels', 'enter_function', 0)
@@ -416,7 +431,7 @@ class updates:
                 for channel in self.update_json:
                     channels.append(channel)
             self.oe.dbg_log('updates::get_channels', 'exit_function', 0)
-            return channels
+            return sorted(list(set(channels)), key=cmp_to_key(self.custom_sort_train))
         except Exception, e:
             self.oe.dbg_log('updates::get_channels', 'ERROR: (' + repr(e) + ')')
 
