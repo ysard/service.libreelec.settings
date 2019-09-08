@@ -633,7 +633,7 @@ class updates:
                      'latest_ts': 0, 'latest': 'unknown'}
 
             with tempfile.NamedTemporaryFile(mode='r', delete=True) as machine_out:
-                console_output = self.oe.execute('/usr/bin/rpi-eeprom-update -j -m "%s"' % machine_out.name, get_result=1).split('\n')
+                console_output = self.oe.execute('/usr/bin/.rpi-eeprom-update.real -j -m "%s"' % machine_out.name, get_result=1).split('\n')
                 if os.path.getsize(machine_out.name) != 0:
                     state['incompatible'] = False
                     jdata = json.load(machine_out)
