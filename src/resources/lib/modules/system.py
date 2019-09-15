@@ -626,21 +626,10 @@ class system:
         except Exception, e:
             self.oe.dbg_log('system::do_restore', 'ERROR: (' + repr(e) + ')')
 
-    def cat_file(self, tmp, filen, description=None):
-        if os.path.exists(filen):
-            if description:
-                self.oe.execute('echo "========== %s ==========" >> %s' % (description, tmp))
-            else:
-                self.oe.execute('echo "========== %s ==========" >> %s' % (filen, tmp))
-            self.oe.execute('cat %s >> %s' % (filen, tmp))
-
     def do_send_system_logs(self, listItem=None):
         try:
             self.oe.dbg_log('system::do_send_system_logs', 'enter_function', 0)
-            if self.oe.BOOT_STATUS == 'SAFE':
-               self.do_send_logs('System', '/storage/.kodi.FAILED', 'kodi.log')
-            else:
-               self.do_send_logs('System', '/storage/.kodi', 'kodi.log')
+            self.do_send_logs('/usr/bin/pastekodi')
             self.oe.dbg_log('system::do_send_system_logs', 'exit_function', 0)
         except Exception, e:
             self.oe.dbg_log('system::do_do_send_system_logs', 'ERROR: (' + repr(e) + ')')
@@ -648,70 +637,33 @@ class system:
     def do_send_crash_logs(self, listItem=None):
         try:
             self.oe.dbg_log('system::do_send_crash_logs', 'enter_function', 0)
-            if self.oe.BOOT_STATUS == 'SAFE':
-               self.do_send_logs('Crash', '/storage/.kodi.FAILED', 'kodi_crash.log')
-            else:
-               self.do_send_logs('Crash', '/storage/.kodi', 'kodi_crash.log')
+            self.do_send_logs('/usr/bin/pastecrash')
             self.oe.dbg_log('system::do_send_crash_logs', 'exit_function', 0)
         except Exception, e:
             self.oe.dbg_log('system::do_do_send_crash_logs', 'ERROR: (' + repr(e) + ')')
 
-    def do_send_logs(self, log_type, kodi_root, kodi_log):
+    def do_send_logs(self, log_cmd):
         try:
             self.oe.dbg_log('system::do_send_logs', 'enter_function', 0)
 
-            self.oe.execute('echo "%s log output for: $(lsb_release)" > /storage/.kodi/temp/paste.tmp' % log_type)
-
-            if self.oe.ARCHITECTURE.endswith('.x86_64'):
-                if os.path.exists('/sys/firmware/efi'):
-                    self.oe.execute('echo "Firmware Boot Mode: EFI" >> /storage/.kodi/temp/paste.tmp')
-                else:
-                    self.oe.execute('echo "Firmware Boot Mode: BIOS" >> /storage/.kodi/temp/paste.tmp')
-
-            if self.oe.PROJECT == "RPi":
-                self.oe.execute('grep "^Revision" /proc/cpuinfo | sed "s/Revision[[:space:]]*:/RPi Hardware Revision:/" >> /storage/.kodi/temp/paste.tmp')
-                bootloader_version = self.oe.execute('vcgencmd bootloader_version', get_result=1)
-                if bootloader_version.find("Command not registered") == -1:
-                    self.oe.execute('echo -n "========== Bootloader version ==========\n%s" >> /storage/.kodi/temp/paste.tmp' % bootloader_version)
-
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/config.txt') # RPi
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/distroconfig.txt') # RPi
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/cmdline.txt') # RPi
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/syslinux.cfg') # x86 BIOS
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/EFI/BOOT/syslinux.cfg') # x86 EFI
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/extlinux.conf') # x86 legacy
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/flash/extlinux/extlinux.conf') # u-boot
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '%s/temp/%s' % (kodi_root, kodi_log))
-            self.oe.execute('journalctl -a > /storage/.kodi/temp/journalctl.txt')
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/storage/.kodi/temp/journalctl.txt', 'journalctl -a')
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '%s/.smb/smb.conf' % kodi_root)
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '%s/.smb/user.conf' % kodi_root)
-            self.cat_file('/storage/.kodi/temp/paste.tmp', '/run/samba/smb.conf')
-            self.do_pastebin()
-            os.remove('/storage/.kodi/temp/journalctl.txt')
-            os.remove('/storage/.kodi/temp/paste.tmp')
-            self.oe.dbg_log('system::do_send_logs', 'exit_function', 0)
-        except Exception, e:
-            self.oe.dbg_log('system::do_do_send_logs', 'ERROR: (' + repr(e) + ')')
-
-    def do_pastebin(self):
-        try:
-            self.oe.dbg_log('system::do_pastebin', 'enter_function', 0)
             paste_dlg = xbmcgui.DialogProgress()
             paste_dlg.create('Pasting log files', 'Pasting...', ' ', ' ')
-            result = self.oe.execute('paste /storage/.kodi/temp/paste.tmp', 1)
+
+            result = self.oe.execute(log_cmd, get_result=1)
+
             if not paste_dlg.iscanceled():
                 paste_dlg.close()
-                link = result.find('http')
                 done_dlg = xbmcgui.Dialog()
-                if link > 0:
-                    self.oe.dbg_log('system::do_pastebin', result[link:], 2)
+                link = result.find('http')
+                if link != -1:
+                    self.oe.dbg_log('system::do_send_logs', result[link:], 2)
                     done_dlg.ok('Paste complete', 'Log files pasted to ' + result[link:])
                 else:
                     done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
-            self.oe.dbg_log('system::do_pastebin', 'exit_function', 0)
+
+            self.oe.dbg_log('system::do_send_logs', 'exit_function', 0)
         except Exception, e:
-            self.oe.dbg_log('system::do_pastebin', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_do_send_logs', 'ERROR: (' + repr(e) + ')')
 
     def tar_add_folder(self, tar, folder):
         try:
