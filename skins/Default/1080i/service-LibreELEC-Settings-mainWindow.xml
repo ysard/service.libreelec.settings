@@ -8,7 +8,7 @@
             <control type="image">
                 <depth>DepthBackground</depth>
                 <aspectratio>scale</aspectratio>
-                <animation effect="fade" start="100" end="bg_alpha" time="0" condition="Player.HasMedia + String.IsEmpty(Window(videolibrary).Property(PlayingBackgroundMedia))">Conditional</animation>
+                <animation effect="fade" start="100" end="bg_alpha" time="0" condition="Player.HasMedia + String.IsEmpty(Window(videos).Property(PlayingBackgroundMedia))">Conditional</animation>
                 <animation effect="fade" start="0" end="100" time="300" condition="Window.Previous(fullscreenvideo) | Window.Previous(startup)">WindowOpen</animation>
                 <texture>bg.jpg</texture>
 
