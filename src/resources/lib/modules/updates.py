@@ -325,14 +325,6 @@ class updates:
             self.struct['update']['settings']['Channel']['values'] = self.get_channels()
             self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
 
-            # AutoUpdate = manual by environment var.
-
-            if os.path.exists('/dev/.update_disabled'):
-                self.update_disabled = True
-                self.struct['update']['hidden'] = 'true'
-                self.struct['update']['settings']['AutoUpdate']['value'] = 'manual'
-                self.struct['update']['settings']['UpdateNotify']['value'] = '0'
-
             # RPi Flash
             if os.path.exists('/usr/lib/libreelec/rpi-flash-firmware') == False:
                 self.struct['rpibootloader']['hidden'] = 'true'
