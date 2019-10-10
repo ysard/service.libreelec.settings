@@ -21,6 +21,7 @@ connman = {
     'WAIT_CONF_FILE': '%s/libreelec/network_wait' % CONFIG_CACHE,
     'ENABLED': lambda : (True if os.path.exists(connman['CONNMAN_DAEMON']) else False),
     }
+connman['ENABLED'] = connman['ENABLED']()
 
 ################################################################################
 # Bluez Module
@@ -32,6 +33,7 @@ bluetooth = {
     'ENABLED': lambda : (True if os.path.exists(bluetooth['BLUETOOTH_DAEMON']) else False),
     'D_OBEXD_ROOT': '/storage/downloads/',
     }
+bluetooth['ENABLED'] = bluetooth['ENABLED']()
 
 ################################################################################
 # Service Module
