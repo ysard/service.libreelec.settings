@@ -877,6 +877,11 @@ if os.path.exists('/etc/machine-id'):
 else:
     SYSTEMID = os.environ.get('SYSTEMID', '')
 
+if PROJECT == 'RPi':
+  RPI_CPU_VER = execute('vcgencmd otp_dump 2>/dev/null | grep 30: | cut -c8', get_result=1).replace('\n','')
+else:
+  RPI_CPU_VER = ''
+
 BOOT_STATUS = load_file('/storage/.config/boot.status')
 
 ############################################################################################

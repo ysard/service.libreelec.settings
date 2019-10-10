@@ -325,21 +325,26 @@ class updates:
             self.struct['update']['settings']['Channel']['values'] = self.get_channels()
             self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
 
-            # RPi Flash
-            if os.path.exists('/usr/lib/libreelec/rpi-flash-firmware') == False:
+            # RPi Flash for RPi4
+            if self.oe.RPI_CPU_VER != '3':
                 self.struct['rpibootloader']['hidden'] = 'true'
             else:
                 self.rpi_spi_state = self.get_rpi_flash_state()
                 if self.rpi_spi_state['incompatible']:
-                    self.struct['rpibootloader']['hidden'] = 'true'
+                    self.struct['rpibootloader']['settings']['SPIBootloader']['hidden'] = 'true'
                 else:
                     self.struct['rpibootloader']['settings']['SPIBootloader']['value'] = self.get_rpi_flash('BOOTLOADER')
                     self.struct['rpibootloader']['settings']['SPIBootloader']['name'] = self.oe._(32024).encode('utf-8') + ' (' + self.rpi_spi_state["state"] + ')'
 
-                    if os.path.exists('/usr/bin/vl805') == False:
-                        self.struct['rpibootloader']['settings']['VIAUSB3']['hidden'] = 'true'
-                    else:
-                        self.struct['rpibootloader']['settings']['VIAUSB3']['value'] = self.get_rpi_flash('USB3')
+                if os.path.exists('/usr/bin/vl805') == False:
+                    self.struct['rpibootloader']['settings']['VIAUSB3']['hidden'] = 'true'
+                else:
+                    self.struct['rpibootloader']['settings']['VIAUSB3']['value'] = self.get_rpi_flash('USB3')
+
+                # Hide entire section if all options are hidden
+                if 'hidden' in self.struct['rpibootloader']['settings']['SPIBootloader'] and \
+                   'hidden' in self.struct['rpibootloader']['settings']['VIAUSB3']:
+                   self.struct['rpibootloader']['hidden'] = 'true'
 
             self.oe.dbg_log('updates::load_values', 'exit_function', 0)
 
