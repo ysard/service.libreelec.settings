@@ -459,8 +459,9 @@ def start_service():
     try:
         __oe__.is_service = True
         for strModule in sorted(dictModules, key=lambda x: dictModules[x].menu.keys()):
-            if hasattr(dictModules[strModule], 'start_service'):
-                dictModules[strModule].start_service()
+            module = dictModules[strModule]
+            if hasattr(module, 'start_service') and module.ENABLED:
+                module.start_service()
         __oe__.is_service = False
     except Exception, e:
         dbg_log('oe::start_service', 'ERROR: (' + repr(e) + ')')
@@ -470,8 +471,9 @@ def stop_service():
     global dictModules
     try:
         for strModule in dictModules:
-            if hasattr(dictModules[strModule], 'stop_service'):
-                dictModules[strModule].stop_service()
+            module = dictModules[strModule]
+            if hasattr(module, 'stop_service') and module.ENABLED:
+                module.stop_service()
         xbmc.log('## LibreELEC Addon ## STOP SERVICE DONE !')
     except Exception, e:
         dbg_log('oe::stop_service', 'ERROR: (' + repr(e) + ')')
