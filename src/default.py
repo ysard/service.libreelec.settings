@@ -15,7 +15,7 @@ _ = __addon__.getLocalizedString
 try:
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect('/var/run/service.libreelec.settings.sock')
-    sock.send('openConfigurationWindow')
+    sock.send(bytes('openConfigurationWindow', 'utf-8'))
     sock.close()
-except Exception, e:
+except Exception as e:
     xbmc.executebuiltin('Notification("LibreELEC", "%s", 5000, "%s/icon.png")' % (_(32390).encode('utf-8'), __media__))

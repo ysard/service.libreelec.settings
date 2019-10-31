@@ -11,7 +11,7 @@ import os
 import re
 import locale
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import time
 import tarfile
 import traceback
@@ -23,6 +23,7 @@ import shutil
 import hashlib, binascii
 
 from xml.dom import minidom
+import imp
 
 __author__ = 'LibreELEC'
 __scriptid__ = 'service.libreelec.settings'
@@ -74,13 +75,13 @@ sys.path.append(xbmc.translatePath(os.path.join(__cwd__, 'resources', 'lib', 'mo
 ## set default encoding
 
 encoding = locale.getpreferredencoding(do_setlocale=True)
-reload(sys)
-sys.setdefaultencoding(encoding)
+imp.reload(sys)
+# sys.setdefaultencoding(encoding)
 
 ## load oeSettings modules
 
 import oeWindows
-xbmc.log('## LibreELEC Addon ## ' + unicode(__addon__.getAddonInfo('version')))
+xbmc.log('## LibreELEC Addon ## ' + str(__addon__.getAddonInfo('version')))
 
 
 def _(code):
@@ -125,7 +126,7 @@ def notify(title, message, icon='icon'):
             )
         xbmc.executebuiltin(msg)
         dbg_log('oe::notify', 'exit_function', 0)
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::notify', 'ERROR: (' + repr(e) + ')')
 
 
@@ -141,10 +142,10 @@ def execute(command_line, get_result=0):
             process = subprocess.Popen(command_line, shell=True, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             process.wait()
             for line in process.stdout.readlines():
-                result = result + line
+                result = result + line.decode('utf-8')
             return result
         dbg_log('oe::execute', 'exit_function', 0)
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::execute', 'ERROR: (' + repr(e) + ')')
 
 
@@ -155,7 +156,7 @@ def enable_service(service):
         if os.path.exists('%s/services/%s.disabled' % (CONFIG_CACHE, service)):
             pass
         service_file = '%s/services/%s' % (CONFIG_CACHE, service)
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::enable_service', 'ERROR: (' + repr(e) + ')')
 
 
@@ -175,7 +176,7 @@ def set_service_option(service, option, value):
             lines.append('%s=%s' % (option, value))
         with open(conf_file_name, 'w') as conf_file:
             conf_file.write('\n'.join(lines) + '\n')
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::set_service_option', 'ERROR: (' + repr(e) + ')')
 
 
@@ -194,7 +195,7 @@ def get_service_option(service, option, default=None):
                         if '=' in line:
                             default = line.strip().split('=')[-1]
         return default
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::get_service_option', 'ERROR: (' + repr(e) + ')')
 
 
@@ -204,7 +205,7 @@ def get_service_state(service):
             return '1'
         else:
             return '0'
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::get_service_state', 'ERROR: (' + repr(e) + ')')
 
 
@@ -247,7 +248,7 @@ def set_service(service, options, state):
                 for svc in defaults._services[service]:
                     execute('systemctl restart %s' % svc)
         dbg_log('oe::set_service', 'exit_function', 0)
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::set_service', 'ERROR: (' + repr(e) + ')')
 
 
@@ -260,19 +261,19 @@ def load_file(filename):
         else:
             content = ''
         return content.strip()
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::load_file(' + filename + ')', 'ERROR: (' + repr(e) + ')')
 
 def url_quote(var):
-    return urllib2.quote(var, safe="")
+    return urllib.parse.quote(var, safe="")
 
 def load_url(url):
     try:
-        request = urllib2.Request(url)
-        response = urllib2.urlopen(request)
+        request = urllib.request.Request(url)
+        response = urllib.request.urlopen(request)
         content = response.read()
-        return content.strip()
-    except Exception, e:
+        return content.decode('utf-8').strip()
+    except Exception as e:
         dbg_log('oe::load_url(' + url + ')', 'ERROR: (' + repr(e) + ')')
 
 
@@ -282,7 +283,7 @@ def download_file(source, destination, silent=False):
         if silent == False:
             download_dlg = xbmcgui.DialogProgress()
             download_dlg.create('LibreELEC', _(32181).encode('utf-8'), ' ', ' ')
-        response = urllib2.urlopen(urllib2.quote(source, safe=':/'))
+        response = urllib.request.urlopen(urllib.parse.quote(source, safe=':/'))
         total_size = int(response.info().getheader('Content-Length').strip())
         minutes = 0
         seconds = 0
@@ -321,7 +322,7 @@ def download_file(source, destination, silent=False):
         local_file.close()
         response.close()
         return destination
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::download_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
 
 
@@ -383,7 +384,7 @@ def extract_file(filename, extract, destination, silent=False):
                         local_file.close()
                         response.close()
         return 1
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::extract_file', 'ERROR: (' + repr(e) + ')')
 
 
@@ -432,7 +433,7 @@ def copy_file(source, destination, silent=False):
         source_file.close()
         destination_file.close()
         return destination
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::copy_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
 
 
@@ -449,8 +450,8 @@ def set_busy(state):
                 __busy__ = __busy__ + 1
             else:
                 __busy__ = __busy__ - 1
-            dbg_log('oe::set_busy', '__busy__ = ' + unicode(__busy__), 0)
-    except Exception, e:
+            dbg_log('oe::set_busy', '__busy__ = ' + str(__busy__), 0)
+    except Exception as e:
         dbg_log('oe::set_busy', 'ERROR: (' + repr(e) + ')', 4)
 
 
@@ -458,12 +459,12 @@ def start_service():
     global dictModules, __oe__
     try:
         __oe__.is_service = True
-        for strModule in sorted(dictModules, key=lambda x: dictModules[x].menu.keys()):
+        for strModule in sorted(dictModules, key=lambda x: list(dictModules[x].menu.keys())):
             module = dictModules[strModule]
             if hasattr(module, 'start_service') and module.ENABLED:
                 module.start_service()
         __oe__.is_service = False
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::start_service', 'ERROR: (' + repr(e) + ')')
 
 
@@ -475,7 +476,7 @@ def stop_service():
             if hasattr(module, 'stop_service') and module.ENABLED:
                 module.stop_service()
         xbmc.log('## LibreELEC Addon ## STOP SERVICE DONE !')
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::stop_service', 'ERROR: (' + repr(e) + ')')
 
 
@@ -485,7 +486,7 @@ def openWizard():
         winOeMain = oeWindows.wizard('service-LibreELEC-Settings-wizard.xml', __cwd__, 'Default', oeMain=__oe__)
         winOeMain.doModal()
         winOeMain = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', __cwd__, 'Default', oeMain=__oe__)  # None
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::openWizard', 'ERROR: (' + repr(e) + ')')
 
 
@@ -534,7 +535,7 @@ def openConfigurationWindow():
         else:
             pass
 
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::openConfigurationWindow', 'ERROR: (' + repr(e) + ')')
 
 def standby_devices():
@@ -542,7 +543,7 @@ def standby_devices():
     try:
         if 'bluetooth' in dictModules:
             dictModules['bluetooth'].standby_devices()
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::standby_devices', 'ERROR: (' + repr(e) + ')')
 
 def load_config():
@@ -570,7 +571,7 @@ def load_config():
             xml_conf = minidom.parseString(config_text)
         conf_lock = False
         return xml_conf
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::load_config', 'ERROR: (' + repr(e) + ')')
 
 
@@ -584,7 +585,7 @@ def save_config(xml_conf):
         config_file.write(xml_conf.toprettyxml())
         config_file.close()
         conf_lock = False
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::save_config', 'ERROR: (' + repr(e) + ')')
 
 
@@ -595,7 +596,7 @@ def read_module(module):
         for xml_setting in xml_settings:
             for xml_modul in xml_setting.getElementsByTagName(module):
                 return xml_modul
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::read_module', 'ERROR: (' + repr(e) + ')')
 
 
@@ -616,7 +617,7 @@ def read_node(node_name):
                     else:
                         value[xml_main_node.nodeName][xml_sub_node.nodeName][xml_value.nodeName] = ''
         return value
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::read_node', 'ERROR: (' + repr(e) + ')')
 
 
@@ -627,7 +628,7 @@ def remove_node(node_name):
         for xml_main_node in xml_node:
             xml_main_node.parentNode.removeChild(xml_main_node)
         save_config(xml_conf)
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::remove_node', 'ERROR: (' + repr(e) + ')')
 
 
@@ -642,7 +643,7 @@ def read_setting(module, setting, default=None):
                     if hasattr(xml_modul_setting.firstChild, 'nodeValue'):
                         value = xml_modul_setting.firstChild.nodeValue
         return value
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::read_setting', 'ERROR: (' + repr(e) + ')')
 
 
@@ -677,7 +678,7 @@ def write_setting(module, setting, value, main_node='settings'):
             xml_value = xml_conf.createTextNode(value)
             xml_setting.appendChild(xml_value)
         save_config(xml_conf)
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::write_setting', 'ERROR: (' + repr(e) + ')')
 
 
@@ -702,9 +703,9 @@ def load_modules():
                     if hasattr(defaults, module_name):
                         for key in getattr(defaults, module_name):
                             setattr(dictModules[module_name], key, getattr(defaults, module_name)[key])
-            except Exception, e:
+            except Exception as e:
                 dbg_log('oe::MAIN(loadingModules)(strModule)', 'ERROR: (' + repr(e) + ')')
-    except Exception, e:
+    except Exception as e:
         dbg_log('oe::MAIN(loadingModules)', 'ERROR: (' + repr(e) + ')')
 
 
@@ -758,7 +759,7 @@ def exit():
 def fixed_writexml(self, writer, indent='', addindent='', newl=''):
     writer.write(indent + '<' + self.tagName)
     attrs = self._get_attributes()
-    a_names = attrs.keys()
+    a_names = list(attrs.keys())
     a_names.sort()
     for a_name in a_names:
         writer.write(' %s="' % a_name)
