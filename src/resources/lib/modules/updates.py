@@ -143,11 +143,11 @@ class updates:
                             },
                         },
                     },
-                'rpibootloader': {
+                'rpieeprom': {
                     'order': 2,
                     'name': 32022,
                     'settings': {
-                        'SPIBootloader': {
+                        'bootloader': {
                             'name': 'dummy',
                             'value': '',
                             'action': 'set_rpi_bootloader',
@@ -155,13 +155,13 @@ class updates:
                             'InfoText': 32025,
                             'order': 1,
                             },
-                        'VIAUSB3': {
+                        'vl805': {
                             'name': 32026,
                             'value': '',
-                            'action': 'set_rpi_usb3',
+                            'action': 'set_rpi_vl805',
                             'type': 'bool',
                             'InfoText': 32027,
-                            'order': 1,
+                            'order': 2,
                             },
                         },
                     },
@@ -325,26 +325,18 @@ class updates:
             self.struct['update']['settings']['Channel']['values'] = self.get_channels()
             self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
 
-            # RPi Flash for RPi4
-            if self.oe.RPI_CPU_VER != '3':
-                self.struct['rpibootloader']['hidden'] = 'true'
+            # RPi4 EEPROM updating
+            if self.oe.RPI_CPU_VER == '3':
+                self.rpi_flashing_state = self.get_rpi_flashing_state()
+                if self.rpi_flashing_state['incompatible']:
+                    self.struct['rpieeprom']['hidden'] = 'true'
+                else:
+                    self.struct['rpieeprom']['settings']['bootloader']['value'] = self.get_rpi_eeprom('BOOTLOADER')
+                    self.struct['rpieeprom']['settings']['bootloader']['name'] = '%s (%s)' % (self.oe._(32024).encode('utf-8'), self.rpi_flashing_state['bootloader']['state'])
+                    self.struct['rpieeprom']['settings']['vl805']['value'] = self.get_rpi_eeprom('VL805')
+                    self.struct['rpieeprom']['settings']['vl805']['name'] = '%s (%s)' % (self.oe._(32026).encode('utf-8'), self.rpi_flashing_state['vl805']['state'])
             else:
-                self.rpi_spi_state = self.get_rpi_flash_state()
-                if self.rpi_spi_state['incompatible']:
-                    self.struct['rpibootloader']['settings']['SPIBootloader']['hidden'] = 'true'
-                else:
-                    self.struct['rpibootloader']['settings']['SPIBootloader']['value'] = self.get_rpi_flash('BOOTLOADER')
-                    self.struct['rpibootloader']['settings']['SPIBootloader']['name'] = self.oe._(32024).encode('utf-8') + ' (' + self.rpi_spi_state["state"] + ')'
-
-                if os.path.exists('/usr/bin/vl805') == False:
-                    self.struct['rpibootloader']['settings']['VIAUSB3']['hidden'] = 'true'
-                else:
-                    self.struct['rpibootloader']['settings']['VIAUSB3']['value'] = self.get_rpi_flash('USB3')
-
-                # Hide entire section if all options are hidden
-                if 'hidden' in self.struct['rpibootloader']['settings']['SPIBootloader'] and \
-                   'hidden' in self.struct['rpibootloader']['settings']['VIAUSB3']:
-                   self.struct['rpibootloader']['hidden'] = 'true'
+                self.struct['rpieeprom']['hidden'] = 'true'
 
             self.oe.dbg_log('updates::load_values', 'exit_function', 0)
 
@@ -606,28 +598,21 @@ class updates:
         except Exception, e:
             self.oe.dbg_log('updates::do_autoupdate', 'ERROR: (' + repr(e) + ')')
 
-    def get_rpi_flash(self, device):
+    def get_rpi_flashing_state(self):
         try:
-            self.oe.dbg_log('updates::get_rpi_flash', 'enter_function', 0)
-            values = []
-            if os.path.exists(self.RPI_FLASHING_TRIGGER):
-                with open(self.RPI_FLASHING_TRIGGER, 'r') as trigger:
-                    values = trigger.read().split('\n')
-            self.oe.dbg_log('updates::get_rpi_flash', 'values: %s' % values, 0)
-            self.oe.dbg_log('updates::get_rpi_flash', 'exit_function', 0)
-            return 'true' if ('%s="yes"' % device) in values else 'false'
-        except Exception, e:
-            self.oe.dbg_log('updates::get_rpi_flash', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_rpi_flashing_state', 'enter_function', 0)
 
-    def get_rpi_flash_state(self):
-        try:
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'enter_function', 0)
+            jdata = {
+                        'EXITCODE': 'EXIT_FAILED',
+                        'BOOTLOADER_CURRENT': 0, 'BOOTLOADER_LATEST': 0,
+                        'VL805_CURRENT': '', 'VL805_LATEST': ''
+                    }
 
-            jdata = {'EXITCODE': 'EXIT_FAILED', 'CURRENT_TS': 0, 'LATEST_TS': 0}
-            state = {'incompatible': True, 'update': False,
-                     'state': '',
-                     'current_ts': 0, 'current': 'unknown',
-                     'latest_ts': 0, 'latest': 'unknown'}
+            state = {
+                        'incompatible': True,
+                        'bootloader': {'state': '', 'current': 'unknown', 'latest': 'unknown'},
+                        'vl805': {'state': '', 'current': 'unknown', 'latest': 'unknown'}
+                    }
 
             with tempfile.NamedTemporaryFile(mode='r', delete=True) as machine_out:
                 console_output = self.oe.execute('/usr/bin/.rpi-eeprom-update.real -j -m "%s"' % machine_out.name, get_result=1).split('\n')
@@ -635,77 +620,97 @@ class updates:
                     state['incompatible'] = False
                     jdata = json.load(machine_out)
 
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'console output: %s' % console_output, 0)
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'json values: %s' % jdata, 0)
+            self.oe.dbg_log('updates::get_rpi_flashing_state', 'console output: %s' % console_output, 0)
+            self.oe.dbg_log('updates::get_rpi_flashing_state', 'json values: %s' % jdata, 0)
 
-            if jdata['CURRENT_TS'] != 0:
-                state["current_ts"] = jdata['CURRENT_TS']
-                state["current"] = datetime.datetime.utcfromtimestamp(state["current_ts"]).strftime("%Y-%m-%d")
+            if jdata['BOOTLOADER_CURRENT'] != 0:
+                state['bootloader']['current'] = datetime.datetime.utcfromtimestamp(jdata['BOOTLOADER_CURRENT']).strftime('%Y-%m-%d')
 
-            if jdata['LATEST_TS'] != 0:
-                state["latest_ts"] = jdata['LATEST_TS']
-                state["latest"] = datetime.datetime.utcfromtimestamp(state["latest_ts"]).strftime("%Y-%m-%d")
+            if jdata['BOOTLOADER_LATEST'] != 0:
+                state['bootloader']['latest'] = datetime.datetime.utcfromtimestamp(jdata['BOOTLOADER_LATEST']).strftime('%Y-%m-%d')
 
-            if jdata['EXITCODE'] == 'EXIT_SUCCESS':
-                state["update"] = False
-                state["state"] = self.oe._(32029).encode('utf-8') % state["current"]
-            elif jdata['EXITCODE'] == 'EXIT_UPDATE_REQUIRED':
-                state["update"] = True
-                state["state"] = self.oe._(32028).encode('utf-8') % (state["current"], state["latest"])
+            if jdata['VL805_CURRENT']:
+                state['vl805']['current'] = jdata['VL805_CURRENT']
 
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'state: %s' % state, 0)
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'exit_function', 0)
+            if jdata['VL805_LATEST']:
+                state['vl805']['latest'] = jdata['VL805_LATEST']
+
+            if jdata['EXITCODE'] in ['EXIT_SUCCESS', 'EXIT_UPDATE_REQUIRED']:
+                if jdata['BOOTLOADER_LATEST'] > jdata['BOOTLOADER_CURRENT']:
+                    state['bootloader']['state'] = self.oe._(32028).encode('utf-8') % (state['bootloader']['current'], state['bootloader']['latest'])
+                else:
+                    state['bootloader']['state'] = self.oe._(32029).encode('utf-8') % state['bootloader']['current']
+
+                if jdata['VL805_LATEST'] and jdata['VL805_LATEST'] > jdata['VL805_CURRENT']:
+                    state['vl805']['state'] = self.oe._(32028).encode('utf-8') % (state['vl805']['current'], state['vl805']['latest'])
+                else:
+                    state['vl805']['state'] = self.oe._(32029).encode('utf-8') % state['vl805']['current']
+
+            self.oe.dbg_log('updates::get_rpi_flashing_state', 'state: %s' % state, 0)
+            self.oe.dbg_log('updates::get_rpi_flashing_state', 'exit_function', 0)
             return state
         except Exception, e:
-            self.oe.dbg_log('updates::get_rpi_flash_status', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_rpi_flashing_state', 'ERROR: (' + repr(e) + ')')
             return {'incompatible': True}
 
-    def set_rpi_flash(self):
+    def get_rpi_eeprom(self, device):
         try:
-            self.oe.dbg_log('updates::set_rpi_flash', 'enter_function', 0)
-            bootloader = (self.struct['rpibootloader']['settings']['SPIBootloader']['value'] == 'true')
-            usb3 = (self.struct['rpibootloader']['settings']['VIAUSB3']['value'] == 'true')
-            self.oe.dbg_log('updates::set_rpi_flash', 'states: [%s], [%s]' % (bootloader, usb3), 0)
-            if bootloader or usb3:
+            self.oe.dbg_log('updates::get_rpi_eeprom', 'enter_function', 0)
+            values = []
+            if os.path.exists(self.RPI_FLASHING_TRIGGER):
+                with open(self.RPI_FLASHING_TRIGGER, 'r') as trigger:
+                    values = trigger.read().split('\n')
+            self.oe.dbg_log('updates::get_rpi_eeprom', 'values: %s' % values, 0)
+            self.oe.dbg_log('updates::get_rpi_eeprom', 'exit_function', 0)
+            return 'true' if ('%s="yes"' % device) in values else 'false'
+        except Exception, e:
+            self.oe.dbg_log('updates::get_rpi_eeprom', 'ERROR: (' + repr(e) + ')')
+
+    def set_rpi_eeprom(self):
+        try:
+            self.oe.dbg_log('updates::set_rpi_eeprom', 'enter_function', 0)
+            bootloader = (self.struct['rpieeprom']['settings']['bootloader']['value'] == 'true')
+            vl805 = (self.struct['rpieeprom']['settings']['vl805']['value'] == 'true')
+            self.oe.dbg_log('updates::set_rpi_eeprom', 'states: [%s], [%s]' % (bootloader, vl805), 0)
+            if bootloader or vl805:
                 values = []
-                values.append('MODE="init"')
-                values.append('BOOTLOADER="' + ('yes' if bootloader else 'no') + '"')
-                values.append('USB3="' + ('yes' if usb3 else 'no') + '"')
+                values.append('BOOTLOADER="%s"' % ('yes' if bootloader else 'no'))
+                values.append('VL805="%s"' % ('yes' if vl805 else 'no'))
                 with open(self.RPI_FLASHING_TRIGGER, 'w') as trigger:
                     trigger.write('\n'.join(values))
             else:
                 if os.path.exists(self.RPI_FLASHING_TRIGGER):
                     os.remove(self.RPI_FLASHING_TRIGGER)
 
-            self.oe.dbg_log('updates::set_rpi_flash', 'exit_function', 0)
+            self.oe.dbg_log('updates::set_rpi_eeprom', 'exit_function', 0)
         except Exception, e:
-            self.oe.dbg_log('updates::set_rpi_flash', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_rpi_eeprom', 'ERROR: (' + repr(e) + ')')
 
     def set_rpi_bootloader(self, listItem):
         try:
             self.oe.dbg_log('updates::set_rpi_bootloader', 'enter_function', 0)
             value = 'false'
             if listItem.getProperty('value') == 'true':
-                if xbmcgui.Dialog().yesno("Update RPi Bootloader", "%s\n\n%s" % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
+                if xbmcgui.Dialog().yesno('Update RPi Bootloader', '%s\n\n%s' % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
                     value = 'true'
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
-            self.set_rpi_flash()
+            self.set_rpi_eeprom()
             self.oe.dbg_log('updates::set_rpi_bootloader', 'exit_function', 0)
         except Exception, e:
             self.oe.dbg_log('updates::set_rpi_bootloader', 'ERROR: (' + repr(e) + ')')
 
-    def set_rpi_usb3(self, listItem):
+    def set_rpi_vl805(self, listItem):
         try:
-            self.oe.dbg_log('updates::set_rpi_usb3', 'enter_function', 0)
+            self.oe.dbg_log('updates::set_rpi_vl805', 'enter_function', 0)
             value = 'false'
             if listItem.getProperty('value') == 'true':
-                if xbmcgui.Dialog().yesno("Update RPi USB3 Firmware", "%s\n\n%s" % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
+                if xbmcgui.Dialog().yesno('Update RPi USB3 Firmware', '%s\n\n%s' % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
                     value = 'true'
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
-            self.set_rpi_flash()
-            self.oe.dbg_log('updates::set_rpi_usb3', 'exit_function', 0)
+            self.set_rpi_eeprom()
+            self.oe.dbg_log('updates::set_rpi_vl805', 'exit_function', 0)
         except Exception, e:
-            self.oe.dbg_log('updates::set_rpi_usb3', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_rpi_vl805', 'ERROR: (' + repr(e) + ')')
 
 class updateThread(threading.Thread):
 
