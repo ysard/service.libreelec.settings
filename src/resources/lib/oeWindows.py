@@ -669,7 +669,7 @@ class wizard(xbmcgui.WindowXMLDialog):
 
                 for module in sorted(self.oe.dictModules, key=lambda x: self.oe.dictModules[x].menu.keys()):
                     strModule = module
-                    if hasattr(self.oe.dictModules[strModule], 'do_wizard'):
+                    if hasattr(self.oe.dictModules[strModule], 'do_wizard') and self.oe.dictModules[strModule].ENABLED:
                         if strModule == self.last_wizard:
                             if hasattr(self.oe.dictModules[strModule], 'exit'):
                                 self.oe.dictModules[strModule].exit()

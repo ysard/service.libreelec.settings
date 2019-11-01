@@ -19,7 +19,7 @@ USER_CONFIG = os.environ.get('USER_CONFIG', '/storage/.config')
 connman = {
     'CONNMAN_DAEMON': '/usr/sbin/connmand',
     'WAIT_CONF_FILE': '%s/libreelec/network_wait' % CONFIG_CACHE,
-    'ENABLED': lambda : (True if os.path.exists(connman['CONNMAN_DAEMON']) else False),
+    'ENABLED': lambda : (True if os.path.exists(connman['CONNMAN_DAEMON']) and not os.path.exists('/dev/.kernel_ipconfig') else False),
     }
 connman['ENABLED'] = connman['ENABLED']()
 
