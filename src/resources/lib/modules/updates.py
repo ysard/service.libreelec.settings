@@ -649,7 +649,7 @@ class updates:
             self.oe.dbg_log('updates::get_rpi_flashing_state', 'state: %s' % state, 0)
             self.oe.dbg_log('updates::get_rpi_flashing_state', 'exit_function', 0)
             return state
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('updates::get_rpi_flashing_state', 'ERROR: (' + repr(e) + ')')
             return {'incompatible': True}
 
@@ -663,7 +663,7 @@ class updates:
             self.oe.dbg_log('updates::get_rpi_eeprom', 'values: %s' % values, 0)
             self.oe.dbg_log('updates::get_rpi_eeprom', 'exit_function', 0)
             return 'true' if ('%s="yes"' % device) in values else 'false'
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('updates::get_rpi_eeprom', 'ERROR: (' + repr(e) + ')')
 
     def set_rpi_eeprom(self):
@@ -683,7 +683,7 @@ class updates:
                     os.remove(self.RPI_FLASHING_TRIGGER)
 
             self.oe.dbg_log('updates::set_rpi_eeprom', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('updates::set_rpi_eeprom', 'ERROR: (' + repr(e) + ')')
 
     def set_rpi_bootloader(self, listItem):
@@ -709,7 +709,7 @@ class updates:
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
             self.set_rpi_eeprom()
             self.oe.dbg_log('updates::set_rpi_vl805', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('updates::set_rpi_vl805', 'ERROR: (' + repr(e) + ')')
 
 class updateThread(threading.Thread):
