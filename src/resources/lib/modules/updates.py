@@ -332,9 +332,9 @@ class updates:
                     self.struct['rpieeprom']['hidden'] = 'true'
                 else:
                     self.struct['rpieeprom']['settings']['bootloader']['value'] = self.get_rpi_eeprom('BOOTLOADER')
-                    self.struct['rpieeprom']['settings']['bootloader']['name'] = '%s (%s)' % (self.oe._(32024).encode('utf-8'), self.rpi_flashing_state['bootloader']['state'])
+                    self.struct['rpieeprom']['settings']['bootloader']['name'] = '%s (%s)' % (self.oe._(32024), self.rpi_flashing_state['bootloader']['state'])
                     self.struct['rpieeprom']['settings']['vl805']['value'] = self.get_rpi_eeprom('VL805')
-                    self.struct['rpieeprom']['settings']['vl805']['name'] = '%s (%s)' % (self.oe._(32026).encode('utf-8'), self.rpi_flashing_state['vl805']['state'])
+                    self.struct['rpieeprom']['settings']['vl805']['name'] = '%s (%s)' % (self.oe._(32026), self.rpi_flashing_state['vl805']['state'])
             else:
                 self.struct['rpieeprom']['hidden'] = 'true'
 
@@ -452,9 +452,9 @@ class updates:
                     version = self.oe.VERSION
                 if self.struct['update']['settings']['Build']['value'] != '':
                     self.update_file = self.update_json[self.struct['update']['settings']['Channel']['value']]['url'] + self.get_available_builds(self.struct['update']['settings']['Build']['value'])
-                    answer = xbmcDialog.yesno('LibreELEC Update', self.oe._(32188).encode('utf-8') + ':  ' + version.encode('utf-8'),
-                                          self.oe._(32187).encode('utf-8') + ':  ' + self.struct['update']['settings']['Build']['value'].encode('utf-8'),
-                                          self.oe._(32180).encode('utf-8'))
+                    answer = xbmcDialog.yesno('LibreELEC Update', '%s:  %s' % (self.oe._(32188), version),
+                                          '%s:  %s' % (self.oe._(32187), self.struct['update']['settings']['Build']['value']),
+                                          self.oe._(32180))
                     xbmcDialog = None
                     del xbmcDialog
                     if answer:
@@ -637,14 +637,14 @@ class updates:
 
             if jdata['EXITCODE'] in ['EXIT_SUCCESS', 'EXIT_UPDATE_REQUIRED']:
                 if jdata['BOOTLOADER_LATEST'] > jdata['BOOTLOADER_CURRENT']:
-                    state['bootloader']['state'] = self.oe._(32028).encode('utf-8') % (state['bootloader']['current'], state['bootloader']['latest'])
+                    state['bootloader']['state'] = self.oe._(32028) % (state['bootloader']['current'], state['bootloader']['latest'])
                 else:
-                    state['bootloader']['state'] = self.oe._(32029).encode('utf-8') % state['bootloader']['current']
+                    state['bootloader']['state'] = self.oe._(32029) % state['bootloader']['current']
 
                 if jdata['VL805_LATEST'] and jdata['VL805_LATEST'] > jdata['VL805_CURRENT']:
-                    state['vl805']['state'] = self.oe._(32028).encode('utf-8') % (state['vl805']['current'], state['vl805']['latest'])
+                    state['vl805']['state'] = self.oe._(32028) % (state['vl805']['current'], state['vl805']['latest'])
                 else:
-                    state['vl805']['state'] = self.oe._(32029).encode('utf-8') % state['vl805']['current']
+                    state['vl805']['state'] = self.oe._(32029) % state['vl805']['current']
 
             self.oe.dbg_log('updates::get_rpi_flashing_state', 'state: %s' % state, 0)
             self.oe.dbg_log('updates::get_rpi_flashing_state', 'exit_function', 0)
@@ -691,7 +691,7 @@ class updates:
             self.oe.dbg_log('updates::set_rpi_bootloader', 'enter_function', 0)
             value = 'false'
             if listItem.getProperty('value') == 'true':
-                if xbmcgui.Dialog().yesno('Update RPi Bootloader', '%s\n\n%s' % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
+                if xbmcgui.Dialog().yesno('Update RPi Bootloader', '%s\n\n%s' % (self.oe._(32023), self.oe._(32326))):
                     value = 'true'
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
             self.set_rpi_eeprom()
@@ -704,7 +704,7 @@ class updates:
             self.oe.dbg_log('updates::set_rpi_vl805', 'enter_function', 0)
             value = 'false'
             if listItem.getProperty('value') == 'true':
-                if xbmcgui.Dialog().yesno('Update RPi USB3 Firmware', '%s\n\n%s' % (self.oe._(32023).encode('utf-8'), self.oe._(32326).encode('utf-8'))):
+                if xbmcgui.Dialog().yesno('Update RPi USB3 Firmware', '%s\n\n%s' % (self.oe._(32023), self.oe._(32326))):
                     value = 'true'
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
             self.set_rpi_eeprom()

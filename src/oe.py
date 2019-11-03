@@ -284,7 +284,7 @@ def download_file(source, destination, silent=False):
             download_dlg = xbmcgui.DialogProgress()
             download_dlg.create('LibreELEC', _(32181).encode('utf-8'), ' ', ' ')
         response = urllib.request.urlopen(urllib.parse.quote(source, safe=':/'))
-        total_size = int(response.info().getheader('Content-Length').strip())
+        total_size = int(response.getheader('Content-Length').strip())
         minutes = 0
         seconds = 0
         rest = 0
@@ -293,7 +293,7 @@ def download_file(source, destination, silent=False):
         size = 0
         part_size = 0
         last_percent = 0
-        while 1:
+        while True:
             part = response.read(32768)
             part_size += len(part)
             if time.time() > start + 2:
@@ -301,12 +301,14 @@ def download_file(source, destination, silent=False):
                 start = time.time()
                 size = part_size
                 rest = total_size - part_size
-                minutes = rest / 1024 / speed / 60
-                seconds = rest / 1024 / speed - minutes * 60
+                minutes = int(rest / 1024 / speed / 60)
+                seconds = int(rest / 1024 / speed) % 60
             percent = int(part_size * 100.0 / total_size)
             if silent == False:
-                download_dlg.update(percent, _(32181) + ':  %s' % source.rsplit('/', 1)[1], _(32182) + ':  %d KB/s' % speed, _(32183)
-                                    + ':  %d m %d s' % (minutes, seconds))
+                download_dlg.update(percent,
+                                    '%s:  %s' % (_(32181), source.rsplit('/', 1)[1]),
+                                    '%s:  %d KB/s' % (_(32182), speed),
+                                    '%s:  %d m %d s' % (_(32183), minutes, seconds))
                 if download_dlg.iscanceled():
                     os.remove(destination)
                     local_file.close()
@@ -693,7 +695,7 @@ def load_modules():
         dict_names = {}
         dictModules = {}
         for file_name in sorted(os.listdir(__cwd__ + '/resources/lib/modules')):
-            if not file_name.startswith('__') and (file_name.endswith('.py') or file_name.endswith('.pyo')):
+            if not file_name.startswith('__') and (file_name.endswith('.py') or file_name.endswith('.pyc')):
                 (name, ext) = file_name.split('.')
                 dict_names[name] = None
         for module_name in dict_names:
