@@ -8,6 +8,7 @@ import xbmc
 import xbmcgui
 import time
 import dbus
+import dbus.service
 import threading
 import oeWindows
 
