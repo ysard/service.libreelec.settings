@@ -175,7 +175,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
             button = self.getControl(self.buttons[number]['id'])
             self.buttons[number]['modul'] = module
             self.buttons[number]['action'] = action
-            button.setLabel(self.oe._(name).encode('utf-8'))
+            button.setLabel(self.oe._(name))
             if onup != None:
                 button.controlUp(self.getControl(onup))
             if onleft != None:
@@ -472,19 +472,19 @@ class wizard(xbmcgui.WindowXMLDialog):
             self.setProperty('version', self.oe.VERSION)
             self.setProperty('build', self.oe.BUILD)
             self.oe.dictModules['system'].do_init()
-            self.getControl(self.wizWinTitle).setLabel(self.oe._(32300).encode('utf-8'))
+            self.getControl(self.wizWinTitle).setLabel(self.oe._(32300))
             self.getControl(self.buttons[3]['id']).setVisible(False)
             self.getControl(self.buttons[4]['id']).setVisible(False)
             self.getControl(self.radiobuttons[1]['id']).setVisible(False)
             self.getControl(self.radiobuttons[2]['id']).setVisible(False)
             self.getControl(self.buttons[2]['id']).setVisible(False)
             if self.oe.BOOT_STATUS == "SAFE":
-              self.set_wizard_title("[COLOR red][B]%s[/B][/COLOR]" % self.oe._(32393).encode('utf-8'))
-              self.set_wizard_text(self.oe._(32394).encode('utf-8'))
+              self.set_wizard_title("[COLOR red][B]%s[/B][/COLOR]" % self.oe._(32393))
+              self.set_wizard_text(self.oe._(32394))
             else:
-              self.set_wizard_title(self.oe._(32301).encode('utf-8'))
-              self.set_wizard_text(self.oe._(32302).encode('utf-8'))
-              self.oe.winOeMain.set_wizard_button_title(self.oe._(32310).encode('utf-8'))
+              self.set_wizard_title(self.oe._(32301))
+              self.set_wizard_text(self.oe._(32302))
+              self.oe.winOeMain.set_wizard_button_title(self.oe._(32310))
               cur_lang = xbmc.getLanguage()
               self.oe.winOeMain.set_wizard_button_1(cur_lang, self, 'wizard_set_language')
             self.showButton(1, 32303)
@@ -515,10 +515,10 @@ class wizard(xbmcgui.WindowXMLDialog):
                 else:
                     self.oe.write_setting("system", "language", str(lang_new))
                 lang_str = 'SetGUILanguage(' + str(lang_new) + ')'
-                self.getControl(self.wizWinTitle).setLabel(self.oe._(32300).encode('utf-8'))
-                self.set_wizard_title(self.oe._(32301).encode('utf-8'))
-                self.set_wizard_text(self.oe._(32302).encode('utf-8'))
-                self.oe.winOeMain.set_wizard_button_title(self.oe._(32310).encode('utf-8'))
+                self.getControl(self.wizWinTitle).setLabel(self.oe._(32300))
+                self.set_wizard_title(self.oe._(32301))
+                self.set_wizard_text(self.oe._(32302))
+                self.oe.winOeMain.set_wizard_button_title(self.oe._(32310))
                 self.oe.winOeMain.set_wizard_button_1(langKey, self, 'wizard_set_language')
                 self.showButton(1, 32303)
                 self.setFocusId(self.buttons[1]['id'])

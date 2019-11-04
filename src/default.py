@@ -18,4 +18,4 @@ try:
     sock.send(bytes('openConfigurationWindow', 'utf-8'))
     sock.close()
 except Exception as e:
-    xbmc.executebuiltin('Notification("LibreELEC", "%s", 5000, "%s/icon.png")' % (_(32390).encode('utf-8'), __media__))
+    xbmc.executebuiltin('Notification("LibreELEC", "%s", 5000, "%s/icon.png")' % (_(32390), __media__))

@@ -282,7 +282,7 @@ def download_file(source, destination, silent=False):
         local_file = open(destination, 'wb')
         if silent == False:
             download_dlg = xbmcgui.DialogProgress()
-            download_dlg.create('LibreELEC', _(32181).encode('utf-8'), ' ', ' ')
+            download_dlg.create('LibreELEC', _(32181), ' ', ' ')
         response = urllib.request.urlopen(urllib.parse.quote(source, safe=':/'))
         total_size = int(response.getheader('Content-Length').strip())
         minutes = 0
@@ -333,7 +333,7 @@ def extract_file(filename, extract, destination, silent=False):
         if tarfile.is_tarfile(filename):
             if silent == False:
                 extract_dlg = xbmcgui.DialogProgress()
-                extract_dlg.create('LibreELEC ', _(32186).encode('utf-8'), ' ', ' ')
+                extract_dlg.create('LibreELEC ', _(32186), ' ', ' ')
                 extract_dlg.update(0)
             compressed = tarfile.open(filename)
             names = compressed.getnames()
@@ -397,7 +397,7 @@ def copy_file(source, destination, silent=False):
         destination_file = open(destination, 'wb')
         if silent == False:
             copy_dlg = xbmcgui.DialogProgress()
-            copy_dlg.create('LibreELEC', _(32181).encode('utf-8'), ' ', ' ')
+            copy_dlg.create('LibreELEC', _(32181), ' ', ' ')
         total_size = os.path.getsize(source)
         minutes = 0
         seconds = 0

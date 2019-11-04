@@ -512,7 +512,7 @@ class system:
         try:
             self.oe.dbg_log('system::ask_sure_reset', 'enter_function', 0)
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno(part + ' Reset', self.oe._(32326).encode('utf-8'), self.oe._(32328).encode('utf-8'))
+            answer = xbmcDialog.yesno(part + ' Reset', self.oe._(32326), self.oe._(32328))
             if answer == 1:
                 if self.oe.reboot_counter(30, self.oe._(32323)) == 1:
                     return 1
@@ -539,7 +539,7 @@ class system:
 
             xbmcDialog = xbmcgui.Dialog()
             bckDir = xbmcDialog.browse( 0,
-                                        self.oe._(32371).encode('utf-8'),
+                                        self.oe._(32371),
                                         'files',
                                         '',
                                         False,
@@ -552,7 +552,7 @@ class system:
                     folder_stat = os.statvfs(bckDir)
                     free_space = folder_stat.f_frsize * folder_stat.f_bavail
                     if self.total_backup_size > free_space:
-                        txt = self.oe.split_dialog_text(self.oe._(32379).encode('utf-8'))
+                        txt = self.oe.split_dialog_text(self.oe._(32379))
                         xbmcDialog = xbmcgui.Dialog()
                         answer = xbmcDialog.ok('Backup', txt[0], txt[1], txt[2])
                         return 0
@@ -560,7 +560,7 @@ class system:
                     pass
 
                 self.backup_dlg = xbmcgui.DialogProgress()
-                self.backup_dlg.create('LibreELEC', self.oe._(32375).encode('utf-8'), ' ', ' ')
+                self.backup_dlg.create('LibreELEC', self.oe._(32375), ' ', ' ')
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
                 self.backup_file = self.oe.timestamp() + '.tar'
@@ -582,7 +582,7 @@ class system:
             copy_success = 0
             xbmcDialog = xbmcgui.Dialog()
             restore_file_path = xbmcDialog.browse( 1,
-                                              self.oe._(32373).encode('utf-8'),
+                                              self.oe._(32373),
                                               'files',
                                               '??????????????.tar',
                                               False,
@@ -607,11 +607,11 @@ class system:
                 else:
                     self.oe.execute('rm -rf %s' % self.RESTORE_DIR)
             else:
-                txt = self.oe.split_dialog_text(self.oe._(32379).encode('utf-8'))
+                txt = self.oe.split_dialog_text(self.oe._(32379))
                 xbmcDialog = xbmcgui.Dialog()
                 answer = xbmcDialog.ok('Restore', txt[0], txt[1], txt[2])
             if copy_success == 1:
-                txt = self.oe.split_dialog_text(self.oe._(32380).encode('utf-8'))
+                txt = self.oe.split_dialog_text(self.oe._(32380))
                 xbmcDialog = xbmcgui.Dialog()
                 answer = xbmcDialog.yesno('Restore', txt[0], txt[1], txt[2])
                 if answer == 1:

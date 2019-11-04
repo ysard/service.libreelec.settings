@@ -559,7 +559,7 @@ class bluetooth:
                 items.append(values[key]['text'])
                 actions.append(values[key]['action'])
             select_window = xbmcgui.Dialog()
-            title = self.oe._(32012).encode('utf-8')
+            title = self.oe._(32012)
             result = select_window.select(title, items)
             if result >= 0:
                 getattr(self, actions[result])(listItem)
@@ -840,7 +840,7 @@ class bluetooth:
                     if interface['Status'] == 'active':
                         self.parent.download_start = time.time()
                         self.parent.download = xbmcgui.DialogProgress()
-                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181).encode('utf-8'),
+                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181),
                                                     self.parent.download_file), '', '')
                     else:
                         if hasattr(self.parent, 'download'):
@@ -851,7 +851,7 @@ class bluetooth:
                             del self.parent.download_start
                         if interface['Status'] == 'complete':
                             xbmcDialog = xbmcgui.Dialog()
-                            answer = xbmcDialog.yesno('Bluetooth Filetransfer', self.oe._(32383).encode('utf-8'))
+                            answer = xbmcDialog.yesno('Bluetooth Filetransfer', self.oe._(32383))
                             if answer == 1:
                                 fil = '%s/%s' % (self.oe.DOWNLOAD_DIR, self.parent.download_file)
                                 if 'image' in self.parent.download_type:
@@ -865,8 +865,8 @@ class bluetooth:
                         transferred = int(interface['Transferred'] / 1024)
                         speed = transferred / (time.time() - self.parent.download_start)
                         percent = int(round(100 / self.parent.download_size * (interface['Transferred'] / 1024), 0))
-                        self.parent.download.update(percent, '%s: %s' % (self.oe._(32181).encode('utf-8'), self.parent.download_file),
-                                                    '%s: %d KB/s' % (self.oe._(32382).encode('utf-8'), speed))
+                        self.parent.download.update(percent, '%s: %s' % (self.oe._(32181), self.parent.download_file),
+                                                    '%s: %d KB/s' % (self.oe._(32382), speed))
                     if self.parent.download.iscanceled():
                         obj = self.oe.dbusSystemBus.get_object('org.bluez.obex', self.parent.download_path)
                         itf = dbus.Interface(obj, 'org.bluez.obex.Transfer1')

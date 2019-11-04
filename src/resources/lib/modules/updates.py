@@ -439,7 +439,7 @@ class updates:
             builds = self.get_available_builds()
             self.struct['update']['settings']['Build']['values'] = builds
             xbmcDialog = xbmcgui.Dialog()
-            buildSel = xbmcDialog.select(self.oe._(32020).encode('utf-8'), builds)
+            buildSel = xbmcDialog.select(self.oe._(32020), builds)
             if buildSel > -1:
                 listItem = builds[buildSel]
                 self.struct['update']['settings']['Build']['value'] = listItem
@@ -498,7 +498,7 @@ class updates:
                                 update_json[channel] = custom_update_json[channel]
                         elif notify_error:
                             ok_window = xbmcgui.Dialog()
-                            answer = ok_window.ok(self.oe._(32191).encode('utf-8'), 'Custom URL is not valid, or currently inaccessible.\n\n%s' % custom_url)
+                            answer = ok_window.ok(self.oe._(32191), 'Custom URL is not valid, or currently inaccessible.\n\n%s' % custom_url)
                             if not answer:
                                 return
             self.oe.dbg_log('updates::build_json', 'exit_function', 0)
@@ -566,7 +566,7 @@ class updates:
                 if 'update' in update_json['data'] and 'folder' in update_json['data']:
                     self.update_file = self.UPDATE_DOWNLOAD_URL % (update_json['data']['folder'], update_json['data']['update'])
                     if self.struct['update']['settings']['UpdateNotify']['value'] == '1':
-                        self.oe.notify(self.oe._(32363).encode('utf-8'), self.oe._(32364).encode('utf-8'))
+                        self.oe.notify(self.oe._(32363), self.oe._(32364))
                     if self.struct['update']['settings']['AutoUpdate']['value'] == 'auto' and force == False:
                         self.update_in_progress = True
                         self.do_autoupdate(None, True)
@@ -744,7 +744,7 @@ class updateThread(threading.Thread):
                 if not hasattr(self.oe.dictModules['updates'], 'update_in_progress'):
                     self.wait_evt.wait(21600)
                 else:
-                    self.oe.notify(self.oe._(32363).encode('utf-8'), self.oe._(32364).encode('utf-8'))
+                    self.oe.notify(self.oe._(32363), self.oe._(32364))
                     self.wait_evt.wait(3600)
                 self.wait_evt.clear()
             self.oe.dbg_log('updates::updateThread', 'Stopped', 1)

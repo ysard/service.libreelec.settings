@@ -914,7 +914,7 @@ class connman:
                 items.append(values[key]['text'])
                 actions.append(values[key]['action'])
             select_window = xbmcgui.Dialog()
-            title = self.oe._(32012).encode('utf-8')
+            title = self.oe._(32012)
             result = select_window.select(title, items)
             if result >= 0:
                 getattr(self, actions[result])(listItem)
@@ -1449,7 +1449,7 @@ class connmanWifiAgent(dbus.service.Object):
             self.oe.input_request = True
             response = {}
             if 'Name' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32146).encode('utf-8'))
+                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32146))
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1463,7 +1463,7 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             if 'Passphrase' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32147).encode('utf-8'))
+                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32147))
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1481,7 +1481,7 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             if 'Username' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32148).encode('utf-8'))
+                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32148))
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1495,7 +1495,7 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             if 'Password' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32148).encode('utf-8'), True)
+                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32148), True)
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
