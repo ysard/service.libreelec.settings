@@ -1,13 +1,15 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+
 import os
 import xbmc
 import xbmcgui
 import time
 import dbus
+import dbus.service
 import threading
 import oeWindows
 
@@ -34,7 +36,7 @@ class bluetooth:
             self.listItems = {}
             self.dbusBluezAdapter = None
             self.oe.dbg_log('bluetooth::__init__', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::__init__', 'ERROR: (' + repr(e) + ')', 4)
 
     def do_init(self):
@@ -42,7 +44,7 @@ class bluetooth:
             self.oe.dbg_log('bluetooth::do_init', 'enter_function', 0)
             self.visible = True
             self.oe.dbg_log('bluetooth::do_init', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::do_init', 'ERROR: (' + repr(e) + ')', 4)
 
     def start_service(self):
@@ -51,7 +53,7 @@ class bluetooth:
             if 'org.bluez' in self.oe.dbusSystemBus.list_names():
                 self.init_adapter()
             self.oe.dbg_log('bluetooth::start_service', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::start_service', 'ERROR: (' + repr(e) + ')', 4)
 
     def stop_service(self):
@@ -63,7 +65,7 @@ class bluetooth:
             if hasattr(self, 'dbusBluezAdapter'):
                 self.dbusBluezAdapter = None
             self.oe.dbg_log('bluetooth::stop_service', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::stop_service', 'ERROR: (' + repr(e) + ')', 4)
 
     def exit(self):
@@ -76,7 +78,7 @@ class bluetooth:
             self.visible = False
             self.oe.dbg_log('bluetooth::exit', 'exit_function', 0)
             pass
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::exit', 'ERROR: (' + repr(e) + ')', 4)
 
     # ###################################################################
@@ -88,7 +90,7 @@ class bluetooth:
             self.oe.dbg_log('bluetooth::init_adapter', 'enter_function', 0)
             dbusBluezManager = dbus.Interface(self.oe.dbusSystemBus.get_object('org.bluez', '/'), 'org.freedesktop.DBus.ObjectManager')
             dbusManagedObjects = dbusBluezManager.GetManagedObjects()
-            for (path, ifaces) in dbusManagedObjects.iteritems():
+            for (path, ifaces) in dbusManagedObjects.items():
                 self.dbusBluezAdapter = ifaces.get('org.bluez.Adapter1')
                 if self.dbusBluezAdapter != None:
                     self.dbusBluezAdapter = dbus.Interface(self.oe.dbusSystemBus.get_object('org.bluez', path), 'org.bluez.Adapter1')
@@ -98,7 +100,7 @@ class bluetooth:
             if self.dbusBluezAdapter != None:
                 self.adapter_powered(self.dbusBluezAdapter, 1)
             self.oe.dbg_log('bluetooth::init_adapter', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::init_adapter', 'ERROR: (' + repr(e) + ')')
 
     def adapter_powered(self, adapter, state=1):
@@ -107,14 +109,14 @@ class bluetooth:
             self.oe.dbg_log('bluetooth::adapter_powered::adapter', repr(adapter), 0)
             self.oe.dbg_log('bluetooth::adapter_powered::state', repr(state), 0)
             if int(self.adapter_info(self.dbusBluezAdapter, 'Powered')) != state:
-                self.oe.dbg_log('bluetooth::adapter_powered', 'set state (' + unicode(state) + ')', 0)
+                self.oe.dbg_log('bluetooth::adapter_powered', 'set state (' + str(state) + ')', 0)
                 adapter_interface = dbus.Interface(self.oe.dbusSystemBus.get_object('org.bluez', adapter.object_path),
                                                    'org.freedesktop.DBus.Properties')
                 adapter_interface.Set('org.bluez.Adapter1', 'Alias', dbus.String(os.environ.get('HOSTNAME', 'libreelec')))
                 adapter_interface.Set('org.bluez.Adapter1', 'Powered', dbus.Boolean(state))
                 adapter_interface = None
             self.oe.dbg_log('bluetooth::adapter_powered', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::adapter_powered', 'ERROR: (' + repr(e) + ')', 4)
 
     def adapter_info(self, adapter, name):
@@ -127,7 +129,7 @@ class bluetooth:
             return adapter_interface.Get('org.bluez.Adapter1', name)
             adapter_interface = None
             self.oe.dbg_log('bluetooth::adapter_info', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::adapter_info', 'ERROR: (' + repr(e) + ')', 4)
 
     def start_discovery(self, listItem=None):
@@ -138,7 +140,7 @@ class bluetooth:
             self.discovering = True
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::start_discovery', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::start_discovery', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -151,7 +153,7 @@ class bluetooth:
                 self.dbusBluezAdapter.StopDiscovery()
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::stop_discovery', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::stop_discovery', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -165,14 +167,14 @@ class bluetooth:
             devices = {}
             dbusBluezManager = dbus.Interface(self.oe.dbusSystemBus.get_object('org.bluez', '/'), 'org.freedesktop.DBus.ObjectManager')
             managedObjects = dbusBluezManager.GetManagedObjects()
-            for (path, interfaces) in managedObjects.iteritems():
+            for (path, interfaces) in managedObjects.items():
                 if 'org.bluez.Device1' in interfaces:
                     devices[path] = interfaces['org.bluez.Device1']
             managedObjects = None
             dbusBluezManager = None
             return devices
             self.oe.dbg_log('bluetooth::get_devices', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::get_devices::__init__', 'ERROR: (' + repr(e) + ')', 4)
 
     def init_device(self, listItem=None):
@@ -187,7 +189,7 @@ class bluetooth:
             else:
                 self.connect_device(listItem.getProperty('entry'))
             self.oe.dbg_log('bluetooth::init_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::init_device', 'ERROR: (' + repr(e) + ')', 4)
 
     def trust_connect_device(self, listItem=None):
@@ -205,7 +207,7 @@ class bluetooth:
             self.trust_device(listItem.getProperty('entry'))
             self.connect_device(listItem.getProperty('entry'))
             self.oe.dbg_log('bluetooth::trust_connect_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::trust_connect_device', 'ERROR: (' + repr(e) + ')', 4)
 
     def enable_device_standby(self, listItem=None):
@@ -220,7 +222,7 @@ class bluetooth:
                 devices.append(listItem.getProperty('entry'))
             self.oe.write_setting('bluetooth', 'standby', ','.join(devices))
             self.oe.dbg_log('bluetooth::enable_device_standby', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::enable_device_standby', 'ERROR: (' + repr(e) + ')', 4)
 
     def disable_device_standby(self, listItem=None):
@@ -235,7 +237,7 @@ class bluetooth:
                 devices.remove(listItem.getProperty('entry'))
             self.oe.write_setting('bluetooth', 'standby', ','.join(devices))
             self.oe.dbg_log('bluetooth::disable_device_standby', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::disable_device_standby', 'ERROR: (' + repr(e) + ')', 4)
 
     def pair_device(self, path):
@@ -247,7 +249,7 @@ class bluetooth:
             device.Pair(reply_handler=self.pair_reply_handler, error_handler=self.dbus_error_handler)
             device = None
             self.oe.dbg_log('bluetooth::pair_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::pair_device', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -262,7 +264,7 @@ class bluetooth:
             self.connect_device(listItem.getProperty('entry'))
             self.menu_connections()
             self.oe.dbg_log('bluetooth::pair_reply_handler', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::pair_reply_handler', 'ERROR: (' + repr(e) + ')', 4)
 
     def trust_device(self, path):
@@ -275,7 +277,7 @@ class bluetooth:
             prop = None
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::trust_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::trust_device', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -288,7 +290,7 @@ class bluetooth:
             device.Connect(reply_handler=self.connect_reply_handler, error_handler=self.dbus_error_handler)
             device = None
             self.oe.dbg_log('bluetooth::connect_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::connect_device', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -298,7 +300,7 @@ class bluetooth:
             self.oe.set_busy(0)
             self.menu_connections()
             self.oe.dbg_log('bluetooth::connect_reply_handler', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::connect_reply_handler', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -314,7 +316,7 @@ class bluetooth:
             device.Disconnect(reply_handler=self.disconnect_reply_handler, error_handler=self.dbus_error_handler)
             device = None
             self.oe.dbg_log('bluetooth::disconnect_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::disconnect_device', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -324,7 +326,7 @@ class bluetooth:
             self.oe.set_busy(0)
             self.menu_connections()
             self.oe.dbg_log('bluetooth::disconnect_reply_handler', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::disconnect_reply_handler', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -343,7 +345,7 @@ class bluetooth:
             self.menu_connections(None)
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::remove_device', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('bluetooth::remove_device', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -363,7 +365,7 @@ class bluetooth:
                 self.close_pinkey_window()
             self.oe.dbg_log('bluetooth::dbus_error_handler', 'ERROR: (' + err_message + ')', 4)
             self.oe.dbg_log('bluetooth::dbus_error_handler', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::dbus_error_handler', 'ERROR: (' + repr(e) + ')', 4)
 
     # ###################################################################
@@ -377,7 +379,7 @@ class bluetooth:
             for entry in remove:
                 del self.listItems[entry]
             self.oe.dbg_log('bluetooth::clear_list', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::clear_list', 'ERROR: (' + repr(e) + ')', 4)
 
     def menu_connections(self, focusItem=None):
@@ -480,13 +482,13 @@ class bluetooth:
                             else:
                                 dictProperties['ConnectedState'] = self.oe._(32335)
                         if properties[prop]['type'] == 1:
-                            value = unicode(int(value))
+                            value = str(int(value))
                         if properties[prop]['type'] == 2:
-                            value = unicode(value)
+                            value = str(value)
                         if properties[prop]['type'] == 3:
-                            value = unicode(len(value))
+                            value = str(len(value))
                         if properties[prop]['type'] == 4:
-                            value = unicode(int(value))
+                            value = str(int(value))
                         dictProperties[name] = value
                 if rebuildList == 1:
                     self.listItems[dbusDevice] = self.oe.winOeMain.addConfigItem(apName, dictProperties, self.oe.listObject['btlist'])
@@ -496,7 +498,7 @@ class bluetooth:
                         for dictProperty in dictProperties:
                             self.listItems[dbusDevice].setProperty(dictProperty, dictProperties[dictProperty])
             self.oe.dbg_log('bluetooth::menu_connections', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::menu_connections', 'ERROR: (' + repr(e) + ')', 4)
 
     def open_context_menu(self, listItem):
@@ -555,16 +557,16 @@ class bluetooth:
                 }
             items = []
             actions = []
-            for key in values.keys():
+            for key in list(values.keys()):
                 items.append(values[key]['text'])
                 actions.append(values[key]['action'])
             select_window = xbmcgui.Dialog()
-            title = self.oe._(32012).encode('utf-8')
+            title = self.oe._(32012)
             result = select_window.select(title, items)
             if result >= 0:
                 getattr(self, actions[result])(listItem)
             self.oe.dbg_log('bluetooth::show_options', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::show_options', 'ERROR: (' + repr(e) + ')', 4)
 
     def open_pinkey_window(self, runtime=60, title=32343):
@@ -576,7 +578,7 @@ class bluetooth:
             self.pinkey_timer = pinkeyTimer(self, runtime)
             self.pinkey_timer.start()
             self.oe.dbg_log('bluetooth::open_pinkey_window', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::open_pinkey_window', 'ERROR: (' + repr(e) + ')', 4)
 
     def close_pinkey_window(self):
@@ -591,7 +593,7 @@ class bluetooth:
                 self.pinkey_window = None
                 del self.pinkey_window
             self.oe.dbg_log('bluetooth::close_pinkey_window', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::close_pinkey_window', 'ERROR: (' + repr(e) + ')', 4)
 
     def standby_devices(self):
@@ -610,7 +612,7 @@ class bluetooth:
                         lstItem = None
                         self.oe.input_request = False
             self.oe.dbg_log('bluetooth::standby_devices', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::standby_devices', 'ERROR: (' + repr(e) + ')', 4)
 
     # ###################################################################
@@ -630,7 +632,7 @@ class bluetooth:
                 self.obAgentPath = '/LibreELEC/ob_agent'
                 self.parent = parent
                 self.oe.dbg_log('bluetooth::monitor::__init__', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::__init__', 'ERROR: (' + repr(e) + ')')
 
         def add_signal_receivers(self):
@@ -651,7 +653,7 @@ class bluetooth:
                 self.NameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('org.bluez', self.bluezNameOwnerChanged)
                 self.ObexNameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('org.bluez.obex', self.bluezObexNameOwnerChanged)
                 self.oe.dbg_log('bluetooth::monitor::add_signal_receivers', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::add_signal_receivers', 'ERROR: (' + repr(e) + ')', 4)
 
         def remove_signal_receivers(self):
@@ -674,7 +676,7 @@ class bluetooth:
                 if hasattr(self, 'btAgent'):
                     self.remove_agent()
                 self.oe.dbg_log('bluetooth::monitor::remove_signal_receivers', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::remove_signal_receivers', 'ERROR: (' + repr(e) + ')', 4)
 
         def bluezNameOwnerChanged(self, proxy):
@@ -685,7 +687,7 @@ class bluetooth:
                 else:
                     self.remove_agent()
                 self.oe.dbg_log('bluetooth::monitor::bluezNameOwnerChanged', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::bluezNameOwnerChanged', 'ERROR: (' + repr(e) + ')', 4)
 
         def initialize_agent(self):
@@ -699,7 +701,7 @@ class bluetooth:
                 dbusBluezManager.RequestDefaultAgent(self.btAgentPath)
                 dbusBluezManager = None
                 self.oe.dbg_log('bluetooth::monitor::initialize_agent', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::initialize_agent', 'ERROR: (' + repr(e) + ')', 4)
 
         def remove_agent(self):
@@ -716,7 +718,7 @@ class bluetooth:
                         pass
                     del self.btAgent
                 self.oe.dbg_log('bluetooth::monitor::remove_agent', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::remove_agent', 'ERROR: (' + repr(e) + ')', 4)
 
         def bluezObexNameOwnerChanged(self, proxy):
@@ -727,7 +729,7 @@ class bluetooth:
                 else:
                     self.remove_obex_agent()
                 self.oe.dbg_log('bluetooth::monitor::bluezObexNameOwnerChanged', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::bluezObexNameOwnerChanged', 'ERROR: (' + repr(e) + ')', 4)
 
         def initialize_obex_agent(self):
@@ -741,7 +743,7 @@ class bluetooth:
                 dbusBluezObexManager.RegisterAgent(self.obAgentPath)
                 dbusBluezObexManager = None
                 self.oe.dbg_log('bluetooth::monitor::initialize_obex_agent', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::initialize_obex_agent', 'ERROR: (' + repr(e) + ')', 4)
 
         def remove_obex_agent(self):
@@ -759,7 +761,7 @@ class bluetooth:
                         pass
                     del self.obAgent
                 self.oe.dbg_log('bluetooth::monitor::remove_obex_agent', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::remove_obex_agent', 'ERROR: (' + repr(e) + ')', 4)
 
         def InterfacesAdded(self, path, interfaces):
@@ -776,7 +778,7 @@ class bluetooth:
                 if self.parent.visible:
                     self.parent.menu_connections()
                 self.oe.dbg_log('bluetooth::monitor::InterfacesAdded', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::InterfacesAdded', 'ERROR: (' + repr(e) + ')', 4)
 
         def InterfacesRemoved(self, path, interfaces):
@@ -789,7 +791,7 @@ class bluetooth:
                 if self.parent.visible and not hasattr(self.parent, 'discovery_thread'):
                     self.parent.menu_connections()
                 self.oe.dbg_log('bluetooth::monitor::InterfacesRemoved', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::InterfacesRemoved', 'ERROR: (' + repr(e) + ')', 4)
 
         def AdapterChanged(self, interface, changed, invalidated, path):
@@ -800,7 +802,7 @@ class bluetooth:
                 self.oe.dbg_log('bluetooth::monitor::AdapterChanged::invalidated', repr(invalidated), 0)
                 self.oe.dbg_log('bluetooth::monitor::AdapterChanged::path', repr(path), 0)
                 self.oe.dbg_log('bluetooth::monitor::AdapterChanged', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::AdapterChanged', 'ERROR: (' + repr(e) + ')', 4)
 
         def PropertiesChanged(self, interface, changed, invalidated, path):
@@ -823,11 +825,11 @@ class bluetooth:
                     if path in self.parent.listItems:
                         for prop in changed:
                             if prop in properties:
-                                self.parent.listItems[path].setProperty(unicode(prop), unicode(changed[prop]))
+                                self.parent.listItems[path].setProperty(str(prop), str(changed[prop]))
                     else:
                         self.parent.menu_connections()
                 self.oe.dbg_log('bluetooth::monitor::PropertiesChanged', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::PropertiesChanged', 'ERROR: (' + repr(e) + ')', 4)
 
         def TransferChanged(self, path, interface, dummy):
@@ -840,7 +842,7 @@ class bluetooth:
                     if interface['Status'] == 'active':
                         self.parent.download_start = time.time()
                         self.parent.download = xbmcgui.DialogProgress()
-                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181).encode('utf-8'),
+                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181),
                                                     self.parent.download_file), '', '')
                     else:
                         if hasattr(self.parent, 'download'):
@@ -851,7 +853,7 @@ class bluetooth:
                             del self.parent.download_start
                         if interface['Status'] == 'complete':
                             xbmcDialog = xbmcgui.Dialog()
-                            answer = xbmcDialog.yesno('Bluetooth Filetransfer', self.oe._(32383).encode('utf-8'))
+                            answer = xbmcDialog.yesno('Bluetooth Filetransfer', self.oe._(32383))
                             if answer == 1:
                                 fil = '%s/%s' % (self.oe.DOWNLOAD_DIR, self.parent.download_file)
                                 if 'image' in self.parent.download_type:
@@ -865,8 +867,8 @@ class bluetooth:
                         transferred = int(interface['Transferred'] / 1024)
                         speed = transferred / (time.time() - self.parent.download_start)
                         percent = int(round(100 / self.parent.download_size * (interface['Transferred'] / 1024), 0))
-                        self.parent.download.update(percent, '%s: %s' % (self.oe._(32181).encode('utf-8'), self.parent.download_file),
-                                                    '%s: %d KB/s' % (self.oe._(32382).encode('utf-8'), speed))
+                        self.parent.download.update(percent, '%s: %s' % (self.oe._(32181), self.parent.download_file),
+                                                    '%s: %d KB/s' % (self.oe._(32382), speed))
                     if self.parent.download.iscanceled():
                         obj = self.oe.dbusSystemBus.get_object('org.bluez.obex', self.parent.download_path)
                         itf = dbus.Interface(obj, 'org.bluez.obex.Transfer1')
@@ -874,7 +876,7 @@ class bluetooth:
                         obj = None
                         itf = None
                 self.oe.dbg_log('bluetooth::monitor::TransferChanged', 'exit_function', 0)
-            except Exception, e:
+            except Exception as e:
                 self.oe.dbg_log('bluetooth::monitor::TransferChanged', 'ERROR: (' + repr(e) + ')', 4)
 
 
@@ -897,7 +899,7 @@ class bluetoothAgent(dbus.service.Object):
         try:
             self.oe.dbg_log('bluetooth::btAgent::Release', 'enter_function', 0)
             self.oe.dbg_log('bluetooth::btAgent::Release', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::Release', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='os', out_signature='')
@@ -916,7 +918,7 @@ class bluetoothAgent(dbus.service.Object):
                 self.oe.dictModules['bluetooth'].trust_device(device)
                 return
             raise Rejected('Connection rejected!')
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='s')
@@ -932,7 +934,7 @@ class bluetoothAgent(dbus.service.Object):
             self.oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'return->' + pincode, 0)
             self.oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'exit_function', 0)
             return dbus.String(pincode)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='u')
@@ -947,7 +949,7 @@ class bluetoothAgent(dbus.service.Object):
             self.busy()
             self.oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'exit_function', 0)
             return dbus.UInt32(passkey)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='ouq', out_signature='')
@@ -962,7 +964,7 @@ class bluetoothAgent(dbus.service.Object):
                 self.parent.pinkey_window.device = device
                 self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
             self.oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='os', out_signature='')
@@ -977,7 +979,7 @@ class bluetoothAgent(dbus.service.Object):
             self.parent.pinkey_window.device = device
             self.parent.pinkey_window.set_label1('PIN code: %s' % (pincode))
             self.oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='ou', out_signature='')
@@ -996,7 +998,7 @@ class bluetoothAgent(dbus.service.Object):
                 self.oe.dictModules['bluetooth'].trust_device(device)
                 return
             raise Rejected("Passkey doesn't match")
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='')
@@ -1014,7 +1016,7 @@ class bluetoothAgent(dbus.service.Object):
                 self.oe.dictModules['bluetooth'].trust_device(device)
                 return
             raise Rejected('Pairing rejected')
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.Agent1', in_signature='', out_signature='')
@@ -1024,7 +1026,7 @@ class bluetoothAgent(dbus.service.Object):
             if hasattr(self.parent, 'pinkey_window'):
                 self.parent.close_pinkey_window()
             self.oe.dbg_log('bluetooth::btAgent::Cancel', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::Cancel', 'ERROR: (' + repr(e) + ')', 4)
 
 
@@ -1042,7 +1044,7 @@ class obexAgent(dbus.service.Object):
         try:
             self.oe.dbg_log('bluetooth::obexAgent::Release', 'enter_function', 0)
             self.oe.dbg_log('bluetooth::obexAgent::Release', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::obexAgent::Release', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.obex.Agent1', in_signature='o', out_signature='s')
@@ -1073,7 +1075,7 @@ class obexAgent(dbus.service.Object):
             properties = None
             transfer = None
             self.oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'ERROR: (' + repr(e) + ')', 4)
 
     @dbus.service.method('org.bluez.obex.Agent1', in_signature='', out_signature='')
@@ -1081,7 +1083,7 @@ class obexAgent(dbus.service.Object):
         try:
             self.oe.dbg_log('bluetooth::obexAgent::Cancel', 'enter_function', 0)
             self.oe.dbg_log('bluetooth::obexAgent::Cancel', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::obexAgent::Cancel', 'ERROR: (' + repr(e) + ')', 4)
 
 
@@ -1096,7 +1098,7 @@ class discoveryThread(threading.Thread):
             self.main_menu = self.oe.winOeMain.getControl(self.oe.winOeMain.guiMenList)
             threading.Thread.__init__(self)
             self.oe.dbg_log('bluetooth::discoveryThread::__init__', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::discoveryThread::__init__', 'ERROR: (' + repr(e) + ')', 4)
 
     def stop(self):
@@ -1116,7 +1118,7 @@ class discoveryThread(threading.Thread):
                     self.stop()
                 time.sleep(1)
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'ERROR: (' + repr(e) + ')', 4)
 
 
@@ -1133,7 +1135,7 @@ class pinkeyTimer(threading.Thread):
             self.runtime = runtime
             threading.Thread.__init__(self)
             self.oe.dbg_log('bluetooth::pinkeyTimer::__init__', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::pinkeyTimer::__init__', 'ERROR: (' + repr(e) + ')', 4)
 
     def stop(self):
@@ -1153,5 +1155,5 @@ class pinkeyTimer(threading.Thread):
                 else:
                     time.sleep(1)
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'ERROR: (' + repr(e) + ')', 4)

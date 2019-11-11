@@ -1,8 +1,9 @@
 # build dir
 build/
 
-# pyo files
+# bytecode files
 *.pyo
+*.pyc
 
 # backup files
 *.orig

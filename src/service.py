@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 import oe
 import xbmc
@@ -30,7 +31,7 @@ class service_thread(threading.Thread):
             threading.Thread.__init__(self)
             self.daemon = True
             self.oe.dbg_log('_service_::__init__', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('_service_::__init__', 'ERROR: (' + repr(e) + ')')
 
     def stop(self):
@@ -39,11 +40,11 @@ class service_thread(threading.Thread):
             self.stopped = True
             sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             sock.connect(self.socket_file)
-            sock.send('exit')
+            sock.send(bytes('exit', 'utf-8'))
             sock.close()
             self.sock.close()
             self.oe.dbg_log('_service_::stop', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('_service_::stop', 'ERROR: (' + repr(e) + ')')
 
     def run(self):
@@ -53,9 +54,9 @@ class service_thread(threading.Thread):
                 threading.Thread(target=self.oe.openWizard).start()
             while self.stopped == False:
                 self.oe.dbg_log('_service_::run', 'WAITING:', 1)
-                (conn, addr) = self.sock.accept()
-                message = conn.recv(1024)
-                self.oe.dbg_log('_service_::run', 'MESSAGE:' + repr(message), 1)
+                conn, addr = self.sock.accept()
+                message = (conn.recv(1024)).decode('utf-8')
+                self.oe.dbg_log('_service_::run', 'MESSAGE:' + message, 1)
                 conn.close()
                 if message == 'openConfigurationWindow':
                     if not hasattr(self.oe, 'winOeMain'):
@@ -66,7 +67,7 @@ class service_thread(threading.Thread):
                 if message == 'exit':
                     self.stopped = True
             self.oe.dbg_log('_service_::run', 'exit_function', 0)
-        except Exception, e:
+        except Exception as e:
             self.oe.dbg_log('_service_::run', 'ERROR: (' + repr(e) + ')')
 
 
