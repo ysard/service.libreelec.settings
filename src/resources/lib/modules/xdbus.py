@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 import dbus
 import gobject
@@ -100,5 +101,3 @@ class dbusMonitor(threading.Thread):
             self.oe.dbg_log('xdbus::dbusMonitor::stop_service', 'exit_function', 0)
         except Exception as e:
             self.oe.dbg_log('xdbus::dbusMonitor::stop_service', 'ERROR: (' + repr(e) + ')')
-
-
