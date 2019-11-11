@@ -12,7 +12,6 @@ import uuid
 import xbmcgui
 import threading
 import oeWindows
-import configparser
 import random
 import string
 
