@@ -416,6 +416,7 @@ class pinkeyWindow(xbmcgui.WindowXMLDialog):
 class wizard(xbmcgui.WindowXMLDialog):
 
     def __init__(self, *args, **kwargs):
+        self.visible = False
         self.lastMenu = -1
         self.guiMenList = 1000
         self.guiNetList = 1200
@@ -467,6 +468,7 @@ class wizard(xbmcgui.WindowXMLDialog):
         self.last_wizard = None
 
     def onInit(self):
+        self.visible = True
         try:
             self.setProperty('arch', self.oe.ARCHITECTURE)
             self.setProperty('distri', self.oe.DISTRIBUTION)
@@ -696,6 +698,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                     time.sleep(.5)
                     xbmc.executebuiltin('SendClick(10100,11)')
                     self.oe.write_setting('libreelec', 'wizard_completed', 'True')
+                    self.visible = False
                     self.close()
                     xbmc.executebuiltin(lang_str)
             self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'exit_function', 0)
