@@ -94,7 +94,7 @@ monitor.start()
 
 xbmcm.waitForAbort()
 
-if hasattr(oe, 'winOeMain'):
+if hasattr(oe, 'winOeMain') and hasattr(oe.winOeMain, 'visible'):
     if oe.winOeMain.visible == True:
         oe.winOeMain.close()
 
