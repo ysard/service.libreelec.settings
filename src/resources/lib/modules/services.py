@@ -254,6 +254,27 @@ class services:
                                 },
                             'InfoText': 752,
                             },
+                        'idle_timeout': {
+                            'order': 4,
+                            'name': 32400,
+                            'value': None,
+                            'action': 'idle_timeout',
+                            'type': 'multivalue',
+                            'values': [
+                                '0',
+                                '1',
+                                '3',
+                                '5',
+                                '15',
+                                '30',
+                                '60',
+                                ],
+                            'parent': {
+                                'entry': 'enabled',
+                                'value': ['1'],
+                                },
+                            'InfoText': 773,
+                            },
                         },
                     },
                 }
@@ -376,6 +397,11 @@ class services:
                     else:
                         self.struct['bluez']['settings']['obex_enabled']['hidden'] = True
                         self.struct['bluez']['settings']['obex_root']['hidden'] = True
+
+                    value = self.oe.read_setting('bluetooth', 'idle_timeout')
+                    if not value:
+                        value = '0'
+                    self.struct['bluez']['settings']['idle_timeout']['value'] = self.oe.read_setting('bluetooth', 'idle_timeout')
                 else:
                     self.struct['bluez']['hidden'] = 'true'
 
@@ -523,6 +549,19 @@ class services:
         except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('services::init_obex', 'ERROR: (' + repr(e) + ')', 4)
+
+    def idle_timeout(self, **kwargs):
+        try:
+            self.oe.dbg_log('services::idle_timeout', 'enter_function', 0)
+            self.oe.set_busy(1)
+            if 'listItem' in kwargs:
+                self.set_value(kwargs['listItem'])
+            self.oe.write_setting('bluetooth', 'idle_timeout', self.struct['bluez']['settings']['idle_timeout']['value'])
+            self.oe.set_busy(0)
+            self.oe.dbg_log('services::idle_timeout', 'exit_function', 0)
+        except Exception as e:
+            self.oe.set_busy(0)
+            self.oe.dbg_log('services::idle_timeout', 'ERROR: (' + repr(e) + ')', 4)
 
     def exit(self):
         try:

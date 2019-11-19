@@ -276,6 +276,10 @@ msgctxt "#772"
 msgid "Checking for a new version will submit the installed Distribution, Project, CPU Arch and Version to the update server. This data is also used to report basic statistics for the project. To continue checking for updates while opting-out of stats reporting, disable this option."
 msgstr ""
 
+msgctxt "#773"
+msgid "Set the idle timeout (in minutes) before devices will be disconnected (defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr ""
@@ -1030,4 +1034,8 @@ msgstr ""
 
 msgctxt "#32399"
 msgid "Public"
+msgstr ""
+
+msgctxt "#32400"
+msgid "Idle Timeout"
 msgstr ""
