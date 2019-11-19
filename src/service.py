@@ -82,6 +82,12 @@ class cxbmcm(xbmc.Monitor):
             threading.Thread(target=oe.__oe__.standby_devices).start()
         oe.__oe__.dbg_log('c_xbmcm::onScreensaverActivated', 'exit_function', 0)
 
+    def onDPMSActivated(self):
+        oe.__oe__.dbg_log('c_xbmcm::onDPMSActivated', 'enter_function', 0)
+        if oe.__oe__.read_setting('bluetooth', 'standby'):
+            threading.Thread(target=oe.__oe__.standby_devices).start()
+        oe.__oe__.dbg_log('c_xbmcm::onDPMSActivated', 'exit_function', 0)
+
     def onAbortRequested(self):
         pass
 
