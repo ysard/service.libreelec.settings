@@ -113,7 +113,7 @@ msgid "Send boot config files from /flash, kodi_crash.log, kernel log and Samba 
 msgstr ""
 
 msgctxt "#720"
-msgid "Set to ON and Bluetooth devices will be disabled during power-saving modes"
+msgid "Set to ON to enable the Bluetooth service"
 msgstr ""
 
 msgctxt "#722"
