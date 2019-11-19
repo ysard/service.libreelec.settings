@@ -126,9 +126,10 @@ class bluetooth:
             self.oe.dbg_log('bluetooth::adapter_info::name', repr(name), 0)
             adapter_interface = dbus.Interface(self.oe.dbusSystemBus.get_object('org.bluez', adapter.object_path),
                                                'org.freedesktop.DBus.Properties')
-            return adapter_interface.Get('org.bluez.Adapter1', name)
+            res = adapter_interface.Get('org.bluez.Adapter1', name)
             adapter_interface = None
             self.oe.dbg_log('bluetooth::adapter_info', 'exit_function', 0)
+            return res
         except Exception as e:
             self.oe.dbg_log('bluetooth::adapter_info', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -172,8 +173,8 @@ class bluetooth:
                     devices[path] = interfaces['org.bluez.Device1']
             managedObjects = None
             dbusBluezManager = None
-            return devices
             self.oe.dbg_log('bluetooth::get_devices', 'exit_function', 0)
+            return devices
         except Exception as e:
             self.oe.dbg_log('bluetooth::get_devices::__init__', 'ERROR: (' + repr(e) + ')', 4)
 
@@ -1063,7 +1064,6 @@ class obexAgent(dbus.service.Object):
                 properties = None
                 transfer = None
                 raise dbus.DBusException('org.bluez.obex.Error.Rejected: Not Authorized')
-                return
             self.parent.download_path = path
             self.parent.download_file = properties['Name']
             self.parent.download_size = properties['Size'] / 1024
@@ -1071,10 +1071,11 @@ class obexAgent(dbus.service.Object):
                 self.parent.download_type = properties['Type']
             else:
                 self.parent.download_type = None
-            return properties['Name']
+            res = properties['Name']
             properties = None
             transfer = None
             self.oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'exit_function', 0)
+            return res
         except Exception as e:
             self.oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'ERROR: (' + repr(e) + ')', 4)
 
