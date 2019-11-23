@@ -305,7 +305,7 @@ msgid "Select Action"
 msgstr ""
 
 msgctxt "#32013"
-msgid "Updates"
+msgid "OS Updates"
 msgstr ""
 
 msgctxt "#32014"
@@ -341,7 +341,7 @@ msgid "Submit Statistics"
 msgstr ""
 
 msgctxt "#32022"
-msgid "Raspberry Pi Flashing"
+msgid "Firmware Updates"
 msgstr ""
 
 msgctxt "#32023"
