@@ -82,6 +82,12 @@ class cxbmcm(xbmc.Monitor):
             threading.Thread(target=oe.__oe__.standby_devices).start()
         oe.__oe__.dbg_log('c_xbmcm::onScreensaverActivated', 'exit_function', 0)
 
+    def onDPMSActivated(self):
+        oe.__oe__.dbg_log('c_xbmcm::onDPMSActivated', 'enter_function', 0)
+        if oe.__oe__.read_setting('bluetooth', 'standby'):
+            threading.Thread(target=oe.__oe__.standby_devices).start()
+        oe.__oe__.dbg_log('c_xbmcm::onDPMSActivated', 'exit_function', 0)
+
     def onAbortRequested(self):
         pass
 
@@ -92,7 +98,28 @@ oe.start_service()
 monitor = service_thread(oe.__oe__)
 monitor.start()
 
-xbmcm.waitForAbort()
+while not xbmcm.abortRequested():
+    if xbmcm.waitForAbort(60):
+        break
+
+    if not oe.__oe__.read_setting('bluetooth', 'standby'):
+        continue
+
+    timeout = oe.__oe__.read_setting('bluetooth', 'idle_timeout')
+    if not timeout:
+        continue
+
+    try:
+        timeout = int(timeout)
+    except:
+        continue
+
+    if timeout < 1:
+        continue
+
+    if xbmc.getGlobalIdleTime() / 60 >= timeout:
+        oe.__oe__.dbg_log('service', 'idle timeout reached', 0)
+        oe.__oe__.standby_devices()
 
 if hasattr(oe, 'winOeMain'):
     if oe.winOeMain.visible == True:
