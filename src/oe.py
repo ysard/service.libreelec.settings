@@ -84,6 +84,94 @@ imp.reload(sys)
 import oeWindows
 xbmc.log('## LibreELEC Addon ## ' + str(__addon__.getAddonInfo('version')))
 
+class ProgressDialog:
+    def __init__(self, label1=32181, label2=32182, label3=32183, minSampleInterval=1.0, maxUpdatesPerSecond=5):
+        self.label1 = _(label1)
+        self.label2 = _(label2)
+        self.label3 = _(label3)
+        self.minSampleInterval = minSampleInterval
+        self.maxUpdatesPerSecond = 1 / maxUpdatesPerSecond
+
+        self.dialog = None
+
+        self.source = None
+        self.total_size = 0
+
+        self.reset()
+
+    def reset(self):
+        self.percent = 0
+        self.speed = 0
+
+        self.partial_size = 0
+        self.prev_size = 0
+
+        self.start = 0
+        self.last_update = 0
+        self.minutes = 0
+        self.seconds = 0
+
+        self.cancelled = False
+
+    def setSource(self, source):
+        self.source = source
+
+    def setSize(self, total_size):
+        self.total_size = total_size
+
+    def getPercent(self):
+        return self.percent
+
+    def getSpeed(self):
+        return self.speed
+
+    def open(self, heading='LibreELEC', line1='', line2='', line3=''):
+        self.dialog = xbmcgui.DialogProgress()
+        self.dialog.create(heading, line1, line2, line3)
+        self.reset()
+
+    def update(self, chunk):
+        if self.dialog and self.needsUpdate(chunk):
+            line1 = '%s: %s' % (self.label1, self.source.rsplit('/', 1)[1])
+            line2 = '%s: %s KB/s' % (self.label2, f'{self.speed:,}')
+            line3 = '%s: %d m %d s' % (self.label3, self.minutes, self.seconds)
+            self.dialog.update(self.percent, line1, line2, line3)
+            self.last_update = time.time()
+
+    def close(self):
+        if self.dialog:
+            self.dialog.close()
+        self.dialog = None
+
+    # Calculate current speed at regular intervals, or upon completion
+    def sample(self, chunk):
+        self.partial_size += len(chunk)
+
+        now = time.time()
+        if self.start == 0:
+            self.start = now
+
+        if (now - self.start) >= self.minSampleInterval or not chunk:
+            self.speed = int((self.partial_size - self.prev_size) / (now - self.start) / 1024)
+            remain = self.total_size - self.partial_size
+            self.minutes = int(remain / 1024 / self.speed / 60)
+            self.seconds = int(remain / 1024 / self.speed) % 60
+            self.prev_size = self.partial_size
+            self.start = now
+
+        self.percent = int(self.partial_size * 100.0 / self.total_size)
+
+    # Update the progress dialog when required, or upon completion
+    def needsUpdate(self, chunk):
+        if not chunk:
+            return True
+        else:
+            return ((time.time() - self.last_update) >= self.maxUpdatesPerSecond)
+
+    def iscanceled(self):
+        if self.dialog:
+            self.cancelled = self.dialog.iscanceled()
+        return self.cancelled
 
 def _(code):
     wizardComp = read_setting('libreelec', 'wizard_completed')
@@ -113,8 +201,9 @@ def dbg_log(source, text, level=4):
         return
     xbmc.log('## LibreELEC Addon ## ' + source + ' ## ' + text, level)
     if level == 4:
-        xbmc.log(traceback.format_exc(), level)
-
+        tracedata = traceback.format_exc()
+        if tracedata != "NoneType: None\n":
+            xbmc.log(tracedata, level)
 
 def notify(title, message, icon='icon'):
     try:
@@ -281,161 +370,92 @@ def load_url(url):
 def download_file(source, destination, silent=False):
     try:
         local_file = open(destination, 'wb')
-        if silent == False:
-            download_dlg = xbmcgui.DialogProgress()
-            download_dlg.create('LibreELEC', _(32181), ' ', ' ')
+
         response = urllib.request.urlopen(urllib.parse.quote(source, safe=':/'))
-        total_size = int(response.getheader('Content-Length').strip())
-        minutes = 0
-        seconds = 0
-        rest = 0
-        speed = 1
-        start = time.time()
-        size = 0
-        part_size = 0
+
+        progress = ProgressDialog()
+        if not silent:
+            progress.open()
+
+        progress.setSource(source)
+        progress.setSize(int(response.getheader('Content-Length').strip()))
+
         last_percent = 0
-        while True:
+
+        while not (xbmc.abortRequested or progress.iscanceled()):
             part = response.read(32768)
-            part_size += len(part)
-            if time.time() > start + 2:
-                speed = int((part_size - size) / (time.time() - start) / 1024)
-                start = time.time()
-                size = part_size
-                rest = total_size - part_size
-                minutes = int(rest / 1024 / speed / 60)
-                seconds = int(rest / 1024 / speed) % 60
-            percent = int(part_size * 100.0 / total_size)
-            if silent == False:
-                download_dlg.update(percent,
-                                    '%s:  %s' % (_(32181), source.rsplit('/', 1)[1]),
-                                    '%s:  %d KB/s' % (_(32182), speed),
-                                    '%s:  %d m %d s' % (_(32183), minutes, seconds))
-                if download_dlg.iscanceled():
-                    os.remove(destination)
-                    local_file.close()
-                    response.close()
-                    return None
+
+            progress.sample(part)
+
+            if not silent:
+                progress.update(part)
             else:
-                if percent > last_percent + 5:
-                    dbg_log('oe::download_file(' + destination + ')', '%d percent with %d KB/s' % (percent, speed))
-                    last_percent = percent
-            if not part or xbmc.abortRequested:
+                if progress.getPercent() - last_percent > 5 or not part:
+                    dbg_log('oe::download_file(%s)' % destination, '%d%% with %d KB/s' % (progress.getPercent(), progress.getSpeed()))
+                    last_percent = progress.getPercent()
+
+            if part:
+                local_file.write(part)
+            else:
                 break
-            local_file.write(part)
+
+        progress.close()
         local_file.close()
         response.close()
+
+        if progress.iscanceled() or xbmc.abortRequested:
+            os.remove(destination)
+            return None
+
         return destination
+
     except Exception as e:
         dbg_log('oe::download_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
-
-
-def extract_file(filename, extract, destination, silent=False):
-    try:
-        if tarfile.is_tarfile(filename):
-            if silent == False:
-                extract_dlg = xbmcgui.DialogProgress()
-                extract_dlg.create('LibreELEC ', _(32186), ' ', ' ')
-                extract_dlg.update(0)
-            compressed = tarfile.open(filename)
-            names = compressed.getnames()
-            for name in names:
-                for search in extract:
-                    if search in name:
-                        fileinfo = compressed.getmember(name)
-                        response = compressed.extractfile(fileinfo)
-                        local_file = open(destination + name.rsplit('/', 1)[1], 'wb')
-                        total_size = fileinfo.size
-                        minutes = 0
-                        seconds = 0
-                        rest = 1
-                        speed = 1
-                        start = time.time()
-                        size = 1
-                        part_size = 1
-                        last_percent = 0
-                        while 1:
-                            part = response.read(32768)
-                            part_size += len(part)
-                            if silent == False:
-                                if extract_dlg.iscanceled():
-                                    local_file.close()
-                                    response.close()
-                                    return None
-                            if not part or xbmc.abortRequested:
-                                break
-                            if time.time() > start + 2:
-                                speed = int((part_size - size) / (time.time() - start) / 1024)
-                                start = time.time()
-                                size = part_size
-                                rest = total_size - part_size
-                                minutes = rest / 1024 / speed / 60
-                                seconds = rest / 1024 / speed - minutes * 60
-                            percent = int(part_size * 100.0 / total_size)
-                            if silent == False:
-                                extract_dlg.update(percent, _(32184) + ':  %s' % name.rsplit('/', 1)[1], _(32185) + ':  %d KB/s' % speed,
-                                                   _(32183) + ':  %d m %d s' % (minutes, seconds))
-                                if extract_dlg.iscanceled():
-                                    local_file.close()
-                                    response.close()
-                                    return None
-                            else:
-                                if percent > last_percent + 5:
-                                    dbg_log('oe::extract_file(' + destination + name.rsplit('/', 1)[1] + ')', '%d percent with %d KB/s'
-                                            % (percent, speed))
-                                    last_percent = percent
-                            local_file.write(part)
-                        local_file.close()
-                        response.close()
-        return 1
-    except Exception as e:
-        dbg_log('oe::extract_file', 'ERROR: (' + repr(e) + ')')
 
 
 def copy_file(source, destination, silent=False):
     try:
         dbg_log('oe::copy_file', 'SOURCE: %s, DEST: %s' % (source, destination))
+
         source_file = open(source, 'rb')
         destination_file = open(destination, 'wb')
-        if silent == False:
-            copy_dlg = xbmcgui.DialogProgress()
-            copy_dlg.create('LibreELEC', _(32181), ' ', ' ')
-        total_size = os.path.getsize(source)
-        minutes = 0
-        seconds = 0
-        rest = 0
-        speed = 1
-        start = time.time()
-        size = 0
-        part_size = 0
+
+        progress = ProgressDialog()
+        if not silent:
+            progress.open()
+
+        progress.setSource(source)
+        progress.setSize(os.path.getsize(source))
+
         last_percent = 0
-        while 1:
+
+        while not (xbmc.abortRequested or progress.iscanceled()):
             part = source_file.read(32768)
-            part_size += len(part)
-            if time.time() > start + 2:
-                speed = int((part_size - size) / (time.time() - start) / 1024)
-                start = time.time()
-                size = part_size
-                rest = total_size - part_size
-                minutes = rest / 1024 / speed / 60
-                seconds = rest / 1024 / speed - minutes * 60
-            percent = int(part_size * 100.0 / total_size)
-            if silent == False:
-                copy_dlg.update(percent, _(32181) + ':  %s' % source.rsplit('/', 1)[1], _(32182) + ':  %d KB/s' % speed, _(32183)
-                                + ':  %d m %d s' % (minutes, seconds))
-                if copy_dlg.iscanceled():
-                    source_file.close()
-                    destination_file.close()
-                    return None
+
+            progress.sample(part)
+
+            if not silent:
+                progress.update(part)
             else:
-                if percent > last_percent + 5:
-                    dbg_log('oe::copy_file(' + destination + ')', '%d percent with %d KB/s' % (percent, speed))
-                    last_percent = percent
-            if not part or xbmc.abortRequested:
+                if progress.getPercent() - last_percent > 5 or not part:
+                    dbg_log('oe::copy_file(%s)' % destination, '%d%% with %d KB/s' % (progress.getPercent(), progress.getSpeed()))
+                    last_percent = progress.getPercent()
+
+            if part:
+                destination_file.write(part)
+            else:
                 break
-            destination_file.write(part)
+
+        progress.close()
         source_file.close()
         destination_file.close()
+
+        if progress.iscanceled() or xbmc.abortRequested:
+            os.remove(destination)
+            return None
+
         return destination
+
     except Exception as e:
         dbg_log('oe::copy_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
 
