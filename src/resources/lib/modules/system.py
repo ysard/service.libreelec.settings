@@ -583,12 +583,16 @@ class system:
             copy_success = 0
             xbmcDialog = xbmcgui.Dialog()
             restore_file_path = xbmcDialog.browse( 1,
-                                              self.oe._(32373),
-                                              'files',
-                                              '??????????????.tar',
-                                              False,
-                                              False,
-                                              self.BACKUP_DESTINATION )
+                                                   self.oe._(32373),
+                                                   'files',
+                                                   '??????????????.tar',
+                                                   False,
+                                                   False,
+                                                   self.BACKUP_DESTINATION )
+
+            # Do nothing if the dialog is cancelled - path will be the backup destination
+            if not os.path.isfile(restore_file_path):
+                return
 
             restore_file_name = restore_file_path.split('/')[-1]
 
