@@ -549,6 +549,19 @@ class connman:
                             'validate': '^[\\x00-\\x7F]{8,64}$',
                             'InfoText': 729,
                             },
+                        'regdom': {
+                            'order': 5,
+                            'name': 32240,
+                            'value': '',
+                            'action': 'custom_regdom',
+                            'type': 'multivalue',
+                            'values': [],
+                            'parent': {
+                                'entry': 'Powered',
+                                'value': ['1'],
+                                },
+                            'InfoText': 749,
+                            },
                         },
                     'order': 0,
                     },
@@ -565,7 +578,7 @@ class connman:
                         'type': 'bool',
                         'dbus': 'Boolean',
                         'InfoText': 730,
-                        }},
+                        },},
                     'order': 1,
                     },
                 'Timeservers': {
@@ -716,7 +729,189 @@ class connman:
                 nf_option_str = self.oe._(32397)
             self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
 
+            # CUSTOM regdom
+            regFile = '/storage/.cache/regdomain.conf'
+            regList = [
+                "NOT SET (DEFAULT)",
+                "GLOBAL (00)",
+                "Afghanistan (AF)",
+                "Albania (AL)",
+                "Algeria (DZ)",
+                "American Samoa (AS)",
+                "Andorra (AD)",
+                "Anguilla (AI)",
+                "Argentina (AR)",
+                "Armenia (AM)",
+                "Aruba (AW)",
+                "Australia (AU)",
+                "Austria (AT)",
+                "Azerbaijan (AZ)",
+                "Bahamas (BS)",
+                "Bahrain (BH)",
+                "Bangladesh (BD)",
+                "Barbados (BB)",
+                "Belarus (BY)",
+                "Belgium (BE)",
+                "Belize (BZ)",
+                "Bermuda (BM)",
+                "Bhutan (BT)",
+                "Bolivia (BO)",
+                "Bosnia and Herzegovina (BA)",
+                "Brazil (BR)",
+                "Brunei Darussalam (BN)",
+                "Bulgaria (BG)",
+                "Burkina Faso (BF)",
+                "Cambodia (KH)",
+                "Canada (CA)",
+                "Cayman Islands (KY)",
+                "Central African Republic (CF)",
+                "Chad (TD)",
+                "Chile (CL)",
+                "China (CN)",
+                "Christmas Island (CX)",
+                "Colombia (CO)",
+                "Costa Rica (CR)",
+                "Côte d'Ivoire (CI)",
+                "Croatia (HR)",
+                "Cyprus (CY)",
+                "Czechia (CZ)",
+                "Denmark (DK)",
+                "Dominica (DM)",
+                "Dominican Republic (DO)",
+                "Ecuador (EC)",
+                "Egypt (EG)",
+                "El Salvador (SV)",
+                "Estonia (EE)",
+                "Ethiopia (ET)",
+                "Finland (FI)",
+                "France (FR)",
+                "French Guiana (GF)",
+                "French Polynesia (PF)",
+                "Georgia (GE)",
+                "Germany (DE)",
+                "Ghana (GH)",
+                "Greece (GR)",
+                "Greenland (GL)",
+                "Grenada (GD)",
+                "Guadelope (GP)",
+                "Guam (GU)",
+                "Guatemala (GT)",
+                "Guyana (GY)",
+                "Haiti (HT)",
+                "Honduras (HN)",
+                "Hong Kong (HK)",
+                "Hungary (HU)",
+                "Iceland (IS)",
+                "India (IN)",
+                "Indonesia (ID)",
+                "Iran (IR)",
+                "Ireland (IE)",
+                "Israel (IL)",
+                "Italy (IT)",
+                "Jamaica (JM)",
+                "Japan (JP)",
+                "Jordan (JO)",
+                "Kazakhstan (KZ)",
+                "Kenya (KE)",
+                "Korea (North) (KP)",
+                "Korea (South) (KR)",
+                "Kuwait (KW)",
+                "Latvia (LV)",
+                "Lebanon (LB)",
+                "Lesotho (LS)",
+                "Liechtenstein (LI)",
+                "Lithuania (LT)",
+                "Luxembourg (LU)",
+                "Macao (MO)",
+                "Malawi (MW)",
+                "Malaysia (MY)",
+                "Malta (MT)",
+                "Marshall Islands (MH)",
+                "Martinique (MQ)",
+                "Mauritania (MR)",
+                "Mauritius (MU)",
+                "Mayotte (YT)",
+                "Mexico (MX)",
+                "Micronesian (FM)",
+                "Moldova (MD)",
+                "Monaco (MC)",
+                "Mongolia (MN)",
+                "Montenegro (ME)",
+                "Morocco (MA)",
+                "Nepal (NP)",
+                "Netherlands (NL)",
+                "New Zealand (NZ)",
+                "Nicaragua (NI)",
+                "North Macedonia (MK)",
+                "Northern Mariana Islands (MP)",
+                "Norway (NO)",
+                "Oman (OM)",
+                "Pakistan (PK)",
+                "Palau (PW)",
+                "Panama (PA)",
+                "Papua New Guinea (PG)",
+                "Paraguay (PY)",
+                "Peru (PE)",
+                "Philipines (PH)",
+                "Poland (PL)",
+                "Portugal (PT)",
+                "Puerto Rico (PR)",
+                "Qatar (QA)",
+                "Réunion (RE)",
+                "Romania (RO)",
+                "Russian Federation (RU)",
+                "Rwanda (RW)",
+                "Saint Barthélemy (BL)",
+                "Saint Kitts and Nevis (KN)",
+                "Saint Lucia (LC)",
+                "Saint Martin (MF)",
+                "Saint Pierre and Miquelon (PM)",
+                "Saint Vincent and the Grenadines (VC)",
+                "Saudi Arabia (SA)",
+                "Senegal (SN)",
+                "Serbia (RS)",
+                "Singapore (SG)",
+                "Slovakia (SK)",
+                "Slovenia (SI)",
+                "South Africa (ZA)",
+                "Spain (ES)",
+                "Sri Lanka (LK)",
+                "Suriname (SR)",
+                "Sweden (SE)",
+                "Switzerland (CH)",
+                "Syria (SY)",
+                "Taiwan (TW)",
+                "Thailand (TH)",
+                "Togo (TG)",
+                "Trinidan and Tobago (TT)",
+                "Tunisia (TN)",
+                "Turkey (TR)",
+                "Turks and Caicos Islands (TC)",
+                "Uganda (UG)",
+                "Ukraine (UA)",
+                "United Arab Emirates (AE)",
+                "United Kingdom (GB)",
+                "United States (US)",
+                "Uraguay (UY)",
+                "Uzbekistan (UZ)",
+                "Vanuatu (VU)",
+                "Venzuela (VE)",
+                "Vietnam (VN)",
+                "Virgin Islands (VI)",
+                "Wallis and Futuna (WF)",
+                "Yemen (YE)",
+                "Zimbabwe (ZW)"
+                ]
+            self.struct['/net/connman/technology/wifi']['settings']['regdom']['values'] = regList
+            if os.path.isfile(regFile):
+                regLine = open(regFile).readline().rstrip()
+                regCode = "(" + regLine[-2:] + ")"
+                regValue = next((v for v in regList if regCode in v), "NOT SET (DEFAULT)")
+            else:
+                regValue = "NOT SET (DEFAULT)"
+            self.struct['/net/connman/technology/wifi']['settings']['regdom']['value'] = str(regValue)
             self.oe.dbg_log('connman::load_values', 'exit_function', 0)
+
         except Exception as e:
             self.oe.dbg_log('connman::load_values', 'ERROR: (' + repr(e) + ')')
 
@@ -1003,6 +1198,26 @@ class connman:
         except Exception as e:
             self.oe.set_busy(0)
             self.oe.dbg_log('connman::set_technologies', 'ERROR: (' + repr(e) + ')', 4)
+
+    def custom_regdom(self, **kwargs):
+        try:
+            self.oe.dbg_log('connman::custom_regdom', 'enter_function', 0)
+            self.oe.set_busy(1)
+            if 'listItem' in kwargs:
+                if str((kwargs['listItem']).getProperty('value')) == "NOT SET (DEFAULT)":
+                    self.oe.execute('rm /storage/.cache/regdomain.conf')
+                    regScript = 'iw reg set 00'
+                else:
+                    regSelect = str((kwargs['listItem']).getProperty('value'))
+                    regCode = regSelect[-3:-1]
+                    regScript = 'echo "REGDOMAIN=' + regCode + '" > /storage/.cache/regdomain.conf; iw reg set ' + regCode
+                self.oe.execute(regScript)
+                self.set_value(kwargs['listItem'])
+            self.oe.set_busy(0)
+            self.oe.dbg_log('connman::custom_regdom', 'exit_function', 0)
+        except Exception as e:
+            self.oe.set_busy(0)
+            self.oe.dbg_log('connman::custom_regdom', 'ERROR: (' + repr(e) + ')', 4)
 
     def configure_network(self, listItem=None):
         try:
