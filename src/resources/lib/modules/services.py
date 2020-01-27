@@ -665,12 +665,11 @@ class services:
                     self.oe.execute('cp -fp /usr/cache/shadow /storage/.cache/shadow')
                     readout3 = "Retype password"
                 else:
-                    ssh = subprocess.Popen(["passwd"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    ssh = subprocess.Popen(["passwd"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=0)
                     readout1 = ssh.stdout.readline()
-                    ssh.stdin.write(newpwd + '\n')
-                    ssh.stdin.flush()
+                    ssh.stdin.write('%s\n' % newpwd)
                     readout2 = ssh.stdout.readline()
-                    ssh.stdin.write(newpwd + '\n')
+                    ssh.stdin.write('%s\n' % newpwd)
                     readout3 = ssh.stdout.readline()
                 if "Bad password" in readout3:
                     xbmcDialog.ok(self.oe._(32220), self.oe._(32221))
