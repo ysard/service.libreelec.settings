@@ -234,6 +234,16 @@
                                 <visible>String.IsEqual(ListItem.Property(netType), ethernet)</visible>
                                 <texture>eth.png</texture>
                             </control>
+                            <!-- Icon vpn -->
+                            <control type="image">
+                                <left>10</left>
+                                <top>10</top>
+                                <width>32</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <visible>String.IsEqual(ListItem.Property(netType), vpn)</visible>
+                                <texture>vpn.png</texture>
+                            </control>
                             <!-- Icon wifi -->
                             <control type="image">
                                 <left>10</left>
@@ -334,6 +344,16 @@
                                 <aspectratio>keep</aspectratio>
                                 <visible>String.IsEqual(ListItem.Property(netType), ethernet)</visible>
                                 <texture>eth.png</texture>
+                            </control>
+                            <!-- Icon vpn -->
+                            <control type="image">
+                                <left>10</left>
+                                <top>10</top>
+                                <width>32</width>
+                                <height>32</height>
+                                <aspectratio>keep</aspectratio>
+                                <visible>String.IsEqual(ListItem.Property(netType), vpn)</visible>
+                                <texture>vpn.png</texture>
                             </control>
                             <!-- Icon wifi -->
                             <control type="image">
