@@ -696,7 +696,7 @@ class system:
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), folder, item)
+                        self.backup_dlg.update(int(progress), '%s\n%s' % (folder, item))
         except Exception as e:
             self.backup_dlg.close()
             self.oe.dbg_log('system::tar_add_folder', 'ERROR: (' + repr(e) + ')')

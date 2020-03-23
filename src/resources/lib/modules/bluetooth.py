@@ -886,8 +886,8 @@ class bluetooth:
                         transferred = int(interface['Transferred'] / 1024)
                         speed = transferred / (time.time() - self.parent.download_start)
                         percent = int(round(100 / self.parent.download_size * (interface['Transferred'] / 1024), 0))
-                        self.parent.download.update(percent, '%s: %s' % (self.oe._(32181), self.parent.download_file),
-                                                    '%s: %d KB/s' % (self.oe._(32382), speed))
+                        message = '%s: %s\n%s: %d KB/s' % (self.oe._(32181), self.parent.download_file, self.oe._(32382), speed)
+                        self.parent.download.update(percent, message)
                     if self.parent.download.iscanceled():
                         obj = self.oe.dbusSystemBus.get_object('org.bluez.obex', self.parent.download_path)
                         itf = dbus.Interface(obj, 'org.bluez.obex.Transfer1')
