@@ -555,7 +555,7 @@ class system:
                     if self.total_backup_size > free_space:
                         txt = self.oe.split_dialog_text(self.oe._(32379))
                         xbmcDialog = xbmcgui.Dialog()
-                        answer = xbmcDialog.ok('Backup', txt[0], txt[1], txt[2])
+                        answer = xbmcDialog.ok('Backup', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
                         return 0
                 except:
                     pass
@@ -614,7 +614,7 @@ class system:
             else:
                 txt = self.oe.split_dialog_text(self.oe._(32379))
                 xbmcDialog = xbmcgui.Dialog()
-                answer = xbmcDialog.ok('Restore', txt[0], txt[1], txt[2])
+                answer = xbmcDialog.ok('Restore', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
             if copy_success == 1:
                 txt = self.oe.split_dialog_text(self.oe._(32380))
                 xbmcDialog = xbmcgui.Dialog()
@@ -662,7 +662,7 @@ class system:
                 link = result.find('http')
                 if link != -1:
                     self.oe.dbg_log('system::do_send_logs', result[link:], 2)
-                    done_dlg.ok('Paste complete', 'Log files pasted to ' + result[link:])
+                    done_dlg.ok('Paste complete', 'Log files pasted to %s' % result[link:])
                 else:
                     done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
 
@@ -738,7 +738,7 @@ class system:
                else:
                    encodePin = self.oe.hash_password(newpin)
                    self.oe.write_setting('system', 'pinlock_pin', encodePin)
-                   xbmcDialog.ok(self.oe._(32230), self.oe._(32231), newpin)
+                   xbmcDialog.ok(self.oe._(32230), '%s\n\n%s' % (self.oe._(32231), newpin))
                    oldpin = newpin
             else:
                 xbmcDialog.ok(self.oe._(32232), self.oe._(32229))
