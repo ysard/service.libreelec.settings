@@ -127,7 +127,7 @@ class ProgressDialog:
 
     def open(self, heading='LibreELEC', line1='', line2='', line3=''):
         self.dialog = xbmcgui.DialogProgress()
-        self.dialog.create(heading, line1, line2, line3)
+        self.dialog.create(heading, '%s\n%s\n%s' % (line1, line2, line3))
         self.reset()
 
     def update(self, chunk):
@@ -749,7 +749,7 @@ def split_dialog_text(text):
 
 def reboot_counter(seconds=10, title=' '):
     reboot_dlg = xbmcgui.DialogProgress()
-    reboot_dlg.create('LibreELEC %s' % title, ' ', ' ', ' ')
+    reboot_dlg.create('LibreELEC %s' % title, ' ')
     reboot_dlg.update(0)
     wait_time = seconds
     while seconds >= 0 and not reboot_dlg.iscanceled():

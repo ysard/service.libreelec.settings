@@ -561,7 +561,7 @@ class system:
                     pass
 
                 self.backup_dlg = xbmcgui.DialogProgress()
-                self.backup_dlg.create('LibreELEC', self.oe._(32375), ' ', ' ')
+                self.backup_dlg.create('LibreELEC', self.oe._(32375))
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
                 self.backup_file = self.oe.timestamp() + '.tar'
@@ -652,7 +652,7 @@ class system:
             self.oe.dbg_log('system::do_send_logs', 'enter_function', 0)
 
             paste_dlg = xbmcgui.DialogProgress()
-            paste_dlg.create('Pasting log files', 'Pasting...', ' ', ' ')
+            paste_dlg.create('Pasting log files', 'Pasting...')
 
             result = self.oe.execute(log_cmd, get_result=1)
 

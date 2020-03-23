@@ -862,8 +862,7 @@ class bluetooth:
                     if interface['Status'] == 'active':
                         self.parent.download_start = time.time()
                         self.parent.download = xbmcgui.DialogProgress()
-                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181),
-                                                    self.parent.download_file), '', '')
+                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181), self.parent.download_file))
                     else:
                         if hasattr(self.parent, 'download'):
                             self.parent.download.close()
