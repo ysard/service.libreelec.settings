@@ -513,7 +513,7 @@ class system:
         try:
             self.oe.dbg_log('system::ask_sure_reset', 'enter_function', 0)
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno(part + ' Reset', self.oe._(32326), self.oe._(32328))
+            answer = xbmcDialog.yesno(part + ' Reset', '%s\n\n%s' % (self.oe._(32326), self.oe._(32328)))
             if answer == 1:
                 if self.oe.reboot_counter(30, self.oe._(32323)) == 1:
                     return 1
@@ -618,7 +618,7 @@ class system:
             if copy_success == 1:
                 txt = self.oe.split_dialog_text(self.oe._(32380))
                 xbmcDialog = xbmcgui.Dialog()
-                answer = xbmcDialog.yesno('Restore', txt[0], txt[1], txt[2])
+                answer = xbmcDialog.yesno('Restore', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
                 if answer == 1:
                     if self.oe.reboot_counter(10, self.oe._(32371)) == 1:
                         self.oe.winOeMain.close()

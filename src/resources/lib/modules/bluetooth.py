@@ -930,7 +930,7 @@ class bluetoothAgent(dbus.service.Object):
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService::uuid=', repr(uuid), 0)
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Authorize service', 'Authorize service %s?' % (uuid))
+            answer = xbmcDialog.yesno('Bluetooth', 'Authorize service %s?' % uuid)
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService::answer=', repr(answer), 0)
             self.busy()
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'exit_function', 0)
@@ -1010,7 +1010,7 @@ class bluetoothAgent(dbus.service.Object):
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation::passkey=', repr(passkey), 0)
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Request confirmation', 'Confirm passkey %06u' % (passkey))
+            answer = xbmcDialog.yesno('Bluetooth', 'Confirm passkey %06u' % passkey)
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation::answer=', repr(answer), 0)
             self.busy()
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'exit_function', 0)
@@ -1028,7 +1028,7 @@ class bluetoothAgent(dbus.service.Object):
             self.oe.dbg_log('bluetooth::btAgent::RequestAuthorization::device=', repr(device), 0)
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Request authorization', 'Accept pairing?')
+            answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
             self.oe.dbg_log('bluetooth::btAgent::RequestAuthorization::answer=', repr(answer), 0)
             self.busy()
             self.oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'exit_function', 0)
@@ -1076,7 +1076,7 @@ class obexAgent(dbus.service.Object):
             properties = transfer.GetAll('org.bluez.obex.Transfer1')
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', self.oe._(32381), properties['Name'])
+            answer = xbmcDialog.yesno('Bluetooth', "%s\n\n%s" % (self.oe._(32381), properties['Name']))
             self.oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), 0)
             self.busy()
             if answer != 1:
