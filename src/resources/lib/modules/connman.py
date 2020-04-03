@@ -469,6 +469,8 @@ class connman:
     CONNMAN_DAEMON = None
     WAIT_CONF_FILE = None
     NF_CUSTOM_PATH = "/storage/.config/iptables/"
+    REGDOMAIN_CONF = "/storage/.cache/regdomain.conf"
+    REGDOMAIN_DEFAULT = "NOT SET (DEFAULT)"
     connect_attempt = 0
     log_error = 1
     net_disconnected = 0
@@ -730,9 +732,8 @@ class connman:
             self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
 
             # CUSTOM regdom
-            regFile = '/storage/.cache/regdomain.conf'
             regList = [
-                "NOT SET (DEFAULT)",
+                self.REGDOMAIN_DEFAULT,
                 "GLOBAL (00)",
                 "Afghanistan (AF)",
                 "Albania (AL)",
@@ -903,12 +904,12 @@ class connman:
                 "Zimbabwe (ZW)"
                 ]
             self.struct['/net/connman/technology/wifi']['settings']['regdom']['values'] = regList
-            if os.path.isfile(regFile):
-                regLine = open(regFile).readline().rstrip()
-                regCode = "(" + regLine[-2:] + ")"
-                regValue = next((v for v in regList if regCode in v), "NOT SET (DEFAULT)")
+            if os.path.isfile(self.REGDOMAIN_CONF):
+                regLine = open(self.REGDOMAIN_CONF).readline().rstrip()
+                regCode = '(%s)' % regLine[-2:]
+                regValue = next((v for v in regList if regCode in v), self.REGDOMAIN_DEFAULT)
             else:
-                regValue = "NOT SET (DEFAULT)"
+                regValue = self.REGDOMAIN_DEFAULT
             self.struct['/net/connman/technology/wifi']['settings']['regdom']['value'] = str(regValue)
             self.oe.dbg_log('connman::load_values', 'exit_function', 0)
 
@@ -1204,13 +1205,15 @@ class connman:
             self.oe.dbg_log('connman::custom_regdom', 'enter_function', 0)
             self.oe.set_busy(1)
             if 'listItem' in kwargs:
-                if str((kwargs['listItem']).getProperty('value')) == "NOT SET (DEFAULT)":
-                    self.oe.execute('rm /storage/.cache/regdomain.conf')
+                if str((kwargs['listItem']).getProperty('value')) == self.REGDOMAIN_DEFAULT:
+                    os.remove(self.REGDOMAIN_CONF)
                     regScript = 'iw reg set 00'
                 else:
                     regSelect = str((kwargs['listItem']).getProperty('value'))
                     regCode = regSelect[-3:-1]
-                    regScript = 'echo "REGDOMAIN=' + regCode + '" > /storage/.cache/regdomain.conf; iw reg set ' + regCode
+                    with open(self.REGDOMAIN_CONF, 'w') as regfile:
+                        regfile.write('REGDOMAIN=%s\n' % regCode)
+                    regScript = 'iw reg set %s' % regCode
                 self.oe.execute(regScript)
                 self.set_value(kwargs['listItem'])
             self.oe.set_busy(0)
