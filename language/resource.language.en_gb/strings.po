@@ -216,6 +216,10 @@ msgctxt "#748"
 msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
 msgstr ""
 
+msgctxt "#749"
+msgid "Overrride the Wireless Regulatory Domain so radio properties (channels and transmit power) comply with local laws or match the country configuration of your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr ""
@@ -746,6 +750,10 @@ msgstr ""
 
 msgctxt "#32238"
 msgid " minutes remain before PIN can be entered.[CR][CR]Too many previous failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
 msgstr ""
 
 msgctxt "#32300"
