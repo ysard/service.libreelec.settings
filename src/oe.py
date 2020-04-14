@@ -84,6 +84,106 @@ imp.reload(sys)
 import oeWindows
 xbmc.log('## LibreELEC Addon ## ' + str(__addon__.getAddonInfo('version')))
 
+class PINStorage:
+    def __init__(self, module='system', prefix='pinlock', maxAttempts=4, delay=300):
+        self.module = module
+        self.prefix = prefix
+        self.maxAttempts = maxAttempts
+        self.delay = delay
+
+        self.now = 0.0
+
+        self.enabled = self.read('enable')
+        self.salthash = self.read('pin')
+        self.numFail = self.read('numFail')
+        self.timeFail = self.read('timeFail')
+
+        self.enabled = '0' if (self.enabled is None or self.enabled != '1') else '1'
+        self.salthash = None if (self.salthash is None or self.salthash == '') else self.salthash
+        self.numFail = 0 if (self.numFail is None or int(self.numFail) < 0) else int(self.numFail)
+        self.timeFail = 0.0 if (self.timeFail is None or float(self.timeFail) <= 0.0) else float(self.timeFail)
+
+        # Remove impossible configurations - if enabled we must have a valid hash, and vice versa.
+        if self.isEnabled() != self.isSet():
+            self.disable()
+
+    def read(self, item):
+        value = read_setting(self.module, '%s_%s' % (self.prefix, item))
+        return None if value == '' else value
+
+    def write(self, item, value):
+        return write_setting(self.module, '%s_%s' % (self.prefix, item), str(value) if value else '')
+
+    def isEnabled(self):
+        return self.enabled == '1'
+
+    def isSet(self):
+        return self.salthash is not None
+
+    def enable(self):
+        if not self.isEnabled():
+            self.enabled = '1'
+            self.write('enable', self.enabled)
+
+    def disable(self):
+        if self.isEnabled():
+            self.enabled = '0'
+            self.write('enable', self.enabled)
+        self.set(None)
+
+    def set(self, value):
+        oldSaltHash = self.salthash
+
+        if value:
+            salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+            newhash = hashlib.pbkdf2_hmac('sha512', value.encode('utf-8'), salt, 100000)
+            newhash = binascii.hexlify(newhash)
+            self.salthash = (salt + newhash).decode('ascii')
+        else:
+            self.salthash = None
+
+        if self.salthash != oldSaltHash:
+            self.write('pin', self.salthash)
+
+    def verify(self, value):
+        salt = self.salthash[:64].encode('ascii')
+        oldhash = self.salthash[64:]
+        newhash = hashlib.pbkdf2_hmac('sha512', value.encode('utf-8'), salt, 100000)
+        newhash = binascii.hexlify(newhash).decode('ascii')
+        return oldhash == newhash
+
+    def fail(self):
+        self.numFail += 1
+        self.timeFail = time.time()
+        self.write('numFail', self.numFail)
+        self.write('timeFail', self.timeFail)
+
+    def success(self):
+        if self.numFail != 0 or self.timeFail != 0.0:
+            self.numFail = 0
+            self.timeFail = 0.0
+            self.write('numFail', self.numFail)
+            self.write('timeFail', self.timeFail)
+
+    def isDelayed(self):
+        self.now = time.time()
+
+        if self.attemptsRemaining() > 0:
+            return False
+
+        if self.delayRemaining() > 0.0:
+            return True
+
+        self.success()
+        return False
+
+    def delayRemaining(self):
+        elapsed = self.now - self.timeFail
+        return (self.delay - elapsed) if elapsed < self.delay else 0.0
+
+    def attemptsRemaining(self):
+        return (self.maxAttempts - self.numFail)
+
 class ProgressDialog:
     def __init__(self, label1=32181, label2=32182, label3=32183, minSampleInterval=1.0, maxUpdatesPerSecond=5):
         self.label1 = _(label1)
@@ -515,49 +615,46 @@ def openWizard():
 
 
 def openConfigurationWindow():
-    global winOeMain, __cwd__, __oe__, dictModules
+    global winOeMain, __cwd__, __oe__, dictModules, PIN
     try:
-        PINmatch = False
-        PINnext = 1000
-        PINenable = read_setting('system', 'pinlock_enable')
-        if PINenable == "0" or PINenable == None:
-            PINmatch = True
-        if PINenable == "1":
-            PINfail = read_setting('system', 'pinlock_timeFail')
-            if PINfail:
-                nowTime = time.time()
-                PINnext = (nowTime - float(PINfail))
-            if PINnext >= 300:
-                PINtry = 4
-                while PINmatch == False:
-                    if PINtry > 0:
-                        PINlock = xbmcDialog.numeric(0, _(32233), bHiddenInput=True)
-                        if PINlock == '':
-                            break
-                        else:
-                            storedPIN = read_setting('system', 'pinlock_pin')
-                            PINmatch = verify_password(storedPIN, PINlock)
-                            if PINmatch == False:
-                                PINtry -= 1
-                                if PINtry > 0:
-                                    xbmcDialog.ok(_(32234), str(PINtry) + _(32235))
-                    else:
-                        timeFail = time.time()
-                        write_setting('system', 'pinlock_timeFail', str(timeFail))
-                        xbmcDialog.ok(_(32234), _(32236))
-                        break
-            else:
-                timeLeft = "{0:.2f}".format((300 - PINnext)/60)
-                xbmcDialog.ok(_(32237), timeLeft + _(32238))
-        if PINmatch == True:
+        match = True
+
+        if PIN.isEnabled():
+            match = False
+
+            if PIN.isDelayed():
+                timeleft = PIN.delayRemaining()
+                timeleft_mins, timeleft_secs = divmod(timeleft, 60)
+                timeleft_hours, timeleft_mins = divmod(timeleft_mins, 60)
+                xbmcDialog.ok(_(32237), _(32238) % (timeleft_mins, timeleft_secs))
+                return
+
+            while PIN.attemptsRemaining() > 0:
+                lockcode = xbmcDialog.numeric(0, _(32233), bHiddenInput=True)
+                if lockcode == '':
+                    break
+
+                if PIN.verify(lockcode):
+                    match = True
+                    PIN.success()
+                    break
+
+                PIN.fail()
+
+                if PIN.attemptsRemaining() > 0:
+                    xbmcDialog.ok(_(32234), '%d %s' % (PIN.attemptsRemaining(), _(32235)))
+
+            if not match and PIN.attemptsRemaining() <= 0:
+              xbmcDialog.ok(_(32234), _(32236))
+              return
+
+        if match == True:
             winOeMain = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', __cwd__, 'Default', oeMain=__oe__)
             winOeMain.doModal()
             for strModule in dictModules:
                 dictModules[strModule].exit()
             winOeMain = None
             del winOeMain
-        else:
-            pass
 
     except Exception as e:
         dbg_log('oe::openConfigurationWindow', 'ERROR: (' + repr(e) + ')')
@@ -858,24 +955,6 @@ def get_os_release():
             builder_version
             )
 
-def hash_password(password):
-    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
-    pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'),
-                                salt, 100000)
-    pwdhash = binascii.hexlify(pwdhash)
-    return (salt + pwdhash).decode('ascii')
-
-def verify_password(stored_password, provided_password):
-    salt = stored_password[:64]
-    stored_password = stored_password[64:]
-    pwdhash = hashlib.pbkdf2_hmac('sha512',
-                                  provided_password.encode('utf-8'),
-                                  salt.encode('ascii'),
-                                  100000)
-    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
-    return pwdhash == stored_password
-
-
 minidom.Element.writexml = fixed_writexml
 
 ############################################################################################
@@ -930,3 +1009,5 @@ try:
         os.makedirs('%s/services' % CONFIG_CACHE)
 except:
     pass
+
+PIN = PINStorage()
