@@ -725,7 +725,7 @@ msgid "@DISTRONAME@ Settings PIN lock set."
 msgstr ""
 
 msgctxt "#32231"
-msgid "Your @DISTRONAME@ Settings PIN lock was set to:"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
 msgstr ""
 
 msgctxt "#32232"
@@ -733,7 +733,7 @@ msgid "Error - PIN code not 4 digits!"
 msgstr ""
 
 msgctxt "#32233"
-msgid "@DISTRONAME@ Settings Locked - Enter PIN"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
 msgstr ""
 
 msgctxt "#32234"
@@ -753,7 +753,7 @@ msgid "@DISTRONAME@ Settings Locked!"
 msgstr ""
 
 msgctxt "#32238"
-msgid " minutes remain before PIN can be entered.[CR][CR]Too many previous failed attempts."
+msgid "Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous failed attempts."
 msgstr ""
 
 msgctxt "#32240"

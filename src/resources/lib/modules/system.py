@@ -293,10 +293,7 @@ class system:
                 self.struct['ident']['settings']['hostname']['value'] = self.oe.DISTRIBUTION
 
             # PIN Lock
-            value = self.oe.read_setting('system', 'pinlock_enable')
-            if not value is None:
-                self.struct['pinlock']['settings']['pinlock_enable']['value'] = value
-
+            self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if self.oe.PIN.isEnabled() else '0'
 
         except Exception as e:
             self.oe.dbg_log('system::load_values', 'ERROR: (' + repr(e) + ')')
@@ -718,36 +715,38 @@ class system:
             self.oe.dbg_log('system::init_pinlock', 'enter_function', 0)
             if not listItem == None:
                 self.set_value(listItem)
-            if (self.oe.read_setting('system', 'pinlock_enable') == "1") and (self.oe.read_setting('system', 'pinlock_pin') == None):
+
+            if self.struct['pinlock']['settings']['pinlock_enable']['value'] == '1':
+                self.oe.PIN.enable()
+            else:
+                self.oe.PIN.disable()
+
+            if self.oe.PIN.isEnabled() and self.oe.PIN.isSet() == False:
                 self.set_pinlock()
-            if (self.oe.read_setting('system', 'pinlock_enable') == "0"):
-                self.oe.write_setting('system', 'pinlock_pin', '')
+
             self.oe.dbg_log('system::init_pinlock', 'exit_function', 0)
         except Exception as e:
-            self.oe.dbg_log('ssystem::init_pinlock', 'ERROR: (%s)' % repr(e), 4)
+            self.oe.dbg_log('system::init_pinlock', 'ERROR: (%s)' % repr(e), 4)
 
     def set_pinlock(self, listItem=None):
         try:
             self.oe.dbg_log('system::set_pinlock', 'enter_function', 0)
-            oldpin = self.oe.read_setting('system', 'pinlock_pin')
             newpin = xbmcDialog.input(self.oe._(32226), type=xbmcgui.INPUT_NUMERIC)
             if len(newpin) == 4 :
                newpinConfirm = xbmcDialog.input(self.oe._(32227), type=xbmcgui.INPUT_NUMERIC)
                if newpin != newpinConfirm:
                    xbmcDialog.ok(self.oe._(32228), self.oe._(32229))
                else:
-                   encodePin = self.oe.hash_password(newpin)
-                   self.oe.write_setting('system', 'pinlock_pin', encodePin)
+                   self.oe.PIN.set(newpin)
                    xbmcDialog.ok(self.oe._(32230), '%s\n\n%s' % (self.oe._(32231), newpin))
-                   oldpin = newpin
             else:
                 xbmcDialog.ok(self.oe._(32232), self.oe._(32229))
-            if oldpin == None:
+            if self.oe.PIN.isSet() == False:
                 self.struct['pinlock']['settings']['pinlock_enable']['value'] = '0'
-                self.oe.write_setting('system', 'pinlock_enable', '0')
+                self.oe.PIN.disable()
             self.oe.dbg_log('system::set_pinlock', 'exit_function', 0)
         except Exception as e:
-            self.oe.dbg_log('ssystem::set_pinlock', 'ERROR: (%s)' % repr(e), 4)
+            self.oe.dbg_log('system::set_pinlock', 'ERROR: (%s)' % repr(e), 4)
 
     def do_wizard(self):
         try:
