@@ -150,14 +150,15 @@ class ProgressDialog:
             self.start = now
 
         if (now - self.start) >= self.minSampleInterval or not chunk:
-            self.speed = int((self.partial_size - self.prev_size) / (now - self.start) / 1024)
+            self.speed = max(int((self.partial_size - self.prev_size) / (now - self.start) / 1024), 1)
             remain = self.total_size - self.partial_size
             self.minutes = int(remain / 1024 / self.speed / 60)
             self.seconds = int(remain / 1024 / self.speed) % 60
             self.prev_size = self.partial_size
             self.start = now
 
-        self.percent = int(self.partial_size * 100.0 / self.total_size)
+        if self.total_size != 0:
+            self.percent = int(self.partial_size * 100.0 / self.total_size)
 
     # Update the progress dialog when required, or upon completion
     def needsUpdate(self, chunk):
