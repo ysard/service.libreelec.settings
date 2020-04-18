@@ -531,7 +531,7 @@ def openConfigurationWindow():
                 PINtry = 4
                 while PINmatch == False:
                     if PINtry > 0:
-                        PINlock = xbmcDialog.input(_(32233), type=xbmcgui.INPUT_NUMERIC)
+                        PINlock = xbmcDialog.numeric(0, _(32233), bHiddenInput=True)
                         if PINlock == '':
                             break
                         else:
