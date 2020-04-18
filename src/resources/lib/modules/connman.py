@@ -345,7 +345,7 @@ class connmanService(object):
         try:
             if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
                 ok_window = xbmcgui.Dialog()
-                answer = ok_window.ok('Not allowed', 'IPv4 method is set to dhcp','changing this option is not allowed')
+                answer = ok_window.ok('Not allowed', 'IPv4 method is set to DHCP.\n\nChanging this option is not allowed')
                 return
             self.oe.dbg_log('connmanService::set_value_checkdhcp', 'enter_function', 0)
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')

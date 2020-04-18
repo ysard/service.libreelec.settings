@@ -452,9 +452,8 @@ class updates:
                     version = self.oe.VERSION
                 if self.struct['update']['settings']['Build']['value'] != '':
                     self.update_file = self.update_json[self.struct['update']['settings']['Channel']['value']]['url'] + self.get_available_builds(self.struct['update']['settings']['Build']['value'])
-                    answer = xbmcDialog.yesno('LibreELEC Update', '%s:  %s' % (self.oe._(32188), version),
-                                          '%s:  %s' % (self.oe._(32187), self.struct['update']['settings']['Build']['value']),
-                                          self.oe._(32180))
+                    message = '%s: %s\n%s: %s\n%s' % (self.oe._(32188), version, self.oe._(32187), self.struct['update']['settings']['Build']['value'], self.oe._(32180))
+                    answer = xbmcDialog.yesno('LibreELEC Update', message)
                     xbmcDialog = None
                     del xbmcDialog
                     if answer:

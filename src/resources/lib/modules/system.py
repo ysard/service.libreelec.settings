@@ -513,7 +513,7 @@ class system:
         try:
             self.oe.dbg_log('system::ask_sure_reset', 'enter_function', 0)
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno(part + ' Reset', self.oe._(32326), self.oe._(32328))
+            answer = xbmcDialog.yesno(part + ' Reset', '%s\n\n%s' % (self.oe._(32326), self.oe._(32328)))
             if answer == 1:
                 if self.oe.reboot_counter(30, self.oe._(32323)) == 1:
                     return 1
@@ -555,13 +555,13 @@ class system:
                     if self.total_backup_size > free_space:
                         txt = self.oe.split_dialog_text(self.oe._(32379))
                         xbmcDialog = xbmcgui.Dialog()
-                        answer = xbmcDialog.ok('Backup', txt[0], txt[1], txt[2])
+                        answer = xbmcDialog.ok('Backup', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
                         return 0
                 except:
                     pass
 
                 self.backup_dlg = xbmcgui.DialogProgress()
-                self.backup_dlg.create('LibreELEC', self.oe._(32375), ' ', ' ')
+                self.backup_dlg.create('LibreELEC', self.oe._(32375))
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
                 self.backup_file = self.oe.timestamp() + '.tar'
@@ -614,11 +614,11 @@ class system:
             else:
                 txt = self.oe.split_dialog_text(self.oe._(32379))
                 xbmcDialog = xbmcgui.Dialog()
-                answer = xbmcDialog.ok('Restore', txt[0], txt[1], txt[2])
+                answer = xbmcDialog.ok('Restore', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
             if copy_success == 1:
                 txt = self.oe.split_dialog_text(self.oe._(32380))
                 xbmcDialog = xbmcgui.Dialog()
-                answer = xbmcDialog.yesno('Restore', txt[0], txt[1], txt[2])
+                answer = xbmcDialog.yesno('Restore', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
                 if answer == 1:
                     if self.oe.reboot_counter(10, self.oe._(32371)) == 1:
                         self.oe.winOeMain.close()
@@ -652,7 +652,7 @@ class system:
             self.oe.dbg_log('system::do_send_logs', 'enter_function', 0)
 
             paste_dlg = xbmcgui.DialogProgress()
-            paste_dlg.create('Pasting log files', 'Pasting...', ' ', ' ')
+            paste_dlg.create('Pasting log files', 'Pasting...')
 
             result = self.oe.execute(log_cmd, get_result=1)
 
@@ -662,7 +662,7 @@ class system:
                 link = result.find('http')
                 if link != -1:
                     self.oe.dbg_log('system::do_send_logs', result[link:], 2)
-                    done_dlg.ok('Paste complete', 'Log files pasted to ' + result[link:])
+                    done_dlg.ok('Paste complete', 'Log files pasted to %s' % result[link:])
                 else:
                     done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
 
@@ -696,7 +696,7 @@ class system:
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), folder, item)
+                        self.backup_dlg.update(int(progress), '%s\n%s' % (folder, item))
         except Exception as e:
             self.backup_dlg.close()
             self.oe.dbg_log('system::tar_add_folder', 'ERROR: (' + repr(e) + ')')
@@ -738,7 +738,7 @@ class system:
                else:
                    encodePin = self.oe.hash_password(newpin)
                    self.oe.write_setting('system', 'pinlock_pin', encodePin)
-                   xbmcDialog.ok(self.oe._(32230), self.oe._(32231), newpin)
+                   xbmcDialog.ok(self.oe._(32230), '%s\n\n%s' % (self.oe._(32231), newpin))
                    oldpin = newpin
             else:
                 xbmcDialog.ok(self.oe._(32232), self.oe._(32229))

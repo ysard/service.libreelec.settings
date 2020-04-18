@@ -310,10 +310,8 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                         strValue = '0'
                     xbmcDialog = xbmcgui.Dialog()
                     returnValue = xbmcDialog.numeric(0, 'LibreELEC.tv', strValue)
-                    if returnValue == '':
-                        returnValue = -1
-                    if returnValue > -1:
-                        selectedItem.setProperty('value', str(returnValue))
+                    if returnValue != '':
+                        selectedItem.setProperty('value', returnValue)
                 elif strTyp == 'bool':
                     strValue = strValue.lower()
                     if strValue == '0':
