@@ -1127,7 +1127,7 @@ class discoveryThread(threading.Thread):
     def run(self):
         try:
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'enter_function', 0)
-            while not self.stopped and not xbmc.abortRequested:
+            while not self.stopped and not self.oe.xbmcm.abortRequested():
                 current_time = time.time()
                 if current_time > self.last_run + 5:
                     if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth' or not hasattr(self.oe.dictModules['bluetooth'], 'discovery_thread'):
@@ -1164,7 +1164,7 @@ class pinkeyTimer(threading.Thread):
         try:
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'enter_function', 0)
             self.endtime = self.start_time + self.runtime
-            while not self.stopped and not xbmc.abortRequested:
+            while not self.stopped and not self.oe.xbmcm.abortRequested():
                 current_time = time.time()
                 percent = round(100 / self.runtime * (self.endtime - current_time), 0)
                 self.parent.pinkey_window.getControl(1704).setPercent(percent)

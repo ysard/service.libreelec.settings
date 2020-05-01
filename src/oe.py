@@ -34,6 +34,8 @@ __oe__ = sys.modules[globals()['__name__']]
 __media__ = '%s/resources/skins/Default/media' % __cwd__
 xbmcDialog = xbmcgui.Dialog()
 
+xbmcm = xbmc.Monitor()
+
 is_service = False
 conf_lock = False
 __busy__ = 0
@@ -483,7 +485,7 @@ def download_file(source, destination, silent=False):
 
         last_percent = 0
 
-        while not (xbmc.abortRequested or progress.iscanceled()):
+        while not (progress.iscanceled() or xbmcm.abortRequested()):
             part = response.read(32768)
 
             progress.sample(part)
@@ -504,7 +506,7 @@ def download_file(source, destination, silent=False):
         local_file.close()
         response.close()
 
-        if progress.iscanceled() or xbmc.abortRequested:
+        if progress.iscanceled() or xbmcm.abortRequested():
             os.remove(destination)
             return None
 
@@ -530,7 +532,7 @@ def copy_file(source, destination, silent=False):
 
         last_percent = 0
 
-        while not (xbmc.abortRequested or progress.iscanceled()):
+        while not (progress.iscanceled() or xbmcm.abortRequested()):
             part = source_file.read(32768)
 
             progress.sample(part)
@@ -551,7 +553,7 @@ def copy_file(source, destination, silent=False):
         source_file.close()
         destination_file.close()
 
-        if progress.iscanceled() or xbmc.abortRequested:
+        if progress.iscanceled() or xbmcm.abortRequested():
             os.remove(destination)
             return None
 
