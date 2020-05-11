@@ -60,8 +60,11 @@ class bluetooth:
         try:
             self.oe.dbg_log('bluetooth::stop_service', 'enter_function', 0)
             if hasattr(self, 'discovery_thread'):
-                self.discovery_thread.stop()
-                del self.discovery_thread
+                try:
+                    self.discovery_thread.stop()
+                    del self.discovery_thread
+                except AttributeError:
+                    pass
             if hasattr(self, 'dbusBluezAdapter'):
                 self.dbusBluezAdapter = None
             self.oe.dbg_log('bluetooth::stop_service', 'exit_function', 0)
@@ -72,8 +75,11 @@ class bluetooth:
         try:
             self.oe.dbg_log('bluetooth::exit', 'enter_function', 0)
             if hasattr(self, 'discovery_thread'):
-                self.discovery_thread.stop()
-                del self.discovery_thread
+                try:
+                    self.discovery_thread.stop()
+                    del self.discovery_thread
+                except AttributeError:
+                    pass
             self.clear_list()
             self.visible = False
             self.oe.dbg_log('bluetooth::exit', 'exit_function', 0)
