@@ -1164,7 +1164,7 @@ class connman:
                                 self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
                             if settings['Tethering']['value'] == '1' and dbus.String(settings['TetheringIdentifier']['value']) != '' \
                                 and dbus.String(settings['TetheringPassphrase']['value']) != '':
-                                time.sleep(5)
+                                self.oe.xbmcm.waitForAbort(5)
                                 self.Technology.SetProperty('TetheringIdentifier', dbus.String(settings['TetheringIdentifier']['value'],
                                                             variant_level=1))
                                 self.Technology.SetProperty('TetheringPassphrase', dbus.String(settings['TetheringPassphrase']['value'],
@@ -1277,7 +1277,7 @@ class connman:
                     if self.connect_attempt == 1:
                         self.log_error = 0
                         self.notify_error = 0
-                        time.sleep(5)
+                        self.oe.xbmcm.waitForAbort(5)
                         self.connect_network()
                     else:
                         self.log_error = 1

@@ -852,15 +852,15 @@ def reboot_counter(seconds=10, title=' '):
     reboot_dlg.create('LibreELEC %s' % title, ' ')
     reboot_dlg.update(0)
     wait_time = seconds
-    while seconds >= 0 and not reboot_dlg.iscanceled():
+    while seconds >= 0 and not (reboot_dlg.iscanceled() or xbmcm.abortRequested()):
         progress = round(1.0 * seconds / wait_time * 100)
         reboot_dlg.update(int(progress), _(32329) % seconds)
-        time.sleep(1)
+        xbmcm.waitForAbort(1)
         seconds = seconds - 1
-    if not reboot_dlg.iscanceled():
-        return 1
-    else:
+    if reboot_dlg.iscanceled() or xbmcm.abortRequested():
         return 0
+    else:
+        return 1
 
 
 def exit():

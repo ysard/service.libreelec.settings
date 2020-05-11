@@ -481,7 +481,7 @@ class system:
                 reset_file.write('reset')
                 reset_file.close()
                 self.oe.winOeMain.close()
-                time.sleep(1)
+                self.oe.xbmcm.waitForAbort(1)
                 xbmc.executebuiltin('Reboot')
             self.oe.set_busy(0)
             self.oe.dbg_log('system::reset_xbmc', 'exit_function', 0)
@@ -498,7 +498,7 @@ class system:
                 reset_file.write('reset')
                 reset_file.close()
                 self.oe.winOeMain.close()
-                time.sleep(1)
+                self.oe.xbmcm.waitForAbort(1)
                 xbmc.executebuiltin('Reboot')
                 self.oe.set_busy(0)
             self.oe.dbg_log('system::reset_oe', 'exit_function', 0)
@@ -619,7 +619,7 @@ class system:
                 if answer == 1:
                     if self.oe.reboot_counter(10, self.oe._(32371)) == 1:
                         self.oe.winOeMain.close()
-                        time.sleep(1)
+                        self.oe.xbmcm.waitForAbort(1)
                         xbmc.executebuiltin('Reboot')
                 else:
                     self.oe.dbg_log('system::do_restore', 'User Abort!', 0)

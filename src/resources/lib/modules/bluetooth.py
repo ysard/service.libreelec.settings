@@ -1135,7 +1135,7 @@ class discoveryThread(threading.Thread):
                     self.last_run = current_time
                 if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth':
                     self.stop()
-                time.sleep(1)
+                self.oe.xbmcm.waitForAbort(1)
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'exit_function', 0)
         except Exception as e:
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'ERROR: (' + repr(e) + ')', 4)
@@ -1172,7 +1172,7 @@ class pinkeyTimer(threading.Thread):
                     self.stopped = True
                     self.parent.close_pinkey_window()
                 else:
-                    time.sleep(1)
+                    self.oe.xbmcm.waitForAbort(1)
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'exit_function', 0)
         except Exception as e:
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'ERROR: (' + repr(e) + ')', 4)
