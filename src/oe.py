@@ -34,7 +34,7 @@ __scriptid__ = 'service.libreelec.settings'
 __addon__ = xbmcaddon.Addon(id=__scriptid__)
 __cwd__ = __addon__.getAddonInfo('path')
 __oe__ = sys.modules[globals()['__name__']]
-__media__ = '%s/resources/skins/Default/media' % __cwd__
+__media__ = f'{__cwd__}/resources/skins/Default/media'
 xbmcDialog = xbmcgui.Dialog()
 
 xbmcm = xbmc.Monitor()
@@ -87,7 +87,7 @@ imp.reload(sys)
 ## load oeSettings modules
 
 import oeWindows
-xbmc.log('## LibreELEC Addon ## ' + str(__addon__.getAddonInfo('version')))
+xbmc.log(f"## LibreELEC Addon ## {str(__addon__.getAddonInfo('version'))}")
 
 class PINStorage:
     def __init__(self, module='system', prefix='pinlock', maxAttempts=4, delay=300):
@@ -113,11 +113,11 @@ class PINStorage:
             self.disable()
 
     def read(self, item):
-        value = read_setting(self.module, '%s_%s' % (self.prefix, item))
+        value = read_setting(self.module, f'{self.prefix}_{item}')
         return None if value == '' else value
 
     def write(self, item, value):
-        return write_setting(self.module, '%s_%s' % (self.prefix, item), str(value) if value else '')
+        return write_setting(self.module, f'{self.prefix}_{item}', str(value) if value else '')
 
     def isEnabled(self):
         return self.enabled == '1'
@@ -232,15 +232,15 @@ class ProgressDialog:
 
     def open(self, heading='LibreELEC', line1='', line2='', line3=''):
         self.dialog = xbmcgui.DialogProgress()
-        self.dialog.create(heading, '%s\n%s\n%s' % (line1, line2, line3))
+        self.dialog.create(heading, f'{line1}\n{line2}\n{line3}')
         self.reset()
 
     def update(self, chunk):
         if self.dialog and self.needsUpdate(chunk):
-            line1 = '%s: %s' % (self.label1, self.source.rsplit('/', 1)[1])
-            line2 = '%s: %s KB/s' % (self.label2, f'{self.speed:,}')
-            line3 = '%s: %d m %d s' % (self.label3, self.minutes, self.seconds)
-            self.dialog.update(self.percent, '%s\n%s\n%s' % (line1, line2, line3))
+            line1 = f'{self.label1}: {self.source.rsplit("/", 1)[1]}'
+            line2 = f'{self.label2}: {self.speed:,} KB/s'
+            line3 = f'{self.label3}: {self.minutes} m {self.seconds} s'
+            self.dialog.update(self.percent, f'{line1}\n{line2}\n{line3}')
             self.last_update = time.time()
 
     def close(self):
@@ -305,7 +305,7 @@ def _(code):
 def dbg_log(source, text, level=4):
     if level == 0 and os.environ.get('DEBUG', 'no') == 'no':
         return
-    xbmc.log('## LibreELEC Addon ## ' + source + ' ## ' + text, level)
+    xbmc.log(f"## LibreELEC Addon ## {source} ## {text}", level)
     if level == 4:
         tracedata = traceback.format_exc()
         if tracedata != "NoneType: None\n":
@@ -314,16 +314,11 @@ def dbg_log(source, text, level=4):
 def notify(title, message, icon='icon'):
     try:
         dbg_log('oe::notify', 'enter_function', LOGDEBUG)
-        msg = 'Notification("%s", "%s", 5000, "%s/%s.png")' % (
-            title,
-            message[0:64],
-            __media__,
-            icon,
-            )
+        msg = f'Notification("{title}", "{message[0:64]}", 5000, "{__media__}/{icon}.png")'
         xbmc.executebuiltin(msg)
         dbg_log('oe::notify', 'exit_function', LOGDEBUG)
     except Exception as e:
-        dbg_log('oe::notify', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::notify', f'ERROR: ({repr(e)})')
 
 
 def execute(command_line, get_result=0):
@@ -342,48 +337,48 @@ def execute(command_line, get_result=0):
             return result
         dbg_log('oe::execute', 'exit_function', LOGDEBUG)
     except Exception as e:
-        dbg_log('oe::execute', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::execute', f'ERROR: ({repr(e)})')
 
 
 def enable_service(service):
     try:
-        if os.path.exists('%s/services/%s' % (CONFIG_CACHE, service)):
+        if os.path.exists(f'{CONFIG_CACHE}/services/{service}'):
             pass
-        if os.path.exists('%s/services/%s.disabled' % (CONFIG_CACHE, service)):
+        if os.path.exists(f'{CONFIG_CACHE}/services/{service}.disabled'):
             pass
-        service_file = '%s/services/%s' % (CONFIG_CACHE, service)
+        service_file = f'{CONFIG_CACHE}/services/{service}'
     except Exception as e:
-        dbg_log('oe::enable_service', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::enable_service', f'ERROR: ({repr(e)})')
 
 
 def set_service_option(service, option, value):
     try:
         lines = []
         changed = False
-        conf_file_name = '%s/services/%s.conf' % (CONFIG_CACHE, service)
+        conf_file_name = f'{CONFIG_CACHE}/services/{service}.conf'
         if os.path.isfile(conf_file_name):
             with open(conf_file_name, 'r') as conf_file:
                 for line in conf_file:
                     if option in line:
-                        line = '%s=%s' % (option, value)
+                        line = f'{option}={value}'
                         changed = True
                     lines.append(line.strip())
         if changed == False:
-            lines.append('%s=%s' % (option, value))
+            lines.append(f'{option}={value}')
         with open(conf_file_name, 'w') as conf_file:
             conf_file.write('\n'.join(lines) + '\n')
     except Exception as e:
-        dbg_log('oe::set_service_option', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::set_service_option', f'ERROR: ({repr(e)})')
 
 
 def get_service_option(service, option, default=None):
     try:
         lines = []
         conf_file_name = ''
-        if os.path.exists('%s/services/%s.conf' % (CONFIG_CACHE, service)):
-            conf_file_name = '%s/services/%s.conf' % (CONFIG_CACHE, service)
-        if os.path.exists('%s/services/%s.disabled' % (CONFIG_CACHE, service)):
-            conf_file_name = '%s/services/%s.disabled' % (CONFIG_CACHE, service)
+        if os.path.exists(f'{CONFIG_CACHE}/services/{service}.conf'):
+            conf_file_name = f'{CONFIG_CACHE}/services/{service}.conf'
+        if os.path.exists(f'{CONFIG_CACHE}/services/{service}.disabled'):
+            conf_file_name = f'{CONFIG_CACHE}/services/{service}.disabled'
         if os.path.exists(conf_file_name):
             with open(conf_file_name, 'r') as conf_file:
                 for line in conf_file:
@@ -392,17 +387,17 @@ def get_service_option(service, option, default=None):
                             default = line.strip().split('=')[-1]
         return default
     except Exception as e:
-        dbg_log('oe::get_service_option', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::get_service_option', f'ERROR: ({repr(e)})')
 
 
 def get_service_state(service):
     try:
-        if os.path.exists('%s/services/%s.conf' % (CONFIG_CACHE, service)):
+        if os.path.exists(f'{CONFIG_CACHE}/services/{service}.conf'):
             return '1'
         else:
             return '0'
     except Exception as e:
-        dbg_log('oe::get_service_state', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::get_service_state', f'ERROR: ({repr(e)})')
 
 
 def set_service(service, options, state):
@@ -421,31 +416,31 @@ def set_service(service, options, state):
             # Is Service alwys enabled ?
 
             if get_service_state(service) == '1':
-                cfn = '%s/services/%s.conf' % (CONFIG_CACHE, service)
+                cfn = f'{CONFIG_CACHE}/services/{service}.conf'
                 cfo = cfn
             else:
-                cfn = '%s/services/%s.conf' % (CONFIG_CACHE, service)
-                cfo = '%s/services/%s.disabled' % (CONFIG_CACHE, service)
+                cfn = f'{CONFIG_CACHE}/services/{service}.conf'
+                cfo = f'{CONFIG_CACHE}/services/{service}.disabled'
             if os.path.exists(cfo) and not cfo == cfn:
                 os.remove(cfo)
             with open(cfn, 'w') as cf:
                 for option in options:
-                    cf.write('%s=%s\n' % (option, options[option]))
+                    cf.write(f'{option}={options[option]}\n')
         else:
 
         # Service Disabled
 
-            cfo = '%s/services/%s.conf' % (CONFIG_CACHE, service)
-            cfn = '%s/services/%s.disabled' % (CONFIG_CACHE, service)
+            cfo = f'{CONFIG_CACHE}/services/{service}.conf'
+            cfn = f'{CONFIG_CACHE}/services/{service}.disabled'
             if os.path.exists(cfo):
                 os.rename(cfo, cfn)
         if not __oe__.is_service:
             if service in defaults._services:
                 for svc in defaults._services[service]:
-                    execute('systemctl restart %s' % svc)
+                    execute(f'systemctl restart {svc}')
         dbg_log('oe::set_service', 'exit_function', LOGDEBUG)
     except Exception as e:
-        dbg_log('oe::set_service', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::set_service', f'ERROR: ({repr(e)})')
 
 
 def load_file(filename):
@@ -458,7 +453,7 @@ def load_file(filename):
             content = ''
         return content.strip()
     except Exception as e:
-        dbg_log('oe::load_file(' + filename + ')', 'ERROR: (' + repr(e) + ')')
+        dbg_log(f'oe::load_file({filename})', f'ERROR: ({repr(e)})')
 
 def url_quote(var):
     return urllib.parse.quote(var, safe="")
@@ -470,7 +465,7 @@ def load_url(url):
         content = response.read()
         return content.decode('utf-8').strip()
     except Exception as e:
-        dbg_log('oe::load_url(' + url + ')', 'ERROR: (' + repr(e) + ')')
+        dbg_log(f'oe::load_url({url})', f'ERROR: ({repr(e)})')
 
 
 def download_file(source, destination, silent=False):
@@ -497,7 +492,7 @@ def download_file(source, destination, silent=False):
                 progress.update(part)
             else:
                 if progress.getPercent() - last_percent > 5 or not part:
-                    dbg_log('oe::download_file(%s)' % destination, '%d%% with %d KB/s' % (progress.getPercent(), progress.getSpeed()))
+                    dbg_log(f'oe::download_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s')
                     last_percent = progress.getPercent()
 
             if part:
@@ -516,12 +511,12 @@ def download_file(source, destination, silent=False):
         return destination
 
     except Exception as e:
-        dbg_log('oe::download_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
+        dbg_log(f'oe::download_file({source},{destination})', f'ERROR: ({repr(e)})')
 
 
 def copy_file(source, destination, silent=False):
     try:
-        dbg_log('oe::copy_file', 'SOURCE: %s, DEST: %s' % (source, destination), LOGINFO)
+        dbg_log('oe::copy_file', f'SOURCE: {source}, DEST: {destination}', LOGINFO)
 
         source_file = open(source, 'rb')
         destination_file = open(destination, 'wb')
@@ -544,7 +539,7 @@ def copy_file(source, destination, silent=False):
                 progress.update(part)
             else:
                 if progress.getPercent() - last_percent > 5 or not part:
-                    dbg_log('oe::copy_file(%s)' % destination, '%d%% with %d KB/s' % (progress.getPercent(), progress.getSpeed()))
+                    dbg_log(f'oe::copy_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s')
                     last_percent = progress.getPercent()
 
             if part:
@@ -563,7 +558,7 @@ def copy_file(source, destination, silent=False):
         return destination
 
     except Exception as e:
-        dbg_log('oe::copy_file(' + source + ', ' + destination + ')', 'ERROR: (' + repr(e) + ')')
+        dbg_log(f'oe::copy_file({source},{destination})', f'ERROR: ({repr(e)})')
 
 
 def is_busy():
@@ -579,9 +574,9 @@ def set_busy(state):
                 __busy__ = __busy__ + 1
             else:
                 __busy__ = __busy__ - 1
-            dbg_log('oe::set_busy', '__busy__ = ' + str(__busy__), LOGDEBUG)
+            dbg_log('oe::set_busy', f'__busy__ = {str(__busy__)}', LOGDEBUG)
     except Exception as e:
-        dbg_log('oe::set_busy', 'ERROR: (' + repr(e) + ')', LOGERROR)
+        dbg_log('oe::set_busy', f'ERROR: ({repr(e)})', LOGERROR)
 
 
 def start_service():
@@ -594,7 +589,7 @@ def start_service():
                 module.start_service()
         __oe__.is_service = False
     except Exception as e:
-        dbg_log('oe::start_service', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::start_service', f'ERROR: ({repr(e)})')
 
 
 def stop_service():
@@ -606,7 +601,7 @@ def stop_service():
                 module.stop_service()
         xbmc.log('## LibreELEC Addon ## STOP SERVICE DONE !')
     except Exception as e:
-        dbg_log('oe::stop_service', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::stop_service', f'ERROR: ({repr(e)})')
 
 
 def openWizard():
@@ -616,7 +611,7 @@ def openWizard():
         winOeMain.doModal()
         winOeMain = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', __cwd__, 'Default', oeMain=__oe__)  # None
     except Exception as e:
-        dbg_log('oe::openWizard', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::openWizard', f'ERROR: ({repr(e)})')
 
 
 def openConfigurationWindow():
@@ -647,7 +642,7 @@ def openConfigurationWindow():
                 PIN.fail()
 
                 if PIN.attemptsRemaining() > 0:
-                    xbmcDialog.ok(_(32234), '%d %s' % (PIN.attemptsRemaining(), _(32235)))
+                    xbmcDialog.ok(_(32234), f'{PIN.attemptsRemaining()} {_(32235)}')
 
             if not match and PIN.attemptsRemaining() <= 0:
               xbmcDialog.ok(_(32234), _(32236))
@@ -662,7 +657,7 @@ def openConfigurationWindow():
             del winOeMain
 
     except Exception as e:
-        dbg_log('oe::openConfigurationWindow', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::openConfigurationWindow', f'ERROR: ({repr(e)})')
 
 def standby_devices():
     global dictModules
@@ -670,7 +665,7 @@ def standby_devices():
         if 'bluetooth' in dictModules:
             dictModules['bluetooth'].standby_devices()
     except Exception as e:
-        dbg_log('oe::standby_devices', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::standby_devices', f'ERROR: ({repr(e)})')
 
 def load_config():
     try:
@@ -698,7 +693,7 @@ def load_config():
         conf_lock = False
         return xml_conf
     except Exception as e:
-        dbg_log('oe::load_config', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::load_config', f'ERROR: ({repr(e)})')
 
 
 def save_config(xml_conf):
@@ -712,7 +707,7 @@ def save_config(xml_conf):
         config_file.close()
         conf_lock = False
     except Exception as e:
-        dbg_log('oe::save_config', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::save_config', f'ERROR: ({repr(e)})')
 
 
 def read_module(module):
@@ -723,7 +718,7 @@ def read_module(module):
             for xml_modul in xml_setting.getElementsByTagName(module):
                 return xml_modul
     except Exception as e:
-        dbg_log('oe::read_module', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::read_module', f'ERROR: ({repr(e)})')
 
 
 def read_node(node_name):
@@ -744,7 +739,7 @@ def read_node(node_name):
                         value[xml_main_node.nodeName][xml_sub_node.nodeName][xml_value.nodeName] = ''
         return value
     except Exception as e:
-        dbg_log('oe::read_node', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::read_node', f'ERROR: ({repr(e)})')
 
 
 def remove_node(node_name):
@@ -755,7 +750,7 @@ def remove_node(node_name):
             xml_main_node.parentNode.removeChild(xml_main_node)
         save_config(xml_conf)
     except Exception as e:
-        dbg_log('oe::remove_node', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::remove_node', f'ERROR: ({repr(e)})')
 
 
 def read_setting(module, setting, default=None):
@@ -770,7 +765,7 @@ def read_setting(module, setting, default=None):
                         value = xml_modul_setting.firstChild.nodeValue
         return value
     except Exception as e:
-        dbg_log('oe::read_setting', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::read_setting', f'ERROR: ({repr(e)})')
 
 
 def write_setting(module, setting, value, main_node='settings'):
@@ -805,7 +800,7 @@ def write_setting(module, setting, value, main_node='settings'):
             xml_setting.appendChild(xml_value)
         save_config(xml_conf)
     except Exception as e:
-        dbg_log('oe::write_setting', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::write_setting', f'ERROR: ({repr(e)})')
 
 
 def load_modules():
@@ -818,7 +813,7 @@ def load_modules():
             dictModules[strModule] = None
         dict_names = {}
         dictModules = {}
-        for file_name in sorted(os.listdir(__cwd__ + '/resources/lib/modules')):
+        for file_name in sorted(os.listdir(f'{__cwd__}/resources/lib/modules')):
             if not file_name.startswith('__') and (file_name.endswith('.py') or file_name.endswith('.pyc')):
                 (name, ext) = file_name.split('.')
                 dict_names[name] = None
@@ -830,9 +825,9 @@ def load_modules():
                         for key in getattr(defaults, module_name):
                             setattr(dictModules[module_name], key, getattr(defaults, module_name)[key])
             except Exception as e:
-                dbg_log('oe::MAIN(loadingModules)(strModule)', 'ERROR: (' + repr(e) + ')')
+                dbg_log('oe::MAIN(loadingModules)(strModule)', f'ERROR: ({repr(e)})')
     except Exception as e:
-        dbg_log('oe::MAIN(loadingModules)', 'ERROR: (' + repr(e) + ')')
+        dbg_log('oe::MAIN(loadingModules)', f'ERROR: ({repr(e)})')
 
 
 def timestamp():
@@ -852,7 +847,7 @@ def split_dialog_text(text):
 
 def reboot_counter(seconds=10, title=' '):
     reboot_dlg = xbmcgui.DialogProgress()
-    reboot_dlg.create('LibreELEC %s' % title, ' ')
+    reboot_dlg.create(f'LibreELEC {title}', ' ')
     reboot_dlg.update(0)
     wait_time = seconds
     while seconds >= 0 and not (reboot_dlg.iscanceled() or xbmcm.abortRequested()):
@@ -883,31 +878,27 @@ def exit():
 # fix for xml printout
 
 def fixed_writexml(self, writer, indent='', addindent='', newl=''):
-    writer.write(indent + '<' + self.tagName)
+    writer.write(f'{indent}<{self.tagName}')
     attrs = self._get_attributes()
     a_names = list(attrs.keys())
     a_names.sort()
     for a_name in a_names:
-        writer.write(' %s="' % a_name)
+        writer.write(f' {a_name}="')
         minidom._write_data(writer, attrs[a_name].value)
         writer.write('"')
     if self.childNodes:
         if len(self.childNodes) == 1 and self.childNodes[0].nodeType == minidom.Node.TEXT_NODE:
             writer.write('>')
             self.childNodes[0].writexml(writer, '', '', '')
-            writer.write('</%s>%s' % (self.tagName, newl))
+            writer.write(f'</{self.tagName}>{newl}')
             return
-        writer.write('>%s' % newl)
+        writer.write(f'>{newl}')
         for node in self.childNodes:
             if node.nodeType is not minidom.Node.TEXT_NODE:
                 node.writexml(writer, indent + addindent, addindent, newl)
-        writer.write('%s</%s>%s' % (
-            indent,
-            self.tagName,
-            newl,
-            ))
+        writer.write(f'{indent}</{self.tagName}>{newl}')
     else:
-        writer.write('/>%s' % newl)
+        writer.write(f'/>{newl}')
 
 
 def parse_os_release():
@@ -979,7 +970,7 @@ DOWNLOAD_DIR = '/storage/downloads'
 XBMC_USER_HOME = os.environ.get('XBMC_USER_HOME', '/storage/.kodi')
 CONFIG_CACHE = os.environ.get('CONFIG_CACHE', '/storage/.cache')
 USER_CONFIG = os.environ.get('USER_CONFIG', '/storage/.config')
-TEMP = '%s/temp/' % XBMC_USER_HOME
+TEMP = f'{XBMC_USER_HOME}/temp/'
 winOeMain = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', __cwd__, 'Default', oeMain=__oe__)
 if os.path.exists('/etc/machine-id'):
     SYSTEMID = load_file('/etc/machine-id')
@@ -996,11 +987,11 @@ BOOT_STATUS = load_file('/storage/.config/boot.status')
 ############################################################################################
 
 try:
-    configFile = '%s/userdata/addon_data/service.libreelec.settings/oe_settings.xml' % XBMC_USER_HOME
-    if not os.path.exists('%s/userdata/addon_data/service.libreelec.settings' % XBMC_USER_HOME):
-        if os.path.exists('%s/userdata/addon_data/service.openelec.settings' % XBMC_USER_HOME):
-            shutil.copytree(('%s/userdata/addon_data/service.openelec.settings' % XBMC_USER_HOME),
-                    ('%s/userdata/addon_data/service.libreelec.settings' % XBMC_USER_HOME))
+    configFile = f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings/oe_settings.xml'
+    if not os.path.exists(f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings'):
+        if os.path.exists(f'{XBMC_USER_HOME}/userdata/addon_data/service.openelec.settings'):
+            shutil.copytree((f'{XBMC_USER_HOME}/userdata/addon_data/service.openelec.settings'),
+                    (f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings'))
             with open(configFile,'r+') as f:
                 xml = f.read()
                 xml = xml.replace("<openelec>","<libreelec>")
@@ -1009,9 +1000,9 @@ try:
                 f.write(xml)
                 f.truncate()
         else:
-            os.makedirs('%s/userdata/addon_data/service.libreelec.settings' % XBMC_USER_HOME)
-    if not os.path.exists('%s/services' % CONFIG_CACHE):
-        os.makedirs('%s/services' % CONFIG_CACHE)
+            os.makedirs(f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings')
+    if not os.path.exists(f'{CONFIG_CACHE}/services'):
+        os.makedirs(f'{CONFIG_CACHE}/services')
 except:
     pass
 
