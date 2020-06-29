@@ -173,7 +173,7 @@ class updates:
             self.arrVariants = {}
             self.oe.dbg_log('updates::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::__init__', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::__init__', f'ERROR: ({repr(e)})')
 
     def start_service(self):
         try:
@@ -184,7 +184,7 @@ class updates:
             del self.is_service
             self.oe.dbg_log('updates::start_service', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::start_service', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::start_service', f'ERROR: ({repr(e)})')
 
     def stop_service(self):
         try:
@@ -193,14 +193,14 @@ class updates:
                 self.update_thread.stop()
             self.oe.dbg_log('updates::stop_service', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::stop_service', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::stop_service', f'ERROR: ({repr(e)})')
 
     def do_init(self):
         try:
             self.oe.dbg_log('updates::do_init', 'enter_function', self.oe.LOGDEBUG)
             self.oe.dbg_log('updates::do_init', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::do_init', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::do_init', f'ERROR: ({repr(e)})')
 
     def exit(self):
         self.oe.dbg_log('updates::exit', 'enter_function', self.oe.LOGDEBUG)
@@ -227,19 +227,19 @@ class updates:
         gpu_driver = ""
 
         gpu_card = self.get_gpu_card()
-        self.oe.dbg_log('updates::get_hardware_flags_x86_64', 'Using card: %s' % gpu_card, self.oe.LOGDEBUG)
+        self.oe.dbg_log('updates::get_hardware_flags_x86_64', f'Using card: {gpu_card}', self.oe.LOGDEBUG)
 
-        gpu_path = self.oe.execute('/usr/bin/udevadm info --name=/dev/dri/%s --query path 2>/dev/null' % gpu_card, get_result=1).replace('\n','')
-        self.oe.dbg_log('updates::get_hardware_flags_x86_64', 'gpu path: %s' % gpu_path, self.oe.LOGDEBUG)
+        gpu_path = self.oe.execute(f'/usr/bin/udevadm info --name=/dev/dri/{gpu_card} --query path 2>/dev/null', get_result=1).replace('\n','')
+        self.oe.dbg_log('updates::get_hardware_flags_x86_64', f'gpu path: {gpu_path}', self.oe.LOGDEBUG)
 
         if gpu_path:
             drv_path = os.path.dirname(os.path.dirname(gpu_path))
-            props = self.oe.execute('/usr/bin/udevadm info --path=%s --query=property 2>/dev/null' % drv_path, get_result=1)
+            props = self.oe.execute(f'/usr/bin/udevadm info --path={drv_path} --query=property 2>/dev/null', get_result=1)
 
             if props:
                 for key, value in [x.strip().split('=') for x in props.strip().split('\n')]:
                     gpu_props[key] = value
-            self.oe.dbg_log('updates::get_gpu_type', 'gpu props: %s' % gpu_props, self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::get_gpu_type', f'gpu props: {gpu_props}', self.oe.LOGDEBUG)
             gpu_driver = gpu_props.get("DRIVER", "")
 
         if not gpu_driver:
@@ -248,7 +248,7 @@ class updates:
         if gpu_driver == 'nvidia' and os.path.realpath('/var/lib/nvidia_drv.so').endswith('nvidia-legacy_drv.so'):
             gpu_driver = 'nvidia-legacy'
 
-        self.oe.dbg_log('updates::get_hardware_flags_x86_64', 'gpu driver: %s' % gpu_driver, self.oe.LOGDEBUG)
+        self.oe.dbg_log('updates::get_hardware_flags_x86_64', f'gpu driver: {gpu_driver}', self.oe.LOGDEBUG)
 
         return gpu_driver if gpu_driver else "unknown"
 
@@ -258,7 +258,7 @@ class updates:
         else:
             dtflag = "unknown"
 
-        self.oe.dbg_log('system::get_hardware_flags_dtflag', 'ARM board: %s' % dtflag, self.oe.LOGDEBUG)
+        self.oe.dbg_log('system::get_hardware_flags_dtflag', f'ARM board: {dtflag}', self.oe.LOGDEBUG)
 
         return dtflag
 
@@ -268,7 +268,7 @@ class updates:
         elif self.oe.PROJECT in ['Allwinner', 'Amlogic', 'NXP', 'Qualcomm', 'Rockchip', 'RPi', 'Samsung' ]:
             return self.get_hardware_flags_dtflag()
         else:
-            self.oe.dbg_log('updates::get_hardware_flags', 'Project is %s, no hardware flag available' % self.oe.PROJECT, self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::get_hardware_flags', f'Project is {self.oe.PROJECT}, no hardware flag available', self.oe.LOGDEBUG)
             return ""
 
     def load_values(self):
@@ -277,7 +277,7 @@ class updates:
 
             # Hardware flags
             self.hardware_flags = self.get_hardware_flags()
-            self.oe.dbg_log('system::load_values', 'loaded hardware_flag %s' % self.hardware_flags, self.oe.LOGDEBUG)
+            self.oe.dbg_log('system::load_values', f'loaded hardware_flag {self.hardware_flags}', self.oe.LOGDEBUG)
 
             # AutoUpdate
 
@@ -290,7 +290,7 @@ class updates:
             value = self.oe.read_setting('updates', 'UpdateNotify')
             if not value is None:
                 self.struct['update']['settings']['UpdateNotify']['value'] = value
-            if os.path.isfile('%s/SYSTEM' % self.LOCAL_UPDATE_DIR):
+            if os.path.isfile(f'{self.LOCAL_UPDATE_DIR}/SYSTEM'):
                 self.update_in_progress = True
 
             # Manual Update
@@ -324,16 +324,16 @@ class updates:
                     self.struct['rpieeprom']['hidden'] = 'true'
                 else:
                     self.struct['rpieeprom']['settings']['bootloader']['value'] = self.get_rpi_eeprom('BOOTLOADER')
-                    self.struct['rpieeprom']['settings']['bootloader']['name'] = '%s (%s)' % (self.oe._(32024), self.rpi_flashing_state['bootloader']['state'])
+                    self.struct['rpieeprom']['settings']['bootloader']['name'] = f"{self.oe._(32024)} ({self.rpi_flashing_state['bootloader']['state']})"
                     self.struct['rpieeprom']['settings']['vl805']['value'] = self.get_rpi_eeprom('VL805')
-                    self.struct['rpieeprom']['settings']['vl805']['name'] = '%s (%s)' % (self.oe._(32026), self.rpi_flashing_state['vl805']['state'])
+                    self.struct['rpieeprom']['settings']['vl805']['name'] = f"{self.oe._(32026)} ({self.rpi_flashing_state['vl805']['state']})"
             else:
                 self.struct['rpieeprom']['hidden'] = 'true'
 
             self.oe.dbg_log('updates::load_values', 'exit_function', self.oe.LOGDEBUG)
 
         except Exception as e:
-            self.oe.dbg_log('updates::load_values', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::load_values', f'ERROR: ({repr(e)})')
 
     def load_menu(self, focusItem):
         try:
@@ -341,7 +341,7 @@ class updates:
             self.oe.winOeMain.build_menu(self.struct)
             self.oe.dbg_log('updates::load_menu', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::load_menu', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::load_menu', f'ERROR: ({repr(e)})')
 
     def set_value(self, listItem):
         try:
@@ -350,7 +350,7 @@ class updates:
             self.oe.write_setting('updates', listItem.getProperty('entry'), str(listItem.getProperty('value')))
             self.oe.dbg_log('updates::set_value', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_value', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_value', f'ERROR: ({repr(e)})')
 
     def set_auto_update(self, listItem=None):
         try:
@@ -366,7 +366,7 @@ class updates:
                 self.oe.dbg_log('updates::set_auto_update', str(self.struct['update']['settings']['AutoUpdate']['value']), self.oe.LOGINFO)
             self.oe.dbg_log('updates::set_auto_update', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_auto_update', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_auto_update', f'ERROR: ({repr(e)})')
 
     def set_channel(self, listItem=None):
         try:
@@ -376,7 +376,7 @@ class updates:
             self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
             self.oe.dbg_log('updates::set_channel', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_channel', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_channel', f'ERROR: ({repr(e)})')
 
     def set_custom_channel(self, listItem=None):
         try:
@@ -391,7 +391,7 @@ class updates:
             self.struct['update']['settings']['Build']['values'] = self.get_available_builds()
             self.oe.dbg_log('updates::set_custom_channel', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_custom_channel', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_custom_channel', f'ERROR: ({repr(e)})')
 
     def custom_sort_train(self, a, b):
         a_items = a.split('-')
@@ -418,7 +418,7 @@ class updates:
             self.oe.dbg_log('updates::get_channels', 'exit_function', self.oe.LOGDEBUG)
             return sorted(list(set(channels)), key=cmp_to_key(self.custom_sort_train))
         except Exception as e:
-            self.oe.dbg_log('updates::get_channels', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_channels', f'ERROR: ({repr(e)})')
 
     def do_manual_update(self, listItem=None):
         try:
@@ -444,7 +444,7 @@ class updates:
                     version = self.oe.VERSION
                 if self.struct['update']['settings']['Build']['value'] != '':
                     self.update_file = self.update_json[self.struct['update']['settings']['Channel']['value']]['url'] + self.get_available_builds(self.struct['update']['settings']['Build']['value'])
-                    message = '%s: %s\n%s: %s\n%s' % (self.oe._(32188), version, self.oe._(32187), self.struct['update']['settings']['Build']['value'], self.oe._(32180))
+                    message = f"{self.oe._(32188)}: {version}\n{self.oe._(32187)}: {self.struct['update']['settings']['Build']['value']}\n{self.oe._(32180)}"
                     answer = xbmcDialog.yesno('LibreELEC Update', message)
                     xbmcDialog = None
                     del xbmcDialog
@@ -454,7 +454,7 @@ class updates:
                 self.struct['update']['settings']['Build']['value'] = ''
             self.oe.dbg_log('updates::do_manual_update', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::do_manual_update', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::do_manual_update', f'ERROR: ({repr(e)})')
 
     def get_json(self, url=None):
         try:
@@ -471,7 +471,7 @@ class updates:
             self.oe.dbg_log('updates::get_json', 'exit_function', self.oe.LOGDEBUG)
             return update_json
         except Exception as e:
-            self.oe.dbg_log('updates::get_json', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_json', f'ERROR: ({repr(e)})')
 
     def build_json(self, notify_error=False):
         try:
@@ -489,13 +489,13 @@ class updates:
                                 update_json[channel] = custom_update_json[channel]
                         elif notify_error:
                             ok_window = xbmcgui.Dialog()
-                            answer = ok_window.ok(self.oe._(32191), 'Custom URL is not valid, or currently inaccessible.\n\n%s' % custom_url)
+                            answer = ok_window.ok(self.oe._(32191), f'Custom URL is not valid, or currently inaccessible.\n\n{custom_url}')
                             if not answer:
                                 return
             self.oe.dbg_log('updates::build_json', 'exit_function', self.oe.LOGDEBUG)
             return update_json
         except Exception as e:
-            self.oe.dbg_log('updates::build_json', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::build_json', f'ERROR: ({repr(e)})')
 
     def get_available_builds(self, shortname=None):
         try:
@@ -521,7 +521,7 @@ class updates:
             else:
                 return build
         except Exception as e:
-            self.oe.dbg_log('updates::get_available_builds', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_available_builds', f'ERROR: ({repr(e)})')
 
     def check_updates_v2(self, force=False):
         try:
@@ -537,20 +537,13 @@ class updates:
                 version = self.oe.BUILDER_VERSION
             else:
                 version = self.oe.VERSION
-            url = '%s?i=%s&d=%s&pa=%s&v=%s&f=%s' % (
-                self.UPDATE_REQUEST_URL,
-                self.oe.url_quote(systemid),
-                self.oe.url_quote(self.oe.DISTRIBUTION),
-                self.oe.url_quote(self.oe.ARCHITECTURE),
-                self.oe.url_quote(version),
-                self.oe.url_quote(self.hardware_flags),
-                )
+            url = f'{self.UPDATE_REQUEST_URL}?i={self.oe.url_quote(systemid)}&d={self.oe.url_quote(self.oe.DISTRIBUTION)}&pa={self.oe.url_quote(self.oe.ARCHITECTURE)}&v={self.oe.url_quote(version)}&f={self.oe.url_quote(self.hardware_flags)}'
             if self.oe.BUILDER_NAME:
-               url += '&b=%s' % self.oe.url_quote(self.oe.BUILDER_NAME)
+               url += f'&b={self.oe.url_quote(self.oe.BUILDER_NAME)}'
 
-            self.oe.dbg_log('updates::check_updates_v2', 'URL: %s' % url, self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::check_updates_v2', f'URL: {url}', self.oe.LOGDEBUG)
             update_json = self.oe.load_url(url)
-            self.oe.dbg_log('updates::check_updates_v2', 'RESULT: %s' % repr(update_json), self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::check_updates_v2', f'RESULT: {repr(update_json)}', self.oe.LOGDEBUG)
             if update_json != '':
                 update_json = json.loads(update_json)
                 self.last_update_check = time.time()
@@ -563,7 +556,7 @@ class updates:
                         self.do_autoupdate(None, True)
             self.oe.dbg_log('updates::check_updates_v2', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::check_updates_v2', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::check_updates_v2', f'ERROR: ({repr(e)})')
 
     def do_autoupdate(self, listItem=None, silent=False):
         try:
@@ -587,7 +580,7 @@ class updates:
 
             self.oe.dbg_log('updates::do_autoupdate', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::do_autoupdate', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::do_autoupdate', f'ERROR: ({repr(e)})')
 
     def get_rpi_flashing_state(self):
         try:
@@ -606,13 +599,13 @@ class updates:
                     }
 
             with tempfile.NamedTemporaryFile(mode='r', delete=True) as machine_out:
-                console_output = self.oe.execute('/usr/bin/.rpi-eeprom-update.real -j -m "%s"' % machine_out.name, get_result=1).split('\n')
+                console_output = self.oe.execute(f'/usr/bin/.rpi-eeprom-update.real -j -m "{machine_out.name}"', get_result=1).split('\n')
                 if os.path.getsize(machine_out.name) != 0:
                     state['incompatible'] = False
                     jdata = json.load(machine_out)
 
-            self.oe.dbg_log('updates::get_rpi_flashing_state', 'console output: %s' % console_output, self.oe.LOGDEBUG)
-            self.oe.dbg_log('updates::get_rpi_flashing_state', 'json values: %s' % jdata, self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::get_rpi_flashing_state', f'console output: {console_output}', self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::get_rpi_flashing_state', f'json values: {jdata}', self.oe.LOGDEBUG)
 
             if jdata['BOOTLOADER_CURRENT'] != 0:
                 state['bootloader']['current'] = datetime.datetime.utcfromtimestamp(jdata['BOOTLOADER_CURRENT']).strftime('%Y-%m-%d')
@@ -637,11 +630,11 @@ class updates:
                 else:
                     state['vl805']['state'] = self.oe._(32029) % state['vl805']['current']
 
-            self.oe.dbg_log('updates::get_rpi_flashing_state', 'state: %s' % state, self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::get_rpi_flashing_state', f'state: {state}', self.oe.LOGDEBUG)
             self.oe.dbg_log('updates::get_rpi_flashing_state', 'exit_function', self.oe.LOGDEBUG)
             return state
         except Exception as e:
-            self.oe.dbg_log('updates::get_rpi_flashing_state', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_rpi_flashing_state', f'ERROR: ({repr(e)})')
             return {'incompatible': True}
 
     def get_rpi_eeprom(self, device):
@@ -651,18 +644,18 @@ class updates:
             if os.path.exists(self.RPI_FLASHING_TRIGGER):
                 with open(self.RPI_FLASHING_TRIGGER, 'r') as trigger:
                     values = trigger.read().split('\n')
-            self.oe.dbg_log('updates::get_rpi_eeprom', 'values: %s' % values, self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::get_rpi_eeprom', f'values: {values}', self.oe.LOGDEBUG)
             self.oe.dbg_log('updates::get_rpi_eeprom', 'exit_function', self.oe.LOGDEBUG)
-            return 'true' if ('%s="yes"' % device) in values else 'false'
+            return 'true' if (f'{device}="yes"') in values else 'false'
         except Exception as e:
-            self.oe.dbg_log('updates::get_rpi_eeprom', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::get_rpi_eeprom', f'ERROR: ({repr(e)})')
 
     def set_rpi_eeprom(self):
         try:
             self.oe.dbg_log('updates::set_rpi_eeprom', 'enter_function', self.oe.LOGDEBUG)
             bootloader = (self.struct['rpieeprom']['settings']['bootloader']['value'] == 'true')
             vl805 = (self.struct['rpieeprom']['settings']['vl805']['value'] == 'true')
-            self.oe.dbg_log('updates::set_rpi_eeprom', 'states: [%s], [%s]' % (bootloader, vl805), self.oe.LOGDEBUG)
+            self.oe.dbg_log('updates::set_rpi_eeprom', f'states: [{bootloader}], [{vl805}]', self.oe.LOGDEBUG)
             if bootloader or vl805:
                 values = []
                 values.append('BOOTLOADER="%s"' % ('yes' if bootloader else 'no'))
@@ -675,33 +668,33 @@ class updates:
 
             self.oe.dbg_log('updates::set_rpi_eeprom', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_rpi_eeprom', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_rpi_eeprom', f'ERROR: ({repr(e)})')
 
     def set_rpi_bootloader(self, listItem):
         try:
             self.oe.dbg_log('updates::set_rpi_bootloader', 'enter_function', self.oe.LOGDEBUG)
             value = 'false'
             if listItem.getProperty('value') == 'true':
-                if xbmcgui.Dialog().yesno('Update RPi Bootloader', '%s\n\n%s' % (self.oe._(32023), self.oe._(32326))):
+                if xbmcgui.Dialog().yesno('Update RPi Bootloader', f'{self.oe._(32023)}\n\n{self.oe._(32326)}'):
                     value = 'true'
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
             self.set_rpi_eeprom()
             self.oe.dbg_log('updates::set_rpi_bootloader', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_rpi_bootloader', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_rpi_bootloader', f'ERROR: ({repr(e)})')
 
     def set_rpi_vl805(self, listItem):
         try:
             self.oe.dbg_log('updates::set_rpi_vl805', 'enter_function', self.oe.LOGDEBUG)
             value = 'false'
             if listItem.getProperty('value') == 'true':
-                if xbmcgui.Dialog().yesno('Update RPi USB3 Firmware', '%s\n\n%s' % (self.oe._(32023), self.oe._(32326))):
+                if xbmcgui.Dialog().yesno('Update RPi USB3 Firmware', f'{self.oe._(32023)}\n\n{self.oe._(32326)}'):
                     value = 'true'
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = value
             self.set_rpi_eeprom()
             self.oe.dbg_log('updates::set_rpi_vl805', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::set_rpi_vl805', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::set_rpi_vl805', f'ERROR: ({repr(e)})')
 
 class updateThread(threading.Thread):
 
@@ -715,7 +708,7 @@ class updateThread(threading.Thread):
             self.oe.dbg_log('updates::updateThread', 'Started', self.oe.LOGINFO)
             self.oe.dbg_log('updates::updateThread::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::updateThread::__init__', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::updateThread::__init__', f'ERROR: ({repr(e)})')
 
     def stop(self):
         try:
@@ -724,7 +717,7 @@ class updateThread(threading.Thread):
             self.wait_evt.set()
             self.oe.dbg_log('updates::updateThread::stop()', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::updateThread::stop()', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::updateThread::stop()', f'ERROR: ({repr(e)})')
 
     def run(self):
         try:
@@ -741,4 +734,4 @@ class updateThread(threading.Thread):
             self.oe.dbg_log('updates::updateThread', 'Stopped', self.oe.LOGINFO)
             self.oe.dbg_log('updates::updateThread::run', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('updates::updateThread::run', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('updates::updateThread::run', f'ERROR: ({repr(e)})')
