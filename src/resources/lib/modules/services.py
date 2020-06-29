@@ -282,7 +282,7 @@ class services:
             self.oe = oeMain
             oeMain.dbg_log('services::__init__', 'exit_function', oeMain.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::__init__', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::__init__', f'ERROR: ({rep(e)})')
 
     def start_service(self):
         try:
@@ -295,7 +295,7 @@ class services:
             self.init_bluetooth(service=1)
             self.oe.dbg_log('services::start_service', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::start_service', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::start_service', f'ERROR: ({repr(e)})')
 
     def stop_service(self):
         try:
@@ -310,7 +310,7 @@ class services:
             self.load_values()
             self.oe.dbg_log('services::do_init', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::do_init', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::do_init', f'ERROR: ({repr(e)})')
 
     def set_value(self, listItem):
         try:
@@ -326,7 +326,7 @@ class services:
             self.oe.winOeMain.build_menu(self.struct)
             self.oe.dbg_log('services::load_menu', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::load_menu', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::load_menu', f'ERROR: ({repr(e)})')
 
     def load_values(self):
         try:
@@ -407,7 +407,7 @@ class services:
 
             self.oe.dbg_log('services::load_values', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::load_values', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::load_values', f'ERROR: ({repr(e)})')
 
     def initialize_samba(self, **kwargs):
         try:
@@ -430,13 +430,13 @@ class services:
                     val_autoshare = 'true'
                 else:
                     val_autoshare = 'false'
-                options['SAMBA_WORKGROUP'] = '"%s"' % self.struct['samba']['settings']['samba_workgroup']['value']
-                options['SAMBA_SECURE'] = '"%s"' % val_secure
-                options['SAMBA_AUTOSHARE'] = '"%s"' % val_autoshare
-                options['SAMBA_MINPROTOCOL'] = '"%s"' % self.struct['samba']['settings']['samba_minprotocol']['value']
-                options['SAMBA_MAXPROTOCOL'] = '"%s"' % self.struct['samba']['settings']['samba_maxprotocol']['value']
-                options['SAMBA_USERNAME'] = '"%s"' % self.struct['samba']['settings']['samba_username']['value']
-                options['SAMBA_PASSWORD'] = '"%s"' % self.struct['samba']['settings']['samba_password']['value']
+                options['SAMBA_WORKGROUP'] = f"{self.struct['samba']['settings']['samba_workgroup']['value']}"
+                options['SAMBA_SECURE'] = f"{val_secure}"
+                options['SAMBA_AUTOSHARE'] = f"{val_autoshare}"
+                options['SAMBA_MINPROTOCOL'] = f"{self.struct['samba']['settings']['samba_minprotocol']['value']}"
+                options['SAMBA_MAXPROTOCOL'] = f"{self.struct['samba']['settings']['samba_maxprotocol']['value']}"
+                options['SAMBA_USERNAME'] = f"{self.struct['samba']['settings']['samba_username']['value']}"
+                options['SAMBA_PASSWORD'] = f"{self.struct['samba']['settings']['samba_password']['value']}"
             else:
                 state = 0
                 self.struct['samba']['settings']['samba_username']['hidden'] = True
@@ -446,7 +446,7 @@ class services:
             self.oe.dbg_log('services::initialize_samba', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('services::initialize_samba', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('services::initialize_samba', f'ERROR: (%{repr(e)})', self.oe.LOGERROR)
 
     def initialize_ssh(self, **kwargs):
         try:
@@ -459,11 +459,11 @@ class services:
             if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
                 if self.struct['ssh']['settings']['ssh_secure']['value'] == '1':
                     val = 'true'
-                    options['SSH_ARGS'] = '"%s"' % self.OPT_SSH_NOPASSWD
+                    options['SSH_ARGS'] = f"{self.OPT_SSH_NOPASSWD}"
                 else:
                     val = 'false'
                     options['SSH_ARGS'] = '""'
-                options['SSHD_DISABLE_PW_AUTH'] = '"%s"' % val
+                options['SSHD_DISABLE_PW_AUTH'] = f"{val}"
             else:
                 state = 0
             self.oe.set_service('sshd', options, state)
@@ -471,7 +471,7 @@ class services:
             self.oe.dbg_log('services::initialize_ssh', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('services::initialize_ssh', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('services::initialize_ssh', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def initialize_avahi(self, **kwargs):
         try:
@@ -488,7 +488,7 @@ class services:
             self.oe.dbg_log('services::initialize_avahi', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('services::initialize_avahi', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('services::initialize_avahi', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def initialize_cron(self, **kwargs):
         try:
@@ -505,7 +505,7 @@ class services:
             self.oe.dbg_log('services::initialize_cron', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('services::initialize_cron', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('services::initialize_cron', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def init_bluetooth(self, **kwargs):
         try:
@@ -540,7 +540,7 @@ class services:
             state = 1
             options = {}
             if self.struct['bluez']['settings']['obex_enabled']['value'] == '1':
-                options['OBEXD_ROOT'] = '"%s"' % self.struct['bluez']['settings']['obex_root']['value']
+                options['OBEXD_ROOT'] = f"{self.struct['bluez']['settings']['obex_root']['value']}"
             else:
                 state = 0
             self.oe.set_service('obexd', options, state)
@@ -568,7 +568,7 @@ class services:
             self.oe.dbg_log('services::exit', 'enter_function', self.oe.LOGDEBUG)
             self.oe.dbg_log('services::exit', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::exit', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('services::exit', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def do_wizard(self):
         try:
@@ -587,7 +587,7 @@ class services:
             self.set_wizard_buttons()
             self.oe.dbg_log('services::do_wizard', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::do_wizard', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::do_wizard', f'ERROR: ({repr(e)})')
 
     def set_wizard_buttons(self):
         try:
@@ -603,7 +603,7 @@ class services:
                     self.oe.winOeMain.set_wizard_radiobutton_2(self.oe._(32200), self, 'wizard_set_samba')
             self.oe.dbg_log('services::set_wizard_buttons', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::set_wizard_buttons', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::set_wizard_buttons', f'ERROR: ({repr(e)})')
 
     def wizard_set_ssh(self):
         try:
@@ -627,7 +627,7 @@ class services:
             self.set_wizard_buttons()
             self.oe.dbg_log('services::wizard_set_ssh', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::wizard_set_ssh', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::wizard_set_ssh', f'ERROR: ({repr(e)})')
 
     def wizard_set_samba(self):
         try:
@@ -641,7 +641,7 @@ class services:
             self.set_wizard_buttons()
             self.oe.dbg_log('services::wizard_set_samba', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::wizard_set_samba', 'ERROR: (%s)' % repr(e))
+            self.oe.dbg_log('services::wizard_set_samba', f'ERROR: ({repr(e)})')
 
     def wizard_sshpasswd(self):
         SSHresult = False
@@ -667,9 +667,9 @@ class services:
                 else:
                     ssh = subprocess.Popen(["passwd"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=0)
                     readout1 = ssh.stdout.readline()
-                    ssh.stdin.write('%s\n' % newpwd)
+                    ssh.stdin.write(f'{newpwd}\n')
                     readout2 = ssh.stdout.readline()
-                    ssh.stdin.write('%s\n' % newpwd)
+                    ssh.stdin.write(f'{newpwd}\n')
                     readout3 = ssh.stdout.readline()
                 if "Bad password" in readout3:
                     xbmcDialog.ok(self.oe._(32220), self.oe._(32221))
