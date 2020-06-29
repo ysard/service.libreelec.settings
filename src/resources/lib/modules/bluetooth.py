@@ -868,7 +868,7 @@ class bluetooth:
                     if interface['Status'] == 'active':
                         self.parent.download_start = time.time()
                         self.parent.download = xbmcgui.DialogProgress()
-                        self.parent.download.create('Bluetooth Filetransfer', '%s: %s' % (self.oe._(32181), self.parent.download_file))
+                        self.parent.download.create('Bluetooth Filetransfer', f'{self.oe._(32181)}: {self.parent.download_file}')
                     else:
                         if hasattr(self.parent, 'download'):
                             self.parent.download.close()
@@ -880,9 +880,9 @@ class bluetooth:
                             xbmcDialog = xbmcgui.Dialog()
                             answer = xbmcDialog.yesno('Bluetooth Filetransfer', self.oe._(32383))
                             if answer == 1:
-                                fil = '%s/%s' % (self.oe.DOWNLOAD_DIR, self.parent.download_file)
+                                fil = f'{self.oe.DOWNLOAD_DIR}/{self.parent.download_file}'
                                 if 'image' in self.parent.download_type:
-                                    xbmc.executebuiltin('showpicture(%s)' % fil)
+                                    xbmc.executebuiltin(f'showpicture({fil})')
                                 else:
                                     xbmc.Player().play(fil)
                             del self.parent.download_type
@@ -892,7 +892,7 @@ class bluetooth:
                         transferred = int(interface['Transferred'] / 1024)
                         speed = transferred / (time.time() - self.parent.download_start)
                         percent = int(round(100 / self.parent.download_size * (interface['Transferred'] / 1024), 0))
-                        message = '%s: %s\n%s: %d KB/s' % (self.oe._(32181), self.parent.download_file, self.oe._(32382), speed)
+                        message = f'{self.oe._(32181)}: {self.parent.download_file}\n{self.oe._(32382)}: {speed} KB/s'
                         self.parent.download.update(percent, message)
                     if self.parent.download.iscanceled():
                         obj = self.oe.dbusSystemBus.get_object('org.bluez.obex', self.parent.download_path)
@@ -935,7 +935,7 @@ class bluetoothAgent(dbus.service.Object):
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService::uuid=', repr(uuid), self.oe.LOGDEBUG)
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Authorize service %s?' % uuid)
+            answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService::answer=', repr(answer), self.oe.LOGDEBUG)
             self.busy()
             self.oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'exit_function', self.oe.LOGDEBUG)
@@ -1002,7 +1002,7 @@ class bluetoothAgent(dbus.service.Object):
                 self.parent.close_pinkey_window()
             self.parent.open_pinkey_window(runtime=30)
             self.parent.pinkey_window.device = device
-            self.parent.pinkey_window.set_label1('PIN code: %s' % (pincode))
+            self.parent.pinkey_window.set_label1(f'PIN code: {pincode}')
             self.oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
@@ -1015,7 +1015,7 @@ class bluetoothAgent(dbus.service.Object):
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation::passkey=', repr(passkey), self.oe.LOGDEBUG)
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Confirm passkey %06u' % passkey)
+            answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation::answer=', repr(answer), self.oe.LOGDEBUG)
             self.busy()
             self.oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'exit_function', self.oe.LOGDEBUG)
@@ -1081,7 +1081,7 @@ class obexAgent(dbus.service.Object):
             properties = transfer.GetAll('org.bluez.obex.Transfer1')
             self.oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', "%s\n\n%s" % (self.oe._(32381), properties['Name']))
+            answer = xbmcDialog.yesno('Bluetooth', f"{self.oe._(32381)}\n\n{properties['Name']}")
             self.oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), self.oe.LOGDEBUG)
             self.busy()
             if answer != 1:
