@@ -39,7 +39,7 @@ class Service_Thread(threading.Thread):
             conn, addr = self.sock.accept()
             message = (conn.recv(1024)).decode('utf-8')
             conn.close()
-            oe.dbg_log('_service_::run', 'MESSAGE:' + message, oe.LOGINFO)
+            oe.dbg_log('_service_::run', f'MESSAGE:{message}', oe.LOGINFO)
             if message == 'openConfigurationWindow':
                 if not hasattr(oe, 'winOeMain'):
                     threading.Thread(target=oe.openConfigurationWindow).start()
