@@ -29,6 +29,7 @@ class system(modules.Module):
     UDEV_KEYBOARD_INFO = None
     NOX_KEYBOARD_INFO = None
     BACKUP_DIRS = None
+    BACKUP_FILTER = None
     BACKUP_DESTINATION = None
     RESTORE_DIR = None
     SET_CLOCK_CMD = None
@@ -533,7 +534,9 @@ class system(modules.Module):
                         pass
                     return 0
                 itempath = os.path.join(folder, item)
-                if os.path.islink(itempath):
+                if itempath in self.BACKUP_FILTER:
+                    continue
+                elif os.path.islink(itempath):
                     tar.add(itempath)
                 elif os.path.ismount(itempath):
                     tar.add(itempath, recursive=False)
@@ -555,7 +558,7 @@ class system(modules.Module):
     def get_folder_size(self, folder):
         for item in os.listdir(folder):
             itempath = os.path.join(folder, item)
-            if os.path.islink(itempath):
+            if itempath in self.BACKUP_FILTER or os.path.islink(itempath):
                 continue
             elif os.path.isfile(itempath):
                 self.total_backup_size += os.path.getsize(itempath)
