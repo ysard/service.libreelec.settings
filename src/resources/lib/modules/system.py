@@ -477,9 +477,7 @@ class system:
             self.oe.dbg_log('system::reset_xbmc', 'enter_function', 0)
             if self.ask_sure_reset('Soft') == 1:
                 self.oe.set_busy(1)
-                reset_file = open(self.XBMC_RESET_FILE, 'w')
-                reset_file.write('reset')
-                reset_file.close()
+                open(self.XBMC_RESET_FILE, 'a').close()
                 self.oe.winOeMain.close()
                 self.oe.xbmcm.waitForAbort(1)
                 xbmc.executebuiltin('Reboot')
@@ -494,9 +492,7 @@ class system:
             self.oe.dbg_log('system::reset_oe', 'enter_function', 0)
             if self.ask_sure_reset('Hard') == 1:
                 self.oe.set_busy(1)
-                reset_file = open(self.LIBREELEC_RESET_FILE, 'w')
-                reset_file.write('reset')
-                reset_file.close()
+                open(self.LIBREELEC_RESET_FILE, 'a').close()
                 self.oe.winOeMain.close()
                 self.oe.xbmcm.waitForAbort(1)
                 xbmc.executebuiltin('Reboot')
