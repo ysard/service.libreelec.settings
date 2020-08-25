@@ -507,7 +507,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                     break
                 else:
                     pass
-            selLanguage = xbmcDialog.select(self.oe._(32193), languagesList, preselect=langIndex)
+            selLanguage = xbmcDialog.select(self.oe._(32310), languagesList, preselect=langIndex)
             if selLanguage >= 0:
                 langKey = languagesList[selLanguage]
                 lang_new = langCodes[langKey]
