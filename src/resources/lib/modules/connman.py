@@ -72,6 +72,7 @@ class connmanService(object):
                                 'value': ['manual'],
                                 },
                             'action': 'set_value',
+                            'notempty': True,
                             },
                         'Netmask': {
                             'order': 3,
@@ -84,6 +85,7 @@ class connmanService(object):
                                 'value': ['manual'],
                                 },
                             'action': 'set_value',
+                            'notempty': True,
                             },
                         'Gateway': {
                             'order': 4,
@@ -96,6 +98,7 @@ class connmanService(object):
                                 'value': ['manual'],
                                 },
                             'action': 'set_value',
+                            'notempty': True,
                             },
                         },
                     },
@@ -375,7 +378,7 @@ class connmanService(object):
                 postfix = '.Configuration'
             for entry in sorted(self.struct[category]['settings'], key=lambda x: self.struct[category]['settings'][x]['order']):
                 setting = self.struct[category]['settings'][entry]
-                if (setting['value'] != '' or hasattr(setting, 'changed')) \
+                if (setting['value'] != '' or (hasattr(setting, 'changed') and not hasattr(setting, 'notempty'))) \
                    and (not 'parent' in setting or ('parent' in setting and self.struct[category]['settings'][setting['parent']['entry']]['value'] \
                                                     in setting['parent']['value'])):
                     if setting['dbus'] == 'Array':
