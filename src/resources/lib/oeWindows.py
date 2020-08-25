@@ -297,6 +297,8 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                     if returnValue != '' and returnValue != '/':
                         selectedItem.setProperty('value', unicode(returnValue))
                 elif strTyp == 'ip':
+                    if strValue == '':
+                        strValue = '0.0.0.0'
                     xbmcDialog = xbmcgui.Dialog()
                     returnValue = xbmcDialog.numeric(3, 'LibreELEC.tv', strValue)
                     if returnValue != '':
