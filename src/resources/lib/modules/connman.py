@@ -375,8 +375,9 @@ class connmanService(object):
                 postfix = '.Configuration'
             for entry in sorted(self.struct[category]['settings'], key=lambda x: self.struct[category]['settings'][x]['order']):
                 setting = self.struct[category]['settings'][entry]
-                if (setting['value'] != '' or hasattr(setting, 'changed')) and not 'parent' in setting or 'parent' in setting \
-                    and self.struct[category]['settings'][setting['parent']['entry']]['value'] in setting['parent']['value']:
+                if (setting['value'] != '' or hasattr(setting, 'changed')) \
+                   and (not 'parent' in setting or ('parent' in setting and self.struct[category]['settings'][setting['parent']['entry']]['value'] \
+                                                    in setting['parent']['value'])):
                     if setting['dbus'] == 'Array':
                         value = dbus.Array(dbus.String(setting['value'], variant_level=1).split(','), signature=dbus.Signature('s'),
                                            variant_level=1)
