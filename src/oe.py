@@ -84,9 +84,9 @@ xbmc.log('## LibreELEC Addon ## ' + unicode(__addon__.getAddonInfo('version')))
 
 class ProgressDialog:
     def __init__(self, label1=32181, label2=32182, label3=32183, minSampleInterval=1.0, maxUpdatesPerSecond=5):
-        self.label1 = _(label1).encode('utf-8')
-        self.label2 = _(label2).encode('utf-8')
-        self.label3 = _(label3).encode('utf-8')
+        self.label1 = _(label1)
+        self.label2 = _(label2)
+        self.label3 = _(label3)
         self.minSampleInterval = minSampleInterval
         self.maxUpdatesPerSecond = 1 / maxUpdatesPerSecond
 
