@@ -76,7 +76,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
             self.oe.winOeMain = self
             for strModule in sorted(self.oe.dictModules, key=lambda x: list(self.oe.dictModules[x].menu.keys())):
                 module = self.oe.dictModules[strModule]
-                self.oe.dbg_log('init module', strModule, 0)
+                self.oe.dbg_log('init module', strModule, self.oe.LOGDEBUG)
                 if module.ENABLED:
                     if hasattr(module, 'do_init'):
                         Thread(target=module.do_init(), args=()).start()
@@ -172,7 +172,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
 
     def showButton(self, number, name, module, action, onup=None, onleft=None):
         try:
-            self.oe.dbg_log('oeWindows::showButton', 'enter_function', 0)
+            self.oe.dbg_log('oeWindows::showButton', 'enter_function', self.oe.LOGDEBUG)
             button = self.getControl(self.buttons[number]['id'])
             self.buttons[number]['modul'] = module
             self.buttons[number]['action'] = action
@@ -182,7 +182,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
             if onleft != None:
                 button.controlLeft(self.getControl(onleft))
             button.setVisible(True)
-            self.oe.dbg_log('oeWindows::showButton', 'exit_function', 0)
+            self.oe.dbg_log('oeWindows::showButton', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.dbg_log('oeWindows.mainWindow::showButton(' + str(number) + ', ' + str(action) + ')', 'ERROR: (' + repr(e) + ')')
 
@@ -229,7 +229,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                 self.close()
 
     def onClick(self, controlID):
-        self.oe.dbg_log('oeWindows::onClick', 'enter_function', 0)
+        self.oe.dbg_log('oeWindows::onClick', 'enter_function', self.oe.LOGDEBUG)
         try:
             for btn in self.buttons:
                 if controlID == self.buttons[btn]['id']:
@@ -335,7 +335,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                 self.onFocus(self.guiMenList)
                 self.setFocusId(controlID)
                 self.getControl(controlID).selectItem(selectedPosition)
-            self.oe.dbg_log('oeWindows::onClick', 'exit_function', 0)
+            self.oe.dbg_log('oeWindows::onClick', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.dbg_log('oeWindows.mainWindow::onClick(' + str(controlID) + ')', 'ERROR: (' + repr(e) + ')')
 
@@ -499,7 +499,7 @@ class wizard(xbmcgui.WindowXMLDialog):
         global lang_str
         global lang_new
         try:
-            self.oe.dbg_log('oeWindows::wizard_set_language', 'enter_function', 0)
+            self.oe.dbg_log('oeWindows::wizard_set_language', 'enter_function', self.oe.LOGDEBUG)
             langCodes = {"Bulgarian":"resource.language.bg_bg","Czech":"resource.language.cs_cz","German":"resource.language.de_de","English":"resource.language.en_gb","Spanish":"resource.language.es_es","Basque":"resource.language.eu_es","Finnish":"resource.language.fi_fi","French":"resource.language.fr_fr","Hebrew":"resource.language.he_il","Hungarian":"resource.language.hu_hu","Italian":"resource.language.it_it","Lithuanian":"resource.language.lt_lt","Latvian":"resource.language.lv_lv","Norwegian":"resource.language.nb_no","Dutch":"resource.language.nl_nl","Polish":"resource.language.pl_pl","Portuguese (Brazil)":"resource.language.pt_br","Portuguese":"resource.language.pt_pt","Romanian":"resource.language.ro_ro","Russian":"resource.language.ru_ru","Slovak":"resource.language.sk_sk","Swedish":"resource.language.sv_se","Turkish":"resource.language.tr_tr","Ukrainian":"resource.language.uk_ua"}
             languagesList = sorted(list(langCodes.keys()))
             cur_lang = xbmc.getLanguage()
@@ -525,7 +525,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                 self.oe.winOeMain.set_wizard_button_1(langKey, self, 'wizard_set_language')
                 self.showButton(1, 32303)
                 self.setFocusId(self.buttons[1]['id'])
-            self.oe.dbg_log('oeWindows::wizard_set_language', 'exit_function', 0)
+            self.oe.dbg_log('oeWindows::wizard_set_language', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.dbg_log('oeWindows::wizard_set_language', 'ERROR: (' + repr(e) + ')')
 
@@ -629,7 +629,7 @@ class wizard(xbmcgui.WindowXMLDialog):
         global strModule
         global prevModule
         try:
-            self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'enter_function', 0)
+            self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'enter_function', self.oe.LOGDEBUG)
             for btn in self.buttons:
                 if controlID == self.buttons[btn]['id'] and self.buttons[btn]['id'] > 2:
                     if hasattr(self.buttons[btn]['modul'], self.buttons[btn]['action']):
@@ -653,7 +653,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                     self.wizards.remove(prevModule)
                     self.oe.remove_node(prevModule)
                     self.onClick(1500)
-                self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'exit_function', 0)
+                self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'exit_function', self.oe.LOGDEBUG)
 
             if controlID == 1500:
                 self.getControl(1390).setLabel('1')
@@ -701,7 +701,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                     self.visible = False
                     self.close()
                     xbmc.executebuiltin(lang_str)
-            self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'exit_function', 0)
+            self.oe.dbg_log('wizard::onClick(' + str(controlID) + ')', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.dbg_log('oeWindows.wizard::onClick()', 'ERROR: (' + repr(e) + ')')
 
