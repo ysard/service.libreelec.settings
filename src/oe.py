@@ -34,6 +34,8 @@ __oe__ = sys.modules[globals()['__name__']]
 __media__ = '%s/resources/skins/Default/media' % __cwd__
 xbmcDialog = xbmcgui.Dialog()
 
+xbmcm = xbmc.Monitor()
+
 is_service = False
 conf_lock = False
 __busy__ = 0
@@ -483,7 +485,7 @@ def download_file(source, destination, silent=False):
 
         last_percent = 0
 
-        while not (xbmc.abortRequested or progress.iscanceled()):
+        while not (progress.iscanceled() or xbmcm.abortRequested()):
             part = response.read(32768)
 
             progress.sample(part)
@@ -504,7 +506,7 @@ def download_file(source, destination, silent=False):
         local_file.close()
         response.close()
 
-        if progress.iscanceled() or xbmc.abortRequested:
+        if progress.iscanceled() or xbmcm.abortRequested():
             os.remove(destination)
             return None
 
@@ -530,7 +532,7 @@ def copy_file(source, destination, silent=False):
 
         last_percent = 0
 
-        while not (xbmc.abortRequested or progress.iscanceled()):
+        while not (progress.iscanceled() or xbmcm.abortRequested()):
             part = source_file.read(32768)
 
             progress.sample(part)
@@ -551,7 +553,7 @@ def copy_file(source, destination, silent=False):
         source_file.close()
         destination_file.close()
 
-        if progress.iscanceled() or xbmc.abortRequested:
+        if progress.iscanceled() or xbmcm.abortRequested():
             os.remove(destination)
             return None
 
@@ -850,15 +852,15 @@ def reboot_counter(seconds=10, title=' '):
     reboot_dlg.create('LibreELEC %s' % title, ' ')
     reboot_dlg.update(0)
     wait_time = seconds
-    while seconds >= 0 and not reboot_dlg.iscanceled():
+    while seconds >= 0 and not (reboot_dlg.iscanceled() or xbmcm.abortRequested()):
         progress = round(1.0 * seconds / wait_time * 100)
         reboot_dlg.update(int(progress), _(32329) % seconds)
-        time.sleep(1)
+        xbmcm.waitForAbort(1)
         seconds = seconds - 1
-    if not reboot_dlg.iscanceled():
-        return 1
-    else:
+    if reboot_dlg.iscanceled() or xbmcm.abortRequested():
         return 0
+    else:
+        return 1
 
 
 def exit():

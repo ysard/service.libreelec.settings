@@ -588,7 +588,7 @@ class updates:
                     subprocess.call('sync', shell=True, stdin=None, stdout=None, stderr=None)
                     if silent == False:
                         self.oe.winOeMain.close()
-                        time.sleep(1)
+                        self.oe.xbmcm.waitForAbort(1)
                         xbmc.executebuiltin('Reboot')
                 else:
                     delattr(self, 'update_in_progress')

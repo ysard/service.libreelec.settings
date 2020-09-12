@@ -655,7 +655,7 @@ class wizard(xbmcgui.WindowXMLDialog):
 
             if controlID == 1500:
                 self.getControl(1390).setLabel('1')
-                time.sleep(0.5)
+                self.oe.xbmcm.waitForAbort(0.5)
                 self.is_last_wizard = True
                 self.getControl(1391).setLabel('')
                 self.getControl(self.buttons[3]['id']).setVisible(False)
@@ -693,7 +693,7 @@ class wizard(xbmcgui.WindowXMLDialog):
                     xbmc.executebuiltin('UpdateAddonRepos')
                     langAddon = "InstallAddon(" + lang_new + ")"
                     xbmc.executebuiltin(langAddon)
-                    time.sleep(.5)
+                    self.oe.xbmcm.waitForAbort(0.5)
                     xbmc.executebuiltin('SendClick(10100,11)')
                     self.oe.write_setting('libreelec', 'wizard_completed', 'True')
                     self.visible = False

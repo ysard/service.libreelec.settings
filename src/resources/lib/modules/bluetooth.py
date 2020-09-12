@@ -60,8 +60,11 @@ class bluetooth:
         try:
             self.oe.dbg_log('bluetooth::stop_service', 'enter_function', 0)
             if hasattr(self, 'discovery_thread'):
-                self.discovery_thread.stop()
-                del self.discovery_thread
+                try:
+                    self.discovery_thread.stop()
+                    del self.discovery_thread
+                except AttributeError:
+                    pass
             if hasattr(self, 'dbusBluezAdapter'):
                 self.dbusBluezAdapter = None
             self.oe.dbg_log('bluetooth::stop_service', 'exit_function', 0)
@@ -72,8 +75,11 @@ class bluetooth:
         try:
             self.oe.dbg_log('bluetooth::exit', 'enter_function', 0)
             if hasattr(self, 'discovery_thread'):
-                self.discovery_thread.stop()
-                del self.discovery_thread
+                try:
+                    self.discovery_thread.stop()
+                    del self.discovery_thread
+                except AttributeError:
+                    pass
             self.clear_list()
             self.visible = False
             self.oe.dbg_log('bluetooth::exit', 'exit_function', 0)
@@ -1127,7 +1133,7 @@ class discoveryThread(threading.Thread):
     def run(self):
         try:
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'enter_function', 0)
-            while not self.stopped and not xbmc.abortRequested:
+            while not self.stopped and not self.oe.xbmcm.abortRequested():
                 current_time = time.time()
                 if current_time > self.last_run + 5:
                     if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth' or not hasattr(self.oe.dictModules['bluetooth'], 'discovery_thread'):
@@ -1135,7 +1141,7 @@ class discoveryThread(threading.Thread):
                     self.last_run = current_time
                 if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth':
                     self.stop()
-                time.sleep(1)
+                self.oe.xbmcm.waitForAbort(1)
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'exit_function', 0)
         except Exception as e:
             self.oe.dbg_log('bluetooth::discoveryThread::run', 'ERROR: (' + repr(e) + ')', 4)
@@ -1164,7 +1170,7 @@ class pinkeyTimer(threading.Thread):
         try:
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'enter_function', 0)
             self.endtime = self.start_time + self.runtime
-            while not self.stopped and not xbmc.abortRequested:
+            while not self.stopped and not self.oe.xbmcm.abortRequested():
                 current_time = time.time()
                 percent = round(100 / self.runtime * (self.endtime - current_time), 0)
                 self.parent.pinkey_window.getControl(1704).setPercent(percent)
@@ -1172,7 +1178,7 @@ class pinkeyTimer(threading.Thread):
                     self.stopped = True
                     self.parent.close_pinkey_window()
                 else:
-                    time.sleep(1)
+                    self.oe.xbmcm.waitForAbort(1)
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'exit_function', 0)
         except Exception as e:
             self.oe.dbg_log('bluetooth::pinkeyTimer::run', 'ERROR: (' + repr(e) + ')', 4)
