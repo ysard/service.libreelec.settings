@@ -90,7 +90,7 @@
                 <top>770</top>
                 <width>400</width>
                 <height>3</height>
-                <texture colordiffuse="FF12B2E7" border="2">dialogs/separator-grey.png</texture>
+                <texture colordiffuse="FF12B2E7" border="2">separator-grey.png</texture>
             </control>
             <control type="image">
                 <description>LOGO</description>
@@ -1142,8 +1142,8 @@
             <top>940</top>
             <width>48</width>
             <height>24</height>
-            <texturefocus colordiffuse="button_focus">overlays/arrowdown.png</texturefocus>
-            <texturenofocus colordiffuse="button_focus">overlays/arrowdown.png</texturenofocus>
+            <texturefocus colordiffuse="FF12A0C7">arrowdown.png</texturefocus>
+            <texturenofocus colordiffuse="FF12A0C7">arrowdown.png</texturenofocus>
             <animation effect="zoom" start="100,0" end="100,100" center="auto" time="200" delay="10">VisibleChange</animation>
             <animation effect="zoom" start="100,0" end="100,100" delay="500" center="auto" time="200">WindowOpen</animation>
             <animation effect="zoom" start="100,100" end="100,0" center="auto" time="200">WindowClose</animation>
@@ -1156,8 +1156,8 @@
             <top>105</top>
             <width>48</width>
             <height>24</height>
-            <texturefocus colordiffuse="button_focus" flipy="true">overlays/arrowdown.png</texturefocus>
-            <texturenofocus colordiffuse="button_focus" flipy="true">overlays/arrowdown.png</texturenofocus>
+            <texturefocus colordiffuse="FF12A0C7" flipy="true">arrowdown.png</texturefocus>
+            <texturenofocus colordiffuse="FF12A0C7" flipy="true">arrowdown.png</texturenofocus>
             <animation effect="zoom" start="100,0" end="100,100" center="auto" time="200" delay="10">VisibleChange</animation>
             <animation effect="zoom" start="100,0" end="100,100" delay="500" center="auto" time="200">WindowOpen</animation>
             <animation effect="zoom" start="100,100" end="100,0" center="auto" time="200">WindowClose</animation>
@@ -1172,8 +1172,8 @@
             <top>940</top>
             <width>48</width>
             <height>24</height>
-            <texturefocus colordiffuse="button_focus">overlays/arrowdown.png</texturefocus>
-            <texturenofocus colordiffuse="button_focus">overlays/arrowdown.png</texturenofocus>
+            <texturefocus colordiffuse="FF12A0C7">arrowdown.png</texturefocus>
+            <texturenofocus colordiffuse="FF12A0C7">arrowdown.png</texturenofocus>
             <animation effect="zoom" start="100,0" end="100,100" center="auto" time="200" delay="10">VisibleChange</animation>
             <animation effect="zoom" start="100,0" end="100,100" delay="500" center="auto" time="200">WindowOpen</animation>
             <animation effect="zoom" start="100,100" end="100,0" center="auto" time="200">WindowClose</animation>
@@ -1186,8 +1186,8 @@
             <top>105</top>
             <width>48</width>
             <height>24</height>
-            <texturefocus colordiffuse="button_focus" flipy="true">overlays/arrowdown.png</texturefocus>
-            <texturenofocus colordiffuse="button_focus" flipy="true">overlays/arrowdown.png</texturenofocus>
+            <texturefocus colordiffuse="FF12A0C7" flipy="true">arrowdown.png</texturefocus>
+            <texturenofocus colordiffuse="FF12A0C7" flipy="true">arrowdown.png</texturenofocus>
             <animation effect="zoom" start="100,0" end="100,100" center="auto" time="200" delay="10">VisibleChange</animation>
             <animation effect="zoom" start="100,0" end="100,100" delay="500" center="auto" time="200">WindowOpen</animation>
             <animation effect="zoom" start="100,100" end="100,0" center="auto" time="200">WindowClose</animation>
@@ -1202,8 +1202,8 @@
             <top>940</top>
             <width>48</width>
             <height>24</height>
-            <texturefocus colordiffuse="button_focus">overlays/arrowdown.png</texturefocus>
-            <texturenofocus colordiffuse="button_focus">overlays/arrowdown.png</texturenofocus>
+            <texturefocus colordiffuse="FF12A0C7">arrowdown.png</texturefocus>
+            <texturenofocus colordiffuse="FF12A0C7">arrowdown.png</texturenofocus>
             <animation effect="zoom" start="100,0" end="100,100" center="auto" time="200" delay="10">VisibleChange</animation>
             <animation effect="zoom" start="100,0" end="100,100" delay="500" center="auto" time="200">WindowOpen</animation>
             <animation effect="zoom" start="100,100" end="100,0" center="auto" time="200">WindowClose</animation>
@@ -1216,8 +1216,8 @@
             <top>105</top>
             <width>48</width>
             <height>24</height>
-            <texturefocus colordiffuse="button_focus" flipy="true">overlays/arrowdown.png</texturefocus>
-            <texturenofocus colordiffuse="button_focus" flipy="true">overlays/arrowdown.png</texturenofocus>
+            <texturefocus colordiffuse="FF12A0C7" flipy="true">arrowdown.png</texturefocus>
+            <texturenofocus colordiffuse="FF12A0C7" flipy="true">arrowdown.png</texturenofocus>
             <animation effect="zoom" start="100,0" end="100,100" center="auto" time="200" delay="10">VisibleChange</animation>
             <animation effect="zoom" start="100,0" end="100,100" delay="500" center="auto" time="200">WindowOpen</animation>
             <animation effect="zoom" start="100,100" end="100,0" center="auto" time="200">WindowClose</animation>
