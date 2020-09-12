@@ -584,7 +584,7 @@ class updates:
                 if not downloaded is None:
                     self.update_file = self.update_file.split('/')[-1]
                     if self.struct['update']['settings']['UpdateNotify']['value'] == '1':
-                        self.oe.notify(self.oe._(32363), self.oe._(32366))
+                        self.oe.notify(self.oe._(32363).encode('utf-8'), self.oe._(32366).encode('utf-8'))
                     shutil.move(self.oe.TEMP + 'update_file', self.LOCAL_UPDATE_DIR + self.update_file)
                     subprocess.call('sync', shell=True, stdin=None, stdout=None, stderr=None)
                     if silent == False:
