@@ -284,8 +284,8 @@ def _(code):
         curLang = read_setting("system", "language")
         if curLang is not None:
             lang_file = os.path.join(__cwd__, 'resources', 'language', str(curLang), 'strings.po')
-            with open(lang_file) as fp:
-                contents = fp.read().decode('utf-8').split('\n\n')
+            with open(lang_file, encoding='utf-8') as fp:
+                contents = fp.read().split('\n\n')
                 for strings in contents:
                     if str(code) in strings:
                         subString = strings.split('msgstr ')[1]
