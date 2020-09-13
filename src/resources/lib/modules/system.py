@@ -589,11 +589,9 @@ class system:
 
             restore_file_name = restore_file_path.split('/')[-1]
 
-            if not os.path.exists(self.RESTORE_DIR):
-                os.makedirs(self.RESTORE_DIR)
-            else:
+            if os.path.exists(self.RESTORE_DIR):
                 self.oe.execute('rm -rf %s' % self.RESTORE_DIR)
-                os.makedirs(self.RESTORE_DIR)
+            os.makedirs(self.RESTORE_DIR)
             folder_stat = os.statvfs(self.RESTORE_DIR)
             file_size = os.path.getsize(restore_file_path)
             free_space = folder_stat.f_frsize * folder_stat.f_bavail
