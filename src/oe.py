@@ -26,6 +26,8 @@ import hashlib, binascii
 from xml.dom import minidom
 import imp
 
+from xbmc import LOGDEBUG, LOGINFO, LOGWARNING, LOGERROR
+
 __author__ = 'LibreELEC'
 __scriptid__ = 'service.libreelec.settings'
 __addon__ = xbmcaddon.Addon(id=__scriptid__)
@@ -310,7 +312,7 @@ def dbg_log(source, text, level=4):
 
 def notify(title, message, icon='icon'):
     try:
-        dbg_log('oe::notify', 'enter_function', 0)
+        dbg_log('oe::notify', 'enter_function', LOGDEBUG)
         msg = 'Notification("%s", "%s", 5000, "%s/%s.png")' % (
             title,
             message[0:64],
@@ -318,15 +320,15 @@ def notify(title, message, icon='icon'):
             icon,
             )
         xbmc.executebuiltin(msg)
-        dbg_log('oe::notify', 'exit_function', 0)
+        dbg_log('oe::notify', 'exit_function', LOGDEBUG)
     except Exception as e:
         dbg_log('oe::notify', 'ERROR: (' + repr(e) + ')')
 
 
 def execute(command_line, get_result=0):
     try:
-        dbg_log('oe::execute', 'enter_function', 0)
-        dbg_log('oe::execute::command', command_line, 0)
+        dbg_log('oe::execute', 'enter_function', LOGDEBUG)
+        dbg_log('oe::execute::command', command_line, LOGDEBUG)
         if get_result == 0:
             process = subprocess.Popen(command_line, shell=True, close_fds=True)
             process.wait()
@@ -337,7 +339,7 @@ def execute(command_line, get_result=0):
             for line in process.stdout.readlines():
                 result = result + line.decode('utf-8')
             return result
-        dbg_log('oe::execute', 'exit_function', 0)
+        dbg_log('oe::execute', 'exit_function', LOGDEBUG)
     except Exception as e:
         dbg_log('oe::execute', 'ERROR: (' + repr(e) + ')')
 
@@ -404,10 +406,10 @@ def get_service_state(service):
 
 def set_service(service, options, state):
     try:
-        dbg_log('oe::set_service', 'enter_function', 0)
-        dbg_log('oe::set_service::service', repr(service), 0)
-        dbg_log('oe::set_service::options', repr(options), 0)
-        dbg_log('oe::set_service::state', repr(state), 0)
+        dbg_log('oe::set_service', 'enter_function', LOGDEBUG)
+        dbg_log('oe::set_service::service', repr(service), LOGDEBUG)
+        dbg_log('oe::set_service::options', repr(options), LOGDEBUG)
+        dbg_log('oe::set_service::state', repr(state), LOGDEBUG)
         config = {}
         changed = False
 
@@ -440,7 +442,7 @@ def set_service(service, options, state):
             if service in defaults._services:
                 for svc in defaults._services[service]:
                     execute('systemctl restart %s' % svc)
-        dbg_log('oe::set_service', 'exit_function', 0)
+        dbg_log('oe::set_service', 'exit_function', LOGDEBUG)
     except Exception as e:
         dbg_log('oe::set_service', 'ERROR: (' + repr(e) + ')')
 
@@ -576,9 +578,9 @@ def set_busy(state):
                 __busy__ = __busy__ + 1
             else:
                 __busy__ = __busy__ - 1
-            dbg_log('oe::set_busy', '__busy__ = ' + str(__busy__), 0)
+            dbg_log('oe::set_busy', '__busy__ = ' + str(__busy__), LOGDEBUG)
     except Exception as e:
-        dbg_log('oe::set_busy', 'ERROR: (' + repr(e) + ')', 4)
+        dbg_log('oe::set_busy', 'ERROR: (' + repr(e) + ')', LOGERROR)
 
 
 def start_service():
