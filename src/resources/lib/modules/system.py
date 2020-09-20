@@ -409,7 +409,7 @@ class system:
                 arrLayouts.sort()
                 arrTypes = None
             elif os.path.exists(self.KEYBOARD_INFO):
-                objXmlFile = open(self.KEYBOARD_INFO, 'r')
+                objXmlFile = open(self.KEYBOARD_INFO, 'r', encoding='utf-8')
                 strXmlText = objXmlFile.read()
                 objXmlFile.close()
                 xml_conf = minidom.parseString(strXmlText)
