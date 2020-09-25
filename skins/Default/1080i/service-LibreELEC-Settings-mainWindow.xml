@@ -1225,5 +1225,19 @@
             <onclick>PageUp(1300)</onclick>
             <visible>Container(1300).HasPrevious + Control.IsVisible(1300)</visible>
         </control>
+
+        <!-- Mouse back button -->
+        <control type="button" id="1999">
+            <left>1800</left>
+            <top>980</top>
+            <width>48</width>
+            <height>48</height>
+            <texturefocus>icon_button_back.png</texturefocus>
+            <texturenofocus colordiffuse="71FFFFFF">icon_button_back.png</texturenofocus>
+            <onclick>Back</onclick>
+            <visible>system.getbool(input.enablemouse)</visible>
+            <visible>true</visible>
+            <font></font>
+        </control>
     </controls>
 </window>
