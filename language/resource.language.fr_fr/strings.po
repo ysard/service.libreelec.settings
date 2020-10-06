@@ -139,16 +139,15 @@ msgid ""
 msgstr "Envoyer les fichiers de configuration de /flash, kodi_crash.log, kernel log et Samba vers http://ix.io et afficher l'URL raccourcie"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Activer cette option désactivera les périphériques bluetooth durant les phases d'économies d'énergie"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr "Changez à ON pour activer le service Bluetooth"
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Créer une archive tar qui contient tout les paramètres de configuration de @DISTRONAME@ et Kodi, ainsi que les bases de données et les miniatures. Les fichiers sont sauvegardés dans /storage/backups"
+"/storage/backup/"
+msgstr "Créer une archive tar qui contient tout les paramètres de configuration de @DISTRONAME@ et Kodi, ainsi que les bases de données et les miniatures. Les fichiers sont sauvegardés dans /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "Définir le mot de passe SSH"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr "Activer un NIP pour accéder aux paramètres @DISTRONAME@"
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr "Changer le NIP de verrouillage pour accéder aux paramètres @DISTRONAME@"
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "Vérifier qu'une nouvelle version est disponible enverra la distribution installée, le projet, le type de CPU, et la version au serveur. Ces données sont aussi utilisées pour des statistiques basiques pour le projet. Pour continuer à vérifier les mises à jour sans envoyer les statistiques, désactivez cette option."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Services"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Sélectionnez une action"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Mises à jour"
+msgid "OS Updates"
+msgstr "Mises à jour OS"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "Versions disponibles"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Envoyer les statistiques"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr "Mises à jour de Firmware"
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr "La mise à jour sera effective une fois que le système sera redémarré."
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr "EEPROM Bootloader"
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Mettre à jour le chargeur de démarrage EEPROM du Raspberry Pi à la dernière version. Cette option sera automatiquement désactivée après avoir redémarré. Redémarrez le système pour prendre en compte les mises à jour."
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr "Firmware VIA USB3"
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Mettre à jour le micrologiciel USB3 Raspberry Pi à la dernière version. Cette option sera automatiquement désactivée après avoir redémarré. Redémarrez le système pour prendre en compte les mises à jour."
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr "mise à jour de %s à %s"
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr "à jour: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "URL invalide"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "NIP de verrouillage"
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr "Activer le verrouillage NIP des paramètres @DISTRONAME@"
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr "Changer le verrouillage NIP des paramètres @DISTRONAME@"
+
 msgctxt "#32196"
 msgid "About"
 msgstr "À propos"
@@ -663,7 +734,7 @@ msgstr "Annuler"
 
 msgctxt "#32213"
 msgid "Keep Existing"
-msgstr "Continue d'exister"
+msgstr "Garder l'existant"
 
 msgctxt "#32214"
 msgid "Set Password"
@@ -699,7 +770,7 @@ msgstr "Mot de passe modifié !"
 
 msgctxt "#32223"
 msgid "The SSH password has been successfully changed."
-msgstr "Le mot de passe a été modifié avec succès."
+msgstr "Le mot de passe SSH a été modifié avec succès."
 
 msgctxt "#32224"
 msgid "Unknown error!"
@@ -708,6 +779,66 @@ msgstr "Erreur inconnue !"
 msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Il y a eu une erreur durant le processus.[CR]Le mot de passe SSH n'a pas été modifié."
+
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "Entrez un nouveau NIP à 4 chiffres"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "Rentrez le NIP à nouveau"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "Erreur - les code NIP ne correspondent pas!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr "Verrouillage NIP des paramètres @DISTRONAME@ pas configuré.[CR][CR]Veuillez essayer à nouveau."
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr "Verrouillage NIP des paramètres @DISTRONAME@ configuré."
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "Erreur - le code NIP n'a pas 4 chiffres!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "NIP incorrect!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr " tentatives restantes."
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "Vous avez entré un NIP incorrect trop de fois.[CR][CR]Vous devrez attendre 5 minutes avant d'essayer à nouveau."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr "Paramètres @DISTRONAME@ verrouillés!"
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr "Domaine réglementaire des communications sans fil"
 
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
@@ -751,7 +882,7 @@ msgstr "Afin de télécharger les fonds d'écran, bannières et miniatures de vo
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Précédent"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -763,7 +894,7 @@ msgstr "Les réseaux suivants sont disponibles :"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Langue"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -805,7 +936,7 @@ msgid ""
 " @DISTRONAME@ as much as we've enjoyed building it. If you need any more "
 "help, you can find links to our support forum along with latest news at our "
 "website."
-msgstr ""
+msgstr "Votre installation de @DISTRONAME@ est terminée et vous allez entrer dans KODI où vous pourrez paramétrer vos bibliothèques de médias. Pour vous aider, un guide est disponible à wiki.kodi.tv[CR][CR]@DISTRONAME@ est développé par une équipe dédiée de développeurs qui le font sur leur temps libre. Même si le projet est basé sur le volontariat, nous payons notre bande passante et les ressources de développement, aussi, si vous trouvez @DISTRONAME@ utile, nous apprécierons votre donation, quelque soit le montant. [CR][CR]Enfin, nous espérons que vous apprécierez l'utilisation de KODI autant que nous avons apprécié son développement. Si vous avez besoin d'aide, vous trouverez des liens dans notre forum de support ainsi que les dernières nouvelles sur notre site web."
 
 msgctxt "#32319"
 msgid "Cron"
