@@ -139,16 +139,15 @@ msgid ""
 msgstr "Skicka bootfiler från /flash, kodi_crash.log, kernel.log and Samba konfiguration till http://ix.io, och visa en kort-URL"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "När inställningen är PÅ och kommer blåtandsenheter inaktiveras vid strömsparläge"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr "Välj PÅ för att aktivera Bluetooth tjänsten"
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Skapa ett tar-arkiv som innehåller alla @DISTRONAME@- och Kodi-inställningar, databaser och miniatyrbilder. Backupfilerna lagras i /storage/backups"
+"/storage/backup/"
+msgstr "Skapa ett tar-arkiv som innehåller alla @DISTRONAME@- och Kodi-inställningar, databaser och miniatyrbilder. Backupfilerna lagras i /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "Ställ in lösenord för SSH"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr "Aktivera PIN-kod för @DISTRONAME@-inställningar"
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr "Ändra PIN-kodslås för åtkomst till @DISTRONAME@-inställningar"
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr "Åsidosätt regelverk för trådlösa radioegenskaper (kanaler och sändningsstyrka) för att matcha landets lagar eller din routerkonfiguration"
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "När kontrollen görs skickas information om; Installerad distribution, Projekt, CPU-arkitektur och version till uppdaterings-servern. Informationen används även för att rapportera statistik till projektet. För att uppdatera utan att skicka statistiken, kan du sätta inställningen till AV."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr "Ange timeout (i minuter) innan enheten kopplas bort (standard är 0 för ingen timeout). Inställningen gäller för enheter som har \"Aktivera Standby\" aktiverat i LibreELEC-inställningarna för enheternas kontextmeny."
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Tjänster"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Välj åtgärd"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Uppdateringar"
+msgid "OS Updates"
+msgstr "OS Uppdateringar"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "Tillgängliga versioner"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Skicka statistik"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr "Firmware uppdateringar"
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr "Uppdateringen kommer genomföras när systemet startas om."
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr "Bootloader EEPROM"
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Uppdatera Raspberry Pi's bootloader EEPROM till senaste versionen. Denna inställning är automatiskt avstängd efter omstart. Starta om systemet för att lägga på uppdateringen."
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr "VIA USB3 Firmware"
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Uppdatera Raspberry Pi VIA USB3 firmware till senaste versionen. Denna inställning är automatiskt avstängd efter omstart. Starta om systemet för att lägga på uppdateringen."
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr "uppdatering från %s till %s"
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr "Aktuell: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Ogiltig URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "PIN-kodslås"
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr "Aktivera PIN-kodslås för @DISTRONAME@-inställningar"
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr "Ändra inställningar för @DISTRONAME@ PIN-kodslås"
+
 msgctxt "#32196"
 msgid "About"
 msgstr "Om"
@@ -709,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Det blev ett fel under processen. [CR]SSH lösenordet är oförändrat."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "Ange ny 4-siffrors PIN-kod"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "Ange PIN-kod igen"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "Fel - PIN-koderna är olika!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr "@DISTRONAME@-inställningar för PIN-kodslås har inte uppdaterats.[CR][CR]Försök igen."
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr "@DISTRONAME@-inställningar för PIN-kodslås har uppdaterats."
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr "Dina @DISTRONAME@-inställningar för PIN-lås har satts till:"
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "Fel: PIN-koden bestod inte av 4 siffror!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr "@DISTRONAME@-inställningar är låsta[CR]Ange 4 siffrors PIN"
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "Fel PIN-kod!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr "försök kvarstår."
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "Du har angivit fel PIN-kod för många gånger.[CR][CR]Du kommer behöva vänta 5 minuter innan du kan försöka igen."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr "@DISTRONAME@-inställningar är låsta!"
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr "Tid innan PIN kan anges på nytt: %02d:%02d[CR][CR]För många tidigare felaktiga försök."
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr "Wireless Regulatory Domain"
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "Välkommern till @DISTRONAME@"
@@ -751,7 +882,7 @@ msgstr "För att ladda ned bakgrundsbilder, banners och miniatyrer  till dina TV
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Föregående"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -763,7 +894,7 @@ msgstr "Följande nätverk finns för närvarande tillgängliga:"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Språk:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -1035,3 +1166,7 @@ msgstr "Home"
 msgctxt "#32399"
 msgid "Public"
 msgstr "Public"
+
+msgctxt "#32400"
+msgid "Idle Timeout"
+msgstr "Timeout"
