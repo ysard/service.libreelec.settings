@@ -66,7 +66,7 @@ msgctxt "#700"
 msgid ""
 "Configure a hostname, keyboard type, perform a reset, update, or backups and"
 " restores"
-msgstr "Задайте име на устройството, тип на клавиатурата, нулирайте, актуализирайте, направете резервно копие или възстановете"
+msgstr "Задайте име на устройството, тип на клавиатурата, нулирайте настройките, актуализирайте, направете резервно копие или възстановете старо копие"
 
 msgctxt "#701"
 msgid "Configure network startup options, NTP and VPNs"
@@ -103,11 +103,11 @@ msgstr "Задайте име на устройството за Вашата @D
 
 msgctxt "#711"
 msgid "Configure the 1st keyboard software layout"
-msgstr "Задайте първа клавишна подредба на софтуерната клавиатурата"
+msgstr "Първа клавишна подредба на софтуерната клавиатурата"
 
 msgctxt "#712"
 msgid "Configure the 2nd keyboard software layout"
-msgstr "Задайте втора клавишна подредба на софтуерната клавиатурата"
+msgstr "Втора клавишна подредба на софтуерната клавиатурата"
 
 msgctxt "#713"
 msgid "Configure the physical keyboard type"
@@ -130,25 +130,24 @@ msgctxt "#718"
 msgid ""
 "Send boot config files from /flash, kodi.log, kernel log and Samba configs "
 "to http://ix.io, and display the short URL"
-msgstr "Изпращайте конфигурационните файлове за зареждане от /flash, kodi.log, kernel log, журнала на ядрото и конфигурациите на Samba в http://ix.io и показвайте краткия URL адрес"
+msgstr "Изпраща конфигурационните файлове от /flash, журналите kodi.log, kernel, и конфигурацията на Samba в http://ix.io. След това показва кратък URL адрес за достъп до качените данни"
 
 msgctxt "#719"
 msgid ""
 "Send boot config files from /flash, kodi_crash.log, kernel log and Samba "
 "configs to http://ix.io, and display the short URL"
-msgstr "Изпращайте конфигурационните файлове за зареждане от /flash, kodi_crash.log, kernel log, журнала на ядрото и Samba configs на http://ix.io и показвайте краткия URL адрес"
+msgstr "Изпраща конфигурационните файлове от /flash, журналите kodi.log, kernel, и конфигурацията на Samba в http://ix.io. След това показва кратък URL адрес за достъп до качените данни"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Включете и Bluetooth устройствата ще бъдат изключвани при активиране на енергоспестяващ режим"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr "Включете за да активирате Bluetooth"
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Създава .tar архив съдържащ всички настройки на @DISTRONAME@ и Kodi, бази данни и миниатюри. Резервните копия се съхраняват в /storage/backups"
+"/storage/backup/"
+msgstr "Създава .tar архив съдържащ всички настройки на @DISTRONAME@ и Kodi, бази данни и миниатюри. Резервните копия се съхраняват в /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -170,7 +169,7 @@ msgstr "[COLOR FFFF0000]HARD RESET[/COLOR]\nНулира настройките 
 
 msgctxt "#726"
 msgid "Enable or disable support for Wireless (WLAN) networks"
-msgstr "Включване или изключване поддръжката за безжични (WLAN) мрежи"
+msgstr "Включва или изключва поддръжката за безжични (WLAN) мрежи"
 
 msgctxt "#727"
 msgid ""
@@ -241,12 +240,12 @@ msgctxt "#743"
 msgid ""
 "Set to ON if you have copied private SSH keys to your HTPC and would like to"
 " improve security by disabling SSH username and password authentication."
-msgstr "Включете ако сте копирали частните SSH ключове в LibreELEC системата и желаете да повишите нивото на сигурност, като избегнете ползването на потребителско име и парола."
+msgstr "Включете ако сте копирали SSH ключове в LibreELEC и желаете да повишите нивото на сигурност, като избегнете ползването на потребителско име и парола."
 
 msgctxt "#744"
 msgid ""
 "Set to ON to enable the Avahi (Zeroconf/Bonjour) network discovery service"
-msgstr "Включете за да активирате услугата Avahi (Zeroconf/Bonjour) за автоматично откриване на устройства, част от мрежата към която сте свързани"
+msgstr "Включете за да активирате услугата Avahi (Zeroconf/Bonjour) за автоматично откриване на устройства в мрежата"
 
 msgctxt "#745"
 msgid "Set to ON to enable the cron daemon"
@@ -254,7 +253,22 @@ msgstr "Включете за да активирате Cron демона"
 
 msgctxt "#746"
 msgid "Set the password for SSH"
-msgstr "Задаване на SSH парола"
+msgstr "Задайте SSH парола"
+
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
 
 msgctxt "#750"
 msgid "750"
@@ -329,7 +343,14 @@ msgid ""
 "CPU Arch and Version to the update server. This data is also used to report "
 "basic statistics for the project. To continue checking for updates while "
 "opting-out of stats reporting, disable this option."
-msgstr "Проверката за нова версия изпраща информация за  инсталираната версия, дистрибуцията, проекта и архитектурата на процесора до сървъра за актуализиране. Данните се използват и за генериране на  статистически доклади. Деактивирайте опцията ако желаете да проверявате за актуализации, но не желаете да бъдете част статистическите доклади."
+msgstr "Проверката за нова версия изпраща информация за инсталираната версия, дистрибуцията, проекта и архитектурата на процесора до сървъра за актуализиране. Данните се ползват и за генериране на  статистически доклади. Деактивирайте опцията ако желаете да проверявате за актуализации, но не желаете да изпращате данни за статистическите доклади."
+
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
 
 msgctxt "#32001"
 msgid "Services"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Изберете действие"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Актуализации"
+msgid "OS Updates"
+msgstr "Актуализации за операционната система"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -393,7 +414,45 @@ msgstr "Налични версии"
 
 msgctxt "#32021"
 msgid "Submit Statistics"
-msgstr "Изпратете статистически данни"
+msgstr "Изпращане на статистически данни"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr "Актуализации за фърмуера"
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr "Актуализирането ще се извърши след рестартиране на системата."
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr ""
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr ""
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Невалиден URL адрес"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "Заключване с ПИН"
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
 msgctxt "#32196"
 msgid "About"
 msgstr "Относно"
@@ -625,7 +696,7 @@ msgstr "Ползване на удостоверяване с парола за 
 
 msgctxt "#32203"
 msgid "Disable SSH Password"
-msgstr "Без парола за SSH достъп"
+msgstr "Забраняване на SSH достъпа чрез парола"
 
 msgctxt "#32204"
 msgid "Enable Samba"
@@ -709,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Възникна грешка.[CR]SSH паролата не е променена."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "Въведете нов 4 цифрен ПИН"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "Въведете повторно"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "Грешка - ПИН кодовете не съвпадат!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr ""
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr ""
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "Грека - ПИН кодът трябва да съдържа 4 цифти!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr "@DISTRONAME@ Настройките са заключени[CR]Въведете 4 цифрен код"
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "Грешен ПИН!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr ""
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "Няколко пъти въведохте грешен ПИН.[CR][CR]Ще можете да опитанте отново след 5 минути."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr ""
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr "Ще можете да въведете ПИН код след: %02d:%02d[CR][CR]Въвели сте няколко пъти грешен ПИН код."
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr ""
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "Добре дошли в @DISTRONAME@"
@@ -751,7 +882,7 @@ msgstr "За свалянето на изображения (плакати, б�
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Предишен"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -875,7 +1006,7 @@ msgstr "Въведете следния код на вашето устройс�
 
 msgctxt "#32344"
 msgid "Enable Bluetooth"
-msgstr "Включване на Bluetooth"
+msgstr "Включи Bluetooth"
 
 msgctxt "#32346"
 msgid "Bluetooth is disabled"
@@ -939,15 +1070,15 @@ msgstr "Прогрес за създаване на резервното коп�
 
 msgctxt "#32376"
 msgid "Submit Log"
-msgstr "Изпрати журнала"
+msgstr "Изпращане на журналите"
 
 msgctxt "#32377"
 msgid "Upload latest Kodi log and configs, and view the short URL"
-msgstr "Качете последния журнал и настройки на Kodi и прегледайте краткия URL адрес"
+msgstr "Качване на журнала, настройките на Kodi и преглед на URL адреса"
 
 msgctxt "#32378"
 msgid "Upload latest Kodi crash log and configs, and view the short URL"
-msgstr "Качете последния журнал за срива и настройки на Kodi и прегледайте краткия URL адрес"
+msgstr "Качване журнала (за сривове), настройките на Kodi и преглед на URL адреса"
 
 msgctxt "#32379"
 msgid "There is not enough free storage space to continue!"
@@ -973,11 +1104,11 @@ msgstr "Възпроизвеждане на файловете?"
 
 msgctxt "#32384"
 msgid "OBEX Enabled"
-msgstr "OBEX е включен"
+msgstr "Включи OBEX"
 
 msgctxt "#32385"
 msgid "OBEX Upload Folder"
-msgstr "OBEX папка за качване"
+msgstr "Папка за файловете качени чрез OBEX"
 
 msgctxt "#32386"
 msgid "Keyboard Layout Variant #1"
@@ -1035,3 +1166,7 @@ msgstr "Домашен режим"
 msgctxt "#32399"
 msgid "Public"
 msgstr "Публичен режим"
+
+msgctxt "#32400"
+msgid "Idle Timeout"
+msgstr ""

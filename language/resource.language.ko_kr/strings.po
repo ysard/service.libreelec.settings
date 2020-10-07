@@ -139,16 +139,15 @@ msgid ""
 msgstr "/flash, kodi_crash.log, kernel.log, Samba 부트 설정 파일들을 http://ix.io 에 올리고 단축 URL을 표시합니다"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "절전 모드에서 블루투스 장치를 사용하지 않으려면 ON으로 설정합니다"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr "블루투스 서비스를 사용하려면 ON으로 설정합니다"
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "모든 Kodi와 @DISTRONAME@ 설정, 데이터베이스, 썸네일을 tar로 묶습니다. 백업 파일은 /storage/backups에 저장됩니다"
+"/storage/backup/"
+msgstr "모든 Kodi와 @DISTRONAME@ 설정, 데이터베이스, 썸네일을 tar로 묶습니다. 백업 파일은 /storage/backup/에 저장됩니다"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "SSH 비밀번호 설정"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr "@DISTRONAME@ 설정하는 PIN 사용"
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr "@DISTRONAME@ 설정하는 PIN 잠금 바꾸기"
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr "무선 라우터의 설정(채널과 전송 세기)이 현지 규정이나 국가 설정에 맞도록 무선 규약 도메인을 덮어씁니다."
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "새 버전 확인은 설치된 배포판, 프로젝트, CPU 아키텍처와 버전을 업데이트 서버에 보냅니다. 이 데이터는 프로젝트를 위한 기초 통계에도 쓰입니다. 통계 보고를 하지 않고 업데이트를 계속하려면 이 옵션을 끕니다."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr "장치 연결이 끊어질 때까지 가동되지 않은 시간(분)을 정합니다 (기본 0은 중단 시간 없음). 장치 연결 상황 메뉴의  \"대기시간 사용\"을 활성화한 장치에 적용됩니다. "
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "서비스"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "동작 선택"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "업데이트"
+msgid "OS Updates"
+msgstr "OS 업데이트"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "사용가능한 버전"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "통계 전송"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr "펌웨어 업데이트"
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr "시스템을 다시 시작하면 바로 업데이트됩니다."
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr "EEPROM 부트로더"
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "라즈베리 파이 EEPROM 부트로더를 최신 버전으로 업데이트합니다. 이 옵션은 리부팅 후에 후에 사용할 수 없게 됩니다. 시스템을 다시 시작하면 바로 업데이트됩니다."
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr "VIA USB3 펌웨어"
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "라즈베리 파이 VIA USB3 펌웨어를 최신 버전으로 업데이트합니다. 이 옵션은 리부팅 후에 사용할 수 없게 됩니다. 시스템을 다시 시작하면 바로 업데이트됩니다."
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr "%s에서%s로 업데이트"
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr "최신: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "잘못된 URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "PIN 잠금"
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr "@DISTRONAME@ 설정의 PIN 잠금 사용"
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr "@DISTRONAME@ 설정의 PIN 잠금 바꾸기"
+
 msgctxt "#32196"
 msgid "About"
 msgstr "정보"
@@ -709,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "과정에서 오류가 있었습니다.[CR]SSH 비밀번호가 바뀌지 않았습니다."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "새로운 4자리 PIN 입력"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "PIN 다시 입력"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "오류 - PIN 코드 다름!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr "@DISTRONAME@ 설정의 PIN 잠금 안 됨.[CR][CR]다시 합니다."
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr "@DISTRONAME@ 설정의 PIN 잠금."
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr "@DISTRONAME@ 설정 PIN 잠금:"
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "오류 - PIN 코드가 4자리가 아님!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr "@DISTRONAME@ 설정 잠김[CR]4 자리 PIN 입력"
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "PIN 틀림!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr "머무름."
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "틀린 PIN을 너무 많이 입력하였습니다.[CR][CR]다시 하려면 5분을 기다려야 합니다."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr "@DISTRONAME@ 설정 잠김!"
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr "PIN 입력까지 남은 시간: %02d:%02d[CR][CR]이전 시도 모두 실패함."
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr "무선 규약 도메인"
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "@DISTRONAME@에 환영합니다"
@@ -751,7 +882,7 @@ msgstr "영화와 TV 쇼의 배경, 배너, 섬네일을 내려 받거나 유튜
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "이전"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -763,7 +894,7 @@ msgstr "사용가능한 네트워크 :"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "언어:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -875,7 +1006,7 @@ msgstr "장치에 아래 키를 입력합니다."
 
 msgctxt "#32344"
 msgid "Enable Bluetooth"
-msgstr "블르투스 사용"
+msgstr "블루투스 사용"
 
 msgctxt "#32346"
 msgid "Bluetooth is disabled"
@@ -1035,3 +1166,7 @@ msgstr "집"
 msgctxt "#32399"
 msgid "Public"
 msgstr "공용"
+
+msgctxt "#32400"
+msgid "Idle Timeout"
+msgstr "가동되지 않은 시간"

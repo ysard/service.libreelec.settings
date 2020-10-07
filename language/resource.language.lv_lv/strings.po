@@ -4,7 +4,6 @@
 # Addon Provider: LibreELEC
 msgid ""
 msgstr ""
-"Project-Id-Version: LibreELEC Settings Add-on\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -140,16 +139,15 @@ msgid ""
 msgstr "/flash boot konfigurācijas faila, kodi_crash.log, kodola žurnāla un Samba konfigurācijas nosūtīšana uz http://ix.io un īsā URL attēlošana"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Ieslēdzot Bluetooth ierīces taupīšanas režīmā tiks atspējotas"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr ""
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Izveidojiet visu @DISTRONAME@ un Kodi konfigurācijas iestatījumu, datu bāzu un satura sīktēlu tar arhīvu. Rezerves faili tiks saglabāti /storage/backups"
+"/storage/backup/"
+msgstr "Izveidojiet visu @DISTRONAME@ un Kodi konfigurācijas iestatījumu, datu bāzu un satura sīktēlu tar arhīvu. Rezerves faili tiks saglabāti /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -257,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "SSH paroles iestatīšana"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr "Iespējot @DISTRONAME@ iestatījumu piekļuves PIN kodu"
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr "Mainīt @DISTRONAME@ iestatījumu piekļuves PIN kodu"
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -332,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "Jaunās versijas pārbaude atjauninājumu serverim iesniegs informāciju par instalēto distributīvu, projekta versiju, CPU arhitektūru un versiju. Šie dati arī tiek izmantoti projekta pamata statistikai. Lai turpinātu pārbaudīt atjauninājumus, atsakoties no statistikas ziņojumiem, atspējojiet šo opciju."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Servisi"
@@ -361,8 +381,8 @@ msgid "Select Action"
 msgstr "Darbības izvēle"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Atjauninājumi"
+msgid "OS Updates"
+msgstr ""
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -395,6 +415,44 @@ msgstr "Pieejamās versijas"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Statistikas nosūtīšana"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr ""
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr ""
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr ""
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -604,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Nederīgs URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "PIN bloķēšana"
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr "Iespējot @DISTRONAME@ iestatījumu PIN bloķēšanu"
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr "Mainīt @DISTRONAME@ iestatījumu PIN bloķēšanu"
+
 msgctxt "#32196"
 msgid "About"
 msgstr "Par"
@@ -710,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Procesa laikā radās kļūda.[CR]SSH parole nav nomainīta."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "Ievadiet jaunu 4 ciparu PIN kodu"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "Atkārtoti ievadiet PIN kodu"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "Kļūda - PIN kodi nesakrīt!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr "@DISTRONAME@ iestatījumu PIN bloķēšana nav iestatīta.[CR][CR]Lūdzu, mēģiniet vēlreiz."
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr "@DISTRONAME@ iestatījumu PIN bloķēšana iestatīta."
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "Kļūda - PIN kods nav 4 cipari!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "Nepareizs PIN!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr " mēģinājumi atlikuši."
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "Pārāk daudz reižu ir ievadīts nepareizs PIN kods.[CR][CR]Pagaidiet 5 minūtes un mēģiniet vēlreiz."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr "@DISTRONAME@ iestatījumi bloķēti!"
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr ""
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "Sveicināti @DISTRONAME@"
@@ -752,7 +882,7 @@ msgstr "Lai lejupielādētu filmu un seriālu fonus, banerus, sīktēlus un stra
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Iepriekšējais"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -764,7 +894,7 @@ msgstr "Pašlaik ir pieejami šādi tīkli:"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Valoda:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -1036,3 +1166,7 @@ msgstr "Mājas"
 msgctxt "#32399"
 msgid "Public"
 msgstr "Publisks"
+
+msgctxt "#32400"
+msgid "Idle Timeout"
+msgstr ""

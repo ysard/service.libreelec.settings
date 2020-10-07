@@ -139,16 +139,15 @@ msgid ""
 msgstr "Отправьте файлы конфигурации загрузки из /flash, kodi_crash.log, kernel log и настроек Samba на http://ix.io и отобразите короткий URL"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Включите для автоматического отключения Bluetooth устройств при простоях для экономии энергии"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr "Включение службы Bluetooth"
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Создание tar-архива со всеми настройками @DISTRONAME@ и Kodi, всеми базами данных и миниатюрами. Резервные копии будут сохранены в /storage/backups"
+"/storage/backup/"
+msgstr "Создание tar-архива со всеми настройками @DISTRONAME@ и Kodi, всеми базами данных и миниатюрами. Резервные копии будут сохранены в /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "Установите пароль для SSH"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr "Включить блокировку по PIN для доступа к настройкам @DISTRONAME@"
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr "Изменить PIN для доступа к настройкам @DISTRONAME@"
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr "Переопределить радиочастотный регион, чтобы характеристики приемопередатчика (список каналов и мощность) соответствовали местным законам или настройкам вашего роутера."
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "Проверка новой версии отправит установленный дистрибутив, Project, CPU Arch и Version на сервер обновлений. Эти данные также используются для составления базовой статистики по проекту. Чтобы продолжить проверку обновлений при отключении статистики, отключите эту опцию."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr "Установить таймаут отключения неактивных устройств. Задаётся в минутах. По умолчанию отключен значением 0. Применяется к устройствам, для которых включена опция \"Включить режим ожидания\" в контекстном меню \"Соединение\" устройства LibrELEC."
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Службы"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Выберите действие"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Обновления"
+msgid "OS Updates"
+msgstr "Обновления операционной системы"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "Доступные версии"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Отправить статистику"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr "Обновления прошивки"
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr "Обновление произойдет после перезагрузки системы."
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr "Загрузчик EEPROM"
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Обновить загрузчик Raspberry Pi до последней версии. Эта опция автоматически отключается после перезагрузки. Перезагрузите систему, чтобы применить обновление."
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr "Прошивка VIA USB3"
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Обновить прошивку VIA USB3 на Raspberry Pi до последней версии. Эта опция автоматически отключается после перезагрузки. Перезагрузите систему, чтобы применить обновление."
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr "Обновить %s до %s"
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr "последняя версия: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Неверная ссылка"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "Блокировка по PIN "
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr "Включить PIN блокировку настроек @DISTRONAME@"
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr "Изменить установки PIN для настроек @DISTRONAME@"
+
 msgctxt "#32196"
 msgid "About"
 msgstr "Об LibreELEC"
@@ -709,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Во время процесса произошла ошибка.[CR]Пароль SSH не изменился."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "Введите PIN из 4 цифр"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "Повторите PIN"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "PIN-коды не совпадают!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr "@DISTRONAME@ PIN блокировка настроек не установлена.[CR][CR]Попробуйте снова."
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr "Установлен PIN на вход в настройки @DISTRONAME@."
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr "Ваш PIN для настроек @DISTRONAME@ установлен в значение:"
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "Ошибка - PIN не содержит 4 цифр!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr "Вход в настройки @DISTRONAME@ заблокирован[CR]Введите 4 цифры PIN-кода"
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "Некорректный PIN!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr "осталось попыток."
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "Вы ввели неверный PIN слишком много раз.[CR][CR]Теперь придётся подождать 5 минут до следующей попытки."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr "Настройки @DISTRONAME@ заблокированы!"
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr "Время до следующей возможности ввести PIN: %02d:%02d[CR][CR]Было слишком много ошибочных попыток."
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr "Радиочастотный регион"
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "Добро пожаловать в @DISTRONAME@"
@@ -727,7 +858,7 @@ msgstr "Этот мастер облегчит настройку при уст�
 
 msgctxt "#32303"
 msgid "Next"
-msgstr "Следующ."
+msgstr "Далее"
 
 msgctxt "#32304"
 msgid ""
@@ -751,7 +882,7 @@ msgstr "Для того, чтобы загружать фанарт, банне�
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Назад"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -763,7 +894,7 @@ msgstr "Доступны следующие сети:"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Язык:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -805,7 +936,7 @@ msgid ""
 " @DISTRONAME@ as much as we've enjoyed building it. If you need any more "
 "help, you can find links to our support forum along with latest news at our "
 "website."
-msgstr ""
+msgstr "Установка @DISTRONAME@ завершена и теперь вы можете войти в Kodi и настроить вашу медиатеку. Если вам необходима помощь, то вы можете найти инструкцию, доступную на сайте wiki.kodi.tv[CR][CR]@DISTRONAME@ разработана группой разработчиков, которые работают в свободное время. Даже будучи волонтерским проектом, мы все равно должны платить за интернет и ресурсы для разработки, поэтому, если вы сочтете @DISTRONAME@ полезным, мы всегда будем признательны за пожертвование любой суммы. Наконец, мы надеемся, что вам понравится использовать @DISTRONAME@ настолько, насколько нам нравится его разрабатывать. Если вам нужна дополнительная помощь, вы можете найти ссылки на наш форум поддержки вместе с последними новостями на нашем сайте."
 
 msgctxt "#32319"
 msgid "Cron"
@@ -1035,3 +1166,7 @@ msgstr "Главное меню"
 msgctxt "#32399"
 msgid "Public"
 msgstr "Общественные"
+
+msgctxt "#32400"
+msgid "Idle Timeout"
+msgstr "Таймаут неактивности"
