@@ -139,16 +139,15 @@ msgid ""
 msgstr "Lähetä käynnistystiedostot polusta /flash, kodi_crash.log, kernel log ja Samba-asetukset osoitteeseen http://ix.io ja näytä lyhennetty osoite"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Kytke päälle ja Bluetooth-laitteet kytketään pois virransäästötilan ollessa päällä"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr ""
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Luo tar-paketin, jossa on kaikki @DISTRONAME@:n ja Kodin asetukset, tietokannat ja tallennetut pienoiskuvat. Varmuuskopiopaketti tallennetaan polkuun /storage/backups"
+"/storage/backup/"
+msgstr "Luo tar-paketin, jossa on kaikki @DISTRONAME@:n ja Kodin asetukset, tietokannat ja tallennetut pienoiskuvat. Varmuuskopiopaketti tallennetaan polkuun /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "Aseta SSH-salasana"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr "Käytä PIN-koodia @DISTRONAME@:n asetusvalikkoon pääsemiseksi"
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr "Vaihda @DISTRONAME@:n asetusvalikon PIN-koodi"
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "Päivityksen tarkistaminen lähettää jakelun nimen, projektin nimen, prosessoriarkkitehtuurin ja versionumeron päivityspalvelimelle. Näitä perustietoja käytetään myös tilastointitarkoituksiin. Jos haluat tarkistaa päivitykset ilman tilastointia, ota tämä asetus pois käytöstä."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Palvelut"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Valitse toiminto"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Päivitykset"
+msgid "OS Updates"
+msgstr ""
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "Saatavilla olevat versiot"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Lähetä tilastointitiedot"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr "Päivitys tapahtuu, kun järjestelmä käynnistetään uudelleen."
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr "EEPROM:n käynnistyslatain"
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Päivittää Raspberry Pin EEPROM-piirillä olevan käynnistyslataimen uusimpaan versioon. Asetus menee automaattisesti pois päältä uudelleenkäynnistyksen jälkeen. Käynnistä järjestelmä uudelleen päivittääksesi."
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr "VIA USB3-ajurit"
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr "Päivittää Raspberry Pin VIA USB3-ajurit uusimpaan versioon. Asetus menee automaattisesti pois päältä uudelleenkäynnistyksen jälkeen. Käynnistä järjestelmä uudelleen päivittääksesi."
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Virheellinen URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr "PIN-koodi"
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr "Kysy PIN-koodia @DISTRONAME@:n asetusvalikossa"
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr "Vaihda @DISTRONAME@:n asetusvalikon PIN-koodi"
+
 msgctxt "#32196"
 msgid "About"
 msgstr "Tietoja"
@@ -708,6 +779,66 @@ msgstr "Tuntematon virhe!"
 msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Toimintoa suoritettaessa tapahtui virhe.[CR]SSH-salasanaa ei muutettu."
+
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr "Anna uusi PIN-koodi (4 numeroa)"
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr "Syötä PIN-koodi uudelleen"
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr "Virhe - PIN-koodit eivät täsmänneet!"
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr "@DISTRONAME@:n asetusten PIN-koodia ei ole asetettu.[CR][CR]Yritä uudelleen."
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr "@DISTRONAME@:n asetusvalikon PIN-koodi on luotu."
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr "Virhe - PIN-koodissa ei ollut 4:ä numeroa!"
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr "Väärä PIN-koodi!"
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr "yritystä jäljellä."
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr "Annoit väärän PIN-koodin liian monta kertaa.[CR][CR]Odota 5 minuuttia ennen uutta yritystä."
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr "@DISTRONAME@:n asetusvalikko on lukittu!"
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr ""
 
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"

@@ -139,16 +139,15 @@ msgid ""
 msgstr "将启动配置文件从/flash，kodi_crash.log，内核日志和Samba配置发送到http://ix.io，并显示短URL"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "设置为开启，蓝牙设备将在省电模式下被禁用"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr ""
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "创建一个包含所有@DISTRONAME@和Kodi配置设置，数据库和缩略图内容的tar归档文件。 备份文件将存储在/storage/backups中"
+"/storage/backup/"
+msgstr "创建一个包含所有@DISTRONAME@和Kodi配置设置，数据库和缩略图内容的tar归档文件。 备份文件将存储在/storage/backup/中"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "为SSH设定密码"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "检查新版本会将已安装的分发，项目，CPU Arch和版本提交给更新服务器。此数据还用于报告项目的基本统计信息。要在选择退出统计信息报告时继续检查更新，请禁用此选项。"
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "服务"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "选择操作"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "升级"
+msgid "OS Updates"
+msgstr ""
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "可用版本"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "提交系统统计信息"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr ""
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr ""
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr ""
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "不可用的URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr ""
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
 msgctxt "#32196"
 msgid "About"
 msgstr "关于"
@@ -708,6 +779,66 @@ msgstr "出现未知错误！"
 msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "出现错误[CR]SSH密码尚未更改"
+
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr ""
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr ""
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr ""
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr ""
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr ""
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr ""
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr ""
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr ""
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr ""
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr ""
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr ""
 
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"

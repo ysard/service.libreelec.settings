@@ -103,11 +103,11 @@ msgstr "Nakonfigurujte názov hostiteľa vášho systému @DISTRONAME@. Toto sa 
 
 msgctxt "#711"
 msgid "Configure the 1st keyboard software layout"
-msgstr "Konfigurácia prvého rozloženia softvéru klávesnice"
+msgstr "Konfigurácia rozloženia klávesnice č. 1"
 
 msgctxt "#712"
 msgid "Configure the 2nd keyboard software layout"
-msgstr "Konfigurácia druhého rozloženia softvéru klávesnice"
+msgstr "Konfigurácia rozloženia klávesnice č. 2"
 
 msgctxt "#713"
 msgid "Configure the physical keyboard type"
@@ -139,16 +139,15 @@ msgid ""
 msgstr "Odošlite bootovacie konfiguračné súbory z /flash, kodi_crash.log, kernel log a Samba configs do http://ix.io a zobrazte krátku adresu URL"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Nastavte možnosť ZAPNUTÉ a zariadenia Bluetooth sa počas režimov šetrenia energie vypnú"
+msgid "Set to ON to enable the Bluetooth service"
+msgstr ""
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Vytvorte archív tarov, ktorý obsahuje všetky nastavenia konfigurácie @DISTRONAME@ a Kodi, databázy a obsah miniatúr. Záložné súbory budú uložené v priečinku /storage/backups"
+"/storage/backup/"
+msgstr "Vytvorte archív tarov, ktorý obsahuje všetky nastavenia konfigurácie @DISTRONAME@ a Kodi, databázy a obsah miniatúr. Záložné súbory budú uložené v priečinku /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "Nastaviť heslo pre SSH"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "Kontrola novej verzie odosiela nainštalovaný distribučný server, projekt, oblúk CPU a verziu servera na aktualizáciu. Tieto údaje sa používajú aj na oznamovanie základných štatistík projektu. Ak chcete pokračovať v kontrole aktualizácií pri zrušení štatistických prehľadov, zakážte túto možnosť."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Služby"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Zvoliť akciu"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Aktualizácie"
+msgid "OS Updates"
+msgstr ""
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "Dostupné verzie"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Odoslať štatistiku"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr ""
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr ""
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr ""
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Neplatné URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr ""
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
 msgctxt "#32196"
 msgid "About"
 msgstr "O programe"
@@ -709,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Počas procesu sa vyskytla chyba.[CR]SSH heslo ostáva nezmenené."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr ""
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr ""
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr ""
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr ""
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr ""
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr ""
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr ""
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr ""
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr ""
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr ""
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr ""
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "Vitajte v @DISTRONAME@"
@@ -747,7 +878,7 @@ msgid ""
 "TV shows and to stream online content from sites like YouTube, @DISTRONAME@ "
 "needs to be connected the Internet.[CR][CR]An Internet connection is also "
 "required for @DISTRONAME@ to automatically update itself."
-msgstr "Ak chcete prevziať pozadie, bannery a náhľady pre vaše filmy a televízne relácie a prehrať online obsah z webových stránok, ako je YouTube, musíte pripojiť @DISTRONAME@.[CR][CR]Pri @DISTRONAME@ sa vyžaduje aj internetové pripojenie sa automaticky aktualizuje."
+msgstr "Ak chcete prevziať pozadia, bannery a náhľady pre vaše filmy a televízne relácie a prehrať online obsah z webových stránok, ako je YouTube, @DISTRONAME@ sa musí pripojiť na internet.[CR][CR]@DISTRONAME@ vyžaduje internetové pripojenie aj pre automatické aktualizácie."
 
 msgctxt "#32307"
 msgid "Previous"
@@ -755,7 +886,7 @@ msgstr ""
 
 msgctxt "#32308"
 msgid "Hostname:"
-msgstr "Meno hosťa:"
+msgstr "Názov hostiteľa:"
 
 msgctxt "#32309"
 msgid "The following Networks are currently available:"
@@ -763,7 +894,7 @@ msgstr "K dispozícii sú tieto siete:"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Jazyk"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"

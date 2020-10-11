@@ -139,16 +139,15 @@ msgid ""
 msgstr "Send boot config-filer fra /flash, kodi_crash.log, kernel log og Samba konfigurerer til http://ix.io, og viser kort URL"
 
 msgctxt "#720"
-msgid ""
-"Set to ON and Bluetooth devices will be disabled during power-saving modes"
-msgstr "Sett til PÅ og Bluetooth-enheter vil deaktiveres under strømsparing modus."
+msgid "Set to ON to enable the Bluetooth service"
+msgstr ""
 
 msgctxt "#722"
 msgid ""
 "Create a tar archive containing all @DISTRONAME@ and Kodi configuration "
 "settings, databases and thumbnail content. Backup files will be stored in "
-"/storage/backups"
-msgstr "Lag et tar-arkiv som inneholder alle @DISTRONAME@ og Kodi konfigurasjonsinnstillinger, databaser og miniatyrbilde-innhold. Sikkerhetskopier blir lagret i /storage/backups"
+"/storage/backup/"
+msgstr "Lag et tar-arkiv som inneholder alle @DISTRONAME@ og Kodi konfigurasjonsinnstillinger, databaser og miniatyrbilde-innhold. Sikkerhetskopier blir lagret i /storage/backup/"
 
 msgctxt "#723"
 msgid ""
@@ -256,6 +255,21 @@ msgctxt "#746"
 msgid "Set the password for SSH"
 msgstr "Angi passordet for SSH"
 
+msgctxt "#747"
+msgid "Enable a PIN for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#748"
+msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
+msgstr ""
+
+msgctxt "#749"
+msgid ""
+"Overrride the Wireless Regulatory Domain so radio properties (channels and "
+"transmit power) comply with local laws or match the country configuration of"
+" your router."
+msgstr ""
+
 msgctxt "#750"
 msgid "750"
 msgstr "750"
@@ -331,6 +345,13 @@ msgid ""
 "opting-out of stats reporting, disable this option."
 msgstr "Ved å se etter en ny versjon, sendes den installerte distribusjonen, prosjektet, CPU-arken og versjonen til oppdateringsserveren. Disse dataene brukes også til å rapportere grunnleggende statistikk for prosjektet. Hvis du vil fortsette å sjekke for oppdateringer mens du velger bort statistikkrapportering, deaktiver dette alternativet."
 
+msgctxt "#773"
+msgid ""
+"Set the idle timeout (in minutes) before devices will be disconnected "
+"(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
+"has been activated in the LibreELEC device connection context menu."
+msgstr ""
+
 msgctxt "#32001"
 msgid "Services"
 msgstr "Tjenester"
@@ -360,8 +381,8 @@ msgid "Select Action"
 msgstr "Velg Handling"
 
 msgctxt "#32013"
-msgid "Updates"
-msgstr "Oppdateringer"
+msgid "OS Updates"
+msgstr ""
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,6 +415,44 @@ msgstr "Tilgjengelige Versjoner"
 msgctxt "#32021"
 msgid "Submit Statistics"
 msgstr "Send statistikk"
+
+msgctxt "#32022"
+msgid "Firmware Updates"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Updating will occur once the system is rebooted."
+msgstr ""
+
+msgctxt "#32024"
+msgid "Bootloader EEPROM"
+msgstr ""
+
+msgctxt "#32025"
+msgid ""
+"Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32026"
+msgid "VIA USB3 Firmware"
+msgstr ""
+
+msgctxt "#32027"
+msgid ""
+"Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
+" is automatically disabled after rebooting. Reboot the system to apply the "
+"update."
+msgstr ""
+
+msgctxt "#32028"
+msgid "update from %s to %s"
+msgstr ""
+
+msgctxt "#32029"
+msgid "up to date: %s"
+msgstr ""
 
 msgctxt "#32100"
 msgid "Connections"
@@ -603,6 +662,18 @@ msgctxt "#32191"
 msgid "Invalid URL"
 msgstr "Ugyldig URL"
 
+msgctxt "#32192"
+msgid "PIN lock"
+msgstr ""
+
+msgctxt "#32193"
+msgid "Enable @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
+msgctxt "#32194"
+msgid "Change @DISTRONAME@ Settings PIN Lock"
+msgstr ""
+
 msgctxt "#32196"
 msgid "About"
 msgstr "Om"
@@ -709,6 +780,66 @@ msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
 msgstr "Det oppsto en feil under prosessen.[CR]SSH-passordet er uendret."
 
+msgctxt "#32226"
+msgid "Enter new 4 digit PIN"
+msgstr ""
+
+msgctxt "#32227"
+msgid "Re-enter PIN"
+msgstr ""
+
+msgctxt "#32228"
+msgid "Error - PIN codes did not match!"
+msgstr ""
+
+msgctxt "#32229"
+msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
+msgstr ""
+
+msgctxt "#32230"
+msgid "@DISTRONAME@ Settings PIN lock set."
+msgstr ""
+
+msgctxt "#32231"
+msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
+msgstr ""
+
+msgctxt "#32232"
+msgid "Error - PIN code not 4 digits!"
+msgstr ""
+
+msgctxt "#32233"
+msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
+msgstr ""
+
+msgctxt "#32234"
+msgid "Incorrect PIN!"
+msgstr ""
+
+msgctxt "#32235"
+msgid " attempts remaining."
+msgstr ""
+
+msgctxt "#32236"
+msgid ""
+"You have entered an incorrect PIN too many times.[CR][CR]You will need to "
+"wait 5 minutes before trying again."
+msgstr ""
+
+msgctxt "#32237"
+msgid "@DISTRONAME@ Settings Locked!"
+msgstr ""
+
+msgctxt "#32238"
+msgid ""
+"Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
+" failed attempts."
+msgstr ""
+
+msgctxt "#32240"
+msgid "Wireless Regulatory Domain"
+msgstr ""
+
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
 msgstr "Velkommen til @DISTRONAME@"
@@ -751,7 +882,7 @@ msgstr "For å laste ned bakgrunner, bannere og miniatyrbilder for dine filmer o
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Forrige"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -763,7 +894,7 @@ msgstr "De følgende Nettverkene er tilgjengelige:"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Språk:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -805,7 +936,7 @@ msgid ""
 " @DISTRONAME@ as much as we've enjoyed building it. If you need any more "
 "help, you can find links to our support forum along with latest news at our "
 "website."
-msgstr ""
+msgstr "Din @DISTRONAME@ installasjonen er nå fullført, og du er i ferd med å legge inn Kodi hvor du kan sette opp mediebiblioteker. For hjelp med dette, sjekk ut guiden som er tilgjengelig på wiki.kodi.tv[CR] [CR]@DISTRONAME@ som er utviklet av et dedikert team av utviklere som bruker fritiden for å bidra. Selv om det er et frivillig prosjekt så må vi fortsatt betale for internett båndbredde og utviklingsressurser, så hvis du finner @DISTRONAME@ nyttig, setter vi stor pris på donasjon. [CR][CR] Til slutt håper vi at du liker å bruke @DISTRONAME@ så mye som vi har hatt glede av å utvikle den. Hvis du trenger mer hjelp kan du finne lenker til vårt supportforum sammen med de siste nyhetene på vår hjemmeside."
 
 msgctxt "#32319"
 msgid "Cron"
