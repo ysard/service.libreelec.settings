@@ -521,7 +521,7 @@ def download_file(source, destination, silent=False):
 
 def copy_file(source, destination, silent=False):
     try:
-        dbg_log('oe::copy_file', 'SOURCE: %s, DEST: %s' % (source, destination))
+        dbg_log('oe::copy_file', 'SOURCE: %s, DEST: %s' % (source, destination), LOGINFO)
 
         source_file = open(source, 'rb')
         destination_file = open(destination, 'wb')
