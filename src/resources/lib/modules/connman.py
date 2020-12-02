@@ -14,6 +14,8 @@ import threading
 import oeWindows
 import random
 import string
+import ravel
+from bus import BUS
 
 
 ####################################################################
@@ -1470,14 +1472,30 @@ class connman:
         def add_signal_receivers(self):
             try:
                 self.oe.dbg_log('connman::monitor::add_signal_receivers', 'enter_function', self.oe.LOGDEBUG)
-                self.signal_receivers.append(self.oe.dbusSystemBus.add_signal_receiver(self.propertyChanged, bus_name='net.connman',
-                                             dbus_interface='net.connman.Manager', signal_name='PropertyChanged', path_keyword='path'))
-                self.signal_receivers.append(self.oe.dbusSystemBus.add_signal_receiver(self.servicesChanged, bus_name='net.connman',
-                                             dbus_interface='net.connman.Manager', signal_name='ServicesChanged'))
-                self.signal_receivers.append(self.oe.dbusSystemBus.add_signal_receiver(self.propertyChanged, bus_name='net.connman',
-                                             dbus_interface='net.connman.Service', signal_name='PropertyChanged', path_keyword='path'))
-                self.signal_receivers.append(self.oe.dbusSystemBus.add_signal_receiver(self.technologyChanged, bus_name='net.connman',
-                                             dbus_interface='net.connman.Technology', signal_name='PropertyChanged', path_keyword='path'))
+                BUS.listen_signal(
+                    interface='net.connman.Manager',
+                    fallback=True,
+                    func=self.propertyChanged,
+                    path='/',
+                    name='PropertyChanged')
+                BUS.listen_signal(
+                    interface='net.connman.Service',
+                    fallback=True,
+                    func=self.propertyChanged,
+                    path='/',
+                    name='PropertyChanged')
+                BUS.listen_signal(
+                    interface='net.connman.Manager',
+                    fallback=True,
+                    func=self.servicesChanged,
+                    path='/',
+                    name='ServicesChanged')
+                BUS.listen_signal(
+                    interface='net.connman.Technology',
+                    fallback=True,
+                    func=self.technologyChanged,
+                    path='/',
+                    name='PropertyChanged')
                 self.signal_receivers.append(self.oe.dbusSystemBus.add_signal_receiver(self.managerPropertyChanged, bus_name='net.connman',
                                              signal_name='PropertyChanged', path_keyword='path', interface_keyword='interface'))
                 self.conNameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
@@ -1550,8 +1568,10 @@ class connman:
             except Exception as e:
                 self.oe.dbg_log('connman::monitor::managerPropertyChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+        @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         def propertyChanged(self, name, value, path):
             try:
+                value = value[1]
                 self.oe.dbg_log('connman::monitor::propertyChanged', 'enter_function', self.oe.LOGDEBUG)
                 self.oe.dbg_log('connman::monitor::propertyChanged::name', repr(name), self.oe.LOGDEBUG)
                 self.oe.dbg_log('connman::monitor::propertyChanged::value', repr(value), self.oe.LOGDEBUG)
@@ -1562,8 +1582,10 @@ class connman:
             except Exception as e:
                 self.oe.dbg_log('connman::monitor::propertyChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+        @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         def technologyChanged(self, name, value, path):
             try:
+                value = value[1]
                 self.oe.dbg_log('connman::monitor::technologyChanged', 'enter_function', self.oe.LOGDEBUG)
                 self.oe.dbg_log('connman::monitor::technologyChanged::name', repr(name), self.oe.LOGDEBUG)
                 self.oe.dbg_log('connman::monitor::technologyChanged::value', repr(value), self.oe.LOGDEBUG)
@@ -1578,8 +1600,11 @@ class connman:
             except Exception as e:
                 self.oe.dbg_log('connman::monitor::technologyChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+        @ravel.signal(name='PropertyChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
         def servicesChanged(self, services, removed):
             try:
+                services = services[1]
+                removed = removed[1]
                 self.oe.dbg_log('connman::monitor::servicesChanged', 'enter_function', self.oe.LOGDEBUG)
                 self.oe.dbg_log('connman::monitor::servicesChanged::services', repr(services), self.oe.LOGDEBUG)
                 self.oe.dbg_log('connman::monitor::servicesChanged::removed', repr(removed), self.oe.LOGDEBUG)
