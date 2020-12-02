@@ -4,10 +4,8 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 import dbus
-import gobject
 import threading
 import dbus.service
-import dbus.mainloop.glib
 
 
 class xdbus:
@@ -64,9 +62,6 @@ class dbusMonitor(threading.Thread):
             self.monitors = []
             self.oe = oeMain
             self.dbusSystemBus = oeMain.dbusSystemBus
-            self.mainLoop = gobject.MainLoop()
-            gobject.threads_init()
-            dbus.mainloop.glib.threads_init()
             threading.Thread.__init__(self)
             self.oe.dbg_log('xdbus::dbusMonitor::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
