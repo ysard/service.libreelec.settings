@@ -10,7 +10,7 @@ ADDON = xbmcaddon.Addon()
 ADDON_NAME = ADDON.getAddonInfo('name')
 
 LOG_HEADER = f'{ADDON_NAME}:'
-LOG_LEVEL = xbmc.LOGINFO
+LOG_LEVEL = xbmc.LOGDEBUG
 
 BUS = ravel.system_bus()
 _LOOP = asyncio.get_event_loop()
