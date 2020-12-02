@@ -14,8 +14,8 @@ import threading
 import oeWindows
 import random
 import string
+import config
 import ravel
-from bus import BUS
 
 
 ####################################################################
@@ -1469,37 +1469,33 @@ class connman:
             except Exception as e:
                 self.oe.dbg_log('connman::monitor::__init__', 'ERROR: (' + repr(e) + ')')
 
+        @config.log_function
         def add_signal_receivers(self):
-            try:
-                self.oe.dbg_log('connman::monitor::add_signal_receivers', 'enter_function', self.oe.LOGDEBUG)
-                BUS.listen_signal(
-                    interface='net.connman.Manager',
-                    fallback=True,
-                    func=self.propertyChanged,
-                    path='/',
-                    name='PropertyChanged')
-                BUS.listen_signal(
-                    interface='net.connman.Service',
-                    fallback=True,
-                    func=self.propertyChanged,
-                    path='/',
-                    name='PropertyChanged')
-                BUS.listen_signal(
-                    interface='net.connman.Manager',
-                    fallback=True,
-                    func=self.servicesChanged,
-                    path='/',
-                    name='ServicesChanged')
-                BUS.listen_signal(
-                    interface='net.connman.Technology',
-                    fallback=True,
-                    func=self.technologyChanged,
-                    path='/',
-                    name='PropertyChanged')
-                self.conNameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
-                self.oe.dbg_log('connman::monitor::add_signal_receivers', 'exit_function', self.oe.LOGDEBUG)
-            except Exception as e:
-                self.oe.dbg_log('connman::monitor::add_signal_receivers', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            config.BUS.listen_signal(
+                interface='net.connman.Manager',
+                fallback=True,
+                func=self.propertyChanged,
+                path='/',
+                name='PropertyChanged')
+            config.BUS.listen_signal(
+                interface='net.connman.Service',
+                fallback=True,
+                func=self.propertyChanged,
+                path='/',
+                name='PropertyChanged')
+            config.BUS.listen_signal(
+                interface='net.connman.Manager',
+                fallback=True,
+                func=self.servicesChanged,
+                path='/',
+                name='ServicesChanged')
+            config.BUS.listen_signal(
+                interface='net.connman.Technology',
+                fallback=True,
+                func=self.technologyChanged,
+                path='/',
+                name='PropertyChanged')
+            self.conNameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
 
         def remove_signal_receivers(self):
             try:
@@ -1556,54 +1552,34 @@ class connman:
                 self.oe.dbg_log('connman::monitor::remove_agent', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
+        @config.log_function
         def propertyChanged(self, name, value, path):
-            try:
-                value = value[1]
-                self.oe.dbg_log('connman::monitor::propertyChanged', 'enter_function', self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::propertyChanged::name', repr(name), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::propertyChanged::value', repr(value), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::propertyChanged::path', repr(path), self.oe.LOGDEBUG)
-                if self.parent.visible:
-                    self.updateGui(name, value, path)
-                self.oe.dbg_log('connman::monitor::propertyChanged', 'exit_function', self.oe.LOGDEBUG)
-            except Exception as e:
-                self.oe.dbg_log('connman::monitor::propertyChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            value = config.convert_debussy(value)
+            if self.parent.visible:
+                self.updateGui(name, value, path)
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
+        @config.log_function
         def technologyChanged(self, name, value, path):
-            try:
-                value = value[1]
-                self.oe.dbg_log('connman::monitor::technologyChanged', 'enter_function', self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::technologyChanged::name', repr(name), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::technologyChanged::value', repr(value), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::technologyChanged::path', repr(path), self.oe.LOGDEBUG)
-                if self.parent.visible:
-                    if self.parent.oe.winOeMain.lastMenu == 1:
-                        self.parent.oe.winOeMain.lastMenu = -1
-                        self.parent.oe.winOeMain.onFocus(self.parent.oe.winOeMain.guiMenList)
-                    else:
-                        self.updateGui(name, value, path)
-                self.oe.dbg_log('connman::monitor::technologyChanged', 'exit_function', self.oe.LOGDEBUG)
-            except Exception as e:
-                self.oe.dbg_log('connman::monitor::technologyChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            value = config.convert_debussy(value)
+            if self.parent.visible:
+                if self.parent.oe.winOeMain.lastMenu == 1:
+                    self.parent.oe.winOeMain.lastMenu = -1
+                    self.parent.oe.winOeMain.onFocus(self.parent.oe.winOeMain.guiMenList)
+                else:
+                    self.updateGui(name, value, path)
 
         @ravel.signal(name='PropertyChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
+        @config.log_function
         def servicesChanged(self, services, removed):
-            try:
-                services = services[1]
-                removed = removed[1]
-                self.oe.dbg_log('connman::monitor::servicesChanged', 'enter_function', self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::servicesChanged::services', repr(services), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::servicesChanged::removed', repr(removed), self.oe.LOGDEBUG)
-                if self.parent.visible:
-                    self.parent.menu_connections(None, services, removed, force=True)
-                self.oe.dbg_log('connman::monitor::servicesChanged', 'exit_function', self.oe.LOGDEBUG)
-            except Exception as e:
-                self.oe.dbg_log('connman::monitor::servicesChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            services = config.convert_debussy(services)
+            removed = config.convert_debussy(removed)
+            if self.parent.visible:
+                self.parent.menu_connections(None, services, removed, force=True)
 
+        @config.log_function
         def updateGui(self, name, value, path):
             try:
-                self.oe.dbg_log('connman::monitor::updateGui', 'enter_function', self.oe.LOGDEBUG)
                 if name == 'Strength':
                     value = str(int(value))
                     self.parent.listItems[path].setProperty(name, value)
@@ -1614,10 +1590,10 @@ class connman:
                     self.forceRender()
                 elif name == 'IPv4':
                     if 'Address' in value:
-                        value = str(value['Address'][1])
+                        value = str(value['Address'])
                         self.parent.listItems[path].setProperty('Address', value)
                     if 'Method' in value:
-                        value = str(value['Method'][1])
+                        value = str(value['Method'])
                         self.parent.listItems[path].setProperty('Address', value)
                     self.forceRender()
                 elif name == 'Favorite':
@@ -1630,8 +1606,6 @@ class connman:
             except KeyError:
                 self.oe.dbg_log('connman::monitor::updateGui', 'exit_function (KeyError)', self.oe.LOGDEBUG)
                 self.parent.menu_connections(None, {}, {}, force=True)
-            except Exception as e:
-                self.oe.dbg_log('connman::monitor::updateGui', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
         def forceRender(self):
             try:
