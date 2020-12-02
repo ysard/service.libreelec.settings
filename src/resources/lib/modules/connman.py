@@ -15,6 +15,7 @@ import oeWindows
 import random
 import string
 import config
+import dbussy
 import ravel
 
 
@@ -1247,13 +1248,17 @@ class connman:
             self.connect_attempt += 1
             if listItem == None:
                 listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-            service_object = self.oe.dbusSystemBus.get_object('net.connman', listItem.getProperty('entry'))
-            dbus.Interface(service_object, 'net.connman.Service').Connect(reply_handler=self.connect_reply_handler,
-                    error_handler=self.dbus_error_handler)
-            service_object = None
-            self.oe.dbg_log('connman::connect_network', 'exit_function', self.oe.LOGDEBUG)
+            entry = listItem.getProperty('entry')
+            try:
+                config.BUS['net.connman'][entry].get_interface('net.connman.Service').Connect()
+                self.menu_connections(None)
+            except dbussy.DBusError as e:
+                # DBuserrors may be handled here
+                # A notification should provide enough information to the user
+                pass
+            finally:
+                self.oe.set_busy(0)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::connect_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def connect_reply_handler(self):
