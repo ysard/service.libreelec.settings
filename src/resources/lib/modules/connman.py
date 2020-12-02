@@ -1554,14 +1554,14 @@ class connman:
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         @config.log_function
         def propertyChanged(self, name, value, path):
-            value = config.convert_debussy(value)
+            value = config.convert_dbussy(value)
             if self.parent.visible:
                 self.updateGui(name, value, path)
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         @config.log_function
         def technologyChanged(self, name, value, path):
-            value = config.convert_debussy(value)
+            value = config.convert_dbussy(value)
             if self.parent.visible:
                 if self.parent.oe.winOeMain.lastMenu == 1:
                     self.parent.oe.winOeMain.lastMenu = -1
@@ -1572,8 +1572,8 @@ class connman:
         @ravel.signal(name='PropertyChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
         @config.log_function
         def servicesChanged(self, services, removed):
-            services = config.convert_debussy(services)
-            removed = config.convert_debussy(removed)
+            services = config.convert_dbussy(services)
+            removed = config.convert_dbussy(removed)
             if self.parent.visible:
                 self.parent.menu_connections(None, services, removed, force=True)
 

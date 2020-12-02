@@ -19,13 +19,13 @@ BUS.attach_asyncio(_LOOP)
 threading.Thread(target=_LOOP.run_forever, daemon=True).start()
 
 
-def convert_debussy(data):
-    if type(data) is list:
-        return [convert_debussy(item) for item in data]
-    if type(data) is dict:
-        return {key: convert_debussy(data[key]) for key in data.keys()}
-    if type(data) is tuple and type(data[0]) is dbussy.DBUS.Signature:
-        return data[1]
+def convert_dbussy(data):
+    if isinstance(data, list):
+        return [convert_dbussy(item) for item in data]
+    if isinstance(data, dict):
+        return {key: convert_dbussy(data[key]) for key in data.keys()}
+    if isinstance(data, tuple) and isinstance(data[0], dbussy.DBUS.Signature):
+        return convert_dbussy(data[1])
     return data
 
 
