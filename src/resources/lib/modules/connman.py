@@ -1252,9 +1252,7 @@ class connman:
             config.BUS['net.connman'][entry].get_interface('net.connman.Service').Connect()
             self.menu_connections(None)
         except dbussy.DBusError as e:
-            # DBuserrors may be handled here
-            # A notification should provide enough information to the user
-            pass
+            config.notification(repr(e))
         finally:
             self.oe.set_busy(0)
 

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (C) 2020-present Team LibreELEC
+
 import asyncio
 import dbussy
 import ravel
@@ -5,8 +8,10 @@ import threading
 import traceback
 import xbmc
 import xbmcaddon
+import xbmcgui
 
 ADDON = xbmcaddon.Addon()
+ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_NAME = ADDON.getAddonInfo('name')
 
 LOG_HEADER = f'{ADDON_NAME}:'
@@ -41,3 +46,7 @@ def log_function(function):
             xbmc.log(f'{header}#{repr(e)}', xbmc.LOGERROR)
             xbmc.log(traceback.format_exc(), xbmc.LOGERROR)
     return wrapper
+
+@log_function
+def notification(message, heading=ADDON_NAME, icon=ADDON_ICON):
+    xbmcgui.Dialog().notification(heading, message, icon)
