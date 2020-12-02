@@ -1496,8 +1496,6 @@ class connman:
                     func=self.technologyChanged,
                     path='/',
                     name='PropertyChanged')
-                self.signal_receivers.append(self.oe.dbusSystemBus.add_signal_receiver(self.managerPropertyChanged, bus_name='net.connman',
-                                             signal_name='PropertyChanged', path_keyword='path', interface_keyword='interface'))
                 self.conNameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
                 self.oe.dbg_log('connman::monitor::add_signal_receivers', 'exit_function', self.oe.LOGDEBUG)
             except Exception as e:
@@ -1556,17 +1554,6 @@ class connman:
                 self.oe.dbg_log('connman::monitor::remove_agent', 'exit_function', self.oe.LOGDEBUG)
             except Exception as e:
                 self.oe.dbg_log('connman::monitor::remove_agent', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
-
-        def managerPropertyChanged(self, name, value, path, interface):
-            try:
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged', 'enter_function', self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged::name', repr(name), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged::value', repr(value), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged::path', repr(path), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged::interface', repr(interface), self.oe.LOGDEBUG)
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged', 'exit_function', self.oe.LOGDEBUG)
-            except Exception as e:
-                self.oe.dbg_log('connman::monitor::managerPropertyChanged', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         def propertyChanged(self, name, value, path):
