@@ -1347,18 +1347,6 @@ class connman:
         finally:
             self.oe.set_busy(0)
 
-    def get_service_path(self):
-        try:
-            self.oe.dbg_log('connman::get_service_path', 'enter_function', self.oe.LOGDEBUG)
-            if hasattr(self, 'winOeCon'):
-                return self.winOeCon.service_path
-            else:
-                listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-                return listItem.getProperty('entry')
-            self.oe.dbg_log('connman::get_service_path', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('connman::get_service_path', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
-
     def start_service(self):
         try:
             self.oe.dbg_log('connman::start_service', 'enter_function', self.oe.LOGDEBUG)
