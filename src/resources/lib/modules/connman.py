@@ -1241,25 +1241,22 @@ class connman:
         except Exception as e:
             self.oe.dbg_log('connman::configure_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+    @config.log_function
     def connect_network(self, listItem=None):
+        self.oe.set_busy(1)
+        self.connect_attempt += 1
+        if listItem == None:
+            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+        entry = listItem.getProperty('entry')
         try:
-            self.oe.dbg_log('connman::connect_network', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
-            self.connect_attempt += 1
-            if listItem == None:
-                listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-            entry = listItem.getProperty('entry')
-            try:
-                config.BUS['net.connman'][entry].get_interface('net.connman.Service').Connect()
-                self.menu_connections(None)
-            except dbussy.DBusError as e:
-                # DBuserrors may be handled here
-                # A notification should provide enough information to the user
-                pass
-            finally:
-                self.oe.set_busy(0)
-        except Exception as e:
-            self.oe.dbg_log('connman::connect_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            config.BUS['net.connman'][entry].get_interface('net.connman.Service').Connect()
+            self.menu_connections(None)
+        except dbussy.DBusError as e:
+            # DBuserrors may be handled here
+            # A notification should provide enough information to the user
+            pass
+        finally:
+            self.oe.set_busy(0)
 
     def connect_reply_handler(self):
         try:
