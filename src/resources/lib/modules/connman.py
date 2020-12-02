@@ -1309,57 +1309,43 @@ class connman:
             self.oe.set_busy(0)
             self.oe.dbg_log('connman::dbus_error_handler', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+    @config.log_function
     def disconnect_network(self, listItem=None):
         try:
-            self.oe.dbg_log('connman::disconnect_network', 'enter_function', self.oe.LOGDEBUG)
             self.oe.set_busy(1)
             self.connect_attempt = 0
             self.net_disconnected = 1
             if listItem == None:
                 listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-            service_object = self.oe.dbusSystemBus.get_object('net.connman', listItem.getProperty('entry'))
-            dbus.Interface(service_object, 'net.connman.Service').Disconnect()
-            service_object = None
-            del service_object
+            entry = listItem.getProperty('entry')
+            config.BUS['net.connman'][entry].get_interface('net.connman.Service').Disconnect()
+        finally:
             self.oe.set_busy(0)
-            self.oe.dbg_log('connman::disconnect_network', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.set_busy(0)
-            self.oe.dbg_log('connman::disconnect_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+    @config.log_function
     def delete_network(self, listItem=None):
         try:
-            self.oe.dbg_log('connman::delete_network', 'enter_function', self.oe.LOGDEBUG)
             self.oe.set_busy(1)
             self.connect_attempt = 0
             if listItem == None:
                 listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
             service_path = listItem.getProperty('entry')
             network_type = listItem.getProperty('netType')
-            service_object = self.oe.dbusSystemBus.get_object('net.connman', service_path)
-            dbus.Interface(service_object, 'net.connman.Service').Remove()
-            service_object = None
+            config.BUS['net.connman'][service_path].get_interface('net.connman.Service').Remove()
             del service_object
             self.oe.set_busy(0)
             self.oe.dbg_log('connman::delete_network', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
+        finally:
             self.oe.set_busy(0)
-            self.oe.dbg_log('connman::delete_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+    @config.log_function
     def refresh_network(self, listItem=None):
         try:
-            self.oe.dbg_log('connman::refresh_network', 'enter_function', self.oe.LOGDEBUG)
             self.oe.set_busy(1)
-            wifi = self.oe.dbusSystemBus.get_object('net.connman', '/net/connman/technology/wifi')
-            dbus.Interface(wifi, 'net.connman.Technology').Scan()
-            wifi = None
-            del wifi
-            self.oe.set_busy(0)
+            config.BUS['net.connman']['/net/connman/technology/wifi'].get_interface('net.connman.Technology').Scan()
             self.menu_connections(None)
-            self.oe.dbg_log('connman::refresh_network', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
+        finally:
             self.oe.set_busy(0)
-            self.oe.dbg_log('connman::refresh_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def get_service_path(self):
         try:
