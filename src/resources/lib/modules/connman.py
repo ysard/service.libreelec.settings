@@ -1614,10 +1614,10 @@ class connman:
                     self.forceRender()
                 elif name == 'IPv4':
                     if 'Address' in value:
-                        value = str(value['Address'])
+                        value = str(value['Address'][1])
                         self.parent.listItems[path].setProperty('Address', value)
                     if 'Method' in value:
-                        value = str(value['Method'])
+                        value = str(value['Method'][1])
                         self.parent.listItems[path].setProperty('Address', value)
                     self.forceRender()
                 elif name == 'Favorite':
