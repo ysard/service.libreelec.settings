@@ -31,7 +31,6 @@ class connmanService(object):
     def __init__(self, servicePath, oeMain):
         try:
             oeMain.dbg_log('connmanService::__init__', 'enter_function', oeMain.LOGDEBUG)
-            oeMain.set_busy(1)
             self.struct = {
                 'AutoConnect': {
                     'order': 1,
@@ -318,24 +317,19 @@ class connmanService(object):
                     'category': strEntry,
                     }
                 self.winOeCon.addMenuItem(self.struct[strEntry]['name'], dictProperties)
-            self.oe.set_busy(0)
             self.winOeCon.doModal()
             del self.winOeCon
             del self.oe.dictModules['connmanNetworkConfig']
             self.oe.dbg_log('connmanService::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connmanService::__init__', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def cancel(self):
         try:
             self.oe.dbg_log('connmanService::cancel', 'exit_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             self.winOeCon.close()
-            self.oe.set_busy(0)
             self.oe.dbg_log('connmanService::cancel', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connmanService::cancel', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def menu_loader(self, menuItem):
@@ -405,7 +399,6 @@ class connmanService(object):
 
     def save_network(self):
         try:
-            self.oe.set_busy(1)
             self.oe.dbg_log('connmanService::save_network', 'enter_function', self.oe.LOGDEBUG)
             if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
                 for setting in self.struct['Nameservers']['settings']:
@@ -429,10 +422,8 @@ class connmanService(object):
                 if value != None:
                     self.service.SetProperty(dbus.String(category), value)
             self.oe.dbg_log('connmanService::save_network', 'exit_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(0)
             return 'close'
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connmanService::save_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
             return 'close'
 
@@ -741,7 +732,6 @@ class connman:
     def menu_connections(self, focusItem, services={}, removed={}, force=False):
         try:
             self.oe.dbg_log('connman::menu_connections', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
 
             # type 1=int, 2=string, 3=array
 
@@ -849,16 +839,13 @@ class connman:
                                 self.listItems[dbusServicePath].setProperty(value, result)
                 if rebuildList == 1:
                     self.listItems[dbusServicePath] = self.oe.winOeMain.addConfigItem(apName, dictProperties, self.oe.listObject['netlist'])
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::menu_connections', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::menu_connections', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def menu_loader(self, menuItem=None):
         try:
             self.oe.dbg_log('connman::menu_loader', 'enter_function0', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if menuItem == None:
                 menuItem = self.oe.winOeMain.getControl(self.oe.winOeMain.guiMenList).getSelectedItem()
             dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
@@ -882,10 +869,8 @@ class connman:
                 else:
                     self.struct['Timeservers']['settings'][setting]['value'] = ''
             self.oe.winOeMain.build_menu(self.struct)
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::menu_loader', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::menu_loader', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def open_context_menu(self, listItem):
@@ -941,7 +926,6 @@ class connman:
 
     def set_timeservers(self, **kwargs):
         try:
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             self.oe.dbg_log('connman::set_timeservers', 'enter_function', self.oe.LOGDEBUG)
@@ -952,9 +936,7 @@ class connman:
                     timeservers.append(self.struct['Timeservers']['settings'][setting]['value'])
             self.clock.SetProperty(dbus.String('Timeservers'), timeservers)
             self.oe.dbg_log('connman::set_timeservers', 'exit_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(0)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::set_timeservers', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def set_value(self, listItem=None):
@@ -969,7 +951,6 @@ class connman:
     def set_technologie(self, **kwargs):
         try:
             self.oe.dbg_log('connman::set_technologies', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
@@ -1016,23 +997,16 @@ class connman:
                         break
             self.technologie_properties = None
             self.menu_loader(None)
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::set_technologies', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::set_technologies', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     @config.log_function
     def custom_regdom(self, **kwargs):
-        try:
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 regSelect = str((kwargs['listItem']).getProperty('value'))
                 regdom.set_regdom(regSelect)
                 self.set_value(kwargs['listItem'])
-            self.oe.set_busy(0)
-        finally:
-            self.oe.set_busy(0)
 
     def configure_network(self, listItem=None):
         try:
@@ -1048,7 +1022,6 @@ class connman:
 
     @config.log_function
     def connect_network(self, listItem=None):
-        self.oe.set_busy(1)
         self.connect_attempt += 1
         if listItem == None:
             listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
@@ -1058,23 +1031,18 @@ class connman:
             self.menu_connections(None)
         except dbussy.DBusError as e:
             config.notification(repr(e))
-        finally:
-            self.oe.set_busy(0)
 
     def connect_reply_handler(self):
         try:
             self.oe.dbg_log('connman::connect_reply_handler', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(0)
             self.menu_connections(None)
             self.oe.dbg_log('connman::connect_reply_handler', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::connect_reply_handler', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def dbus_error_handler(self, error):
         try:
             self.oe.dbg_log('connman::dbus_error_handler', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(0)
             err_name = error.get_dbus_name()
             if 'InProgress' in err_name:
                 if self.net_disconnected != 1:
@@ -1109,46 +1077,32 @@ class connman:
                     self.log_error = 1
             self.oe.dbg_log('connman::dbus_error_handler', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::dbus_error_handler', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     @config.log_function
     def disconnect_network(self, listItem=None):
-        try:
-            self.oe.set_busy(1)
-            self.connect_attempt = 0
-            self.net_disconnected = 1
-            if listItem == None:
-                listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-            entry = listItem.getProperty('entry')
-            config.BUS['net.connman'][entry].get_interface('net.connman.Service').Disconnect()
-        finally:
-            self.oe.set_busy(0)
+        self.connect_attempt = 0
+        self.net_disconnected = 1
+        if listItem == None:
+            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+        entry = listItem.getProperty('entry')
+        config.BUS['net.connman'][entry].get_interface('net.connman.Service').Disconnect()
 
     @config.log_function
     def delete_network(self, listItem=None):
-        try:
-            self.oe.set_busy(1)
-            self.connect_attempt = 0
-            if listItem == None:
-                listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-            service_path = listItem.getProperty('entry')
-            network_type = listItem.getProperty('netType')
-            config.BUS['net.connman'][service_path].get_interface('net.connman.Service').Remove()
-            del service_object
-            self.oe.set_busy(0)
-            self.oe.dbg_log('connman::delete_network', 'exit_function', self.oe.LOGDEBUG)
-        finally:
-            self.oe.set_busy(0)
+        self.connect_attempt = 0
+        if listItem == None:
+            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+        service_path = listItem.getProperty('entry')
+        network_type = listItem.getProperty('netType')
+        config.BUS['net.connman'][service_path].get_interface('net.connman.Service').Remove()
+        del service_object
+        self.oe.dbg_log('connman::delete_network', 'exit_function', self.oe.LOGDEBUG)
 
     @config.log_function
     def refresh_network(self, listItem=None):
-        try:
-            self.oe.set_busy(1)
-            config.BUS['net.connman']['/net/connman/technology/wifi'].get_interface('net.connman.Technology').Scan()
-            self.menu_connections(None)
-        finally:
-            self.oe.set_busy(0)
+        config.BUS['net.connman']['/net/connman/technology/wifi'].get_interface('net.connman.Technology').Scan()
+        self.menu_connections(None)
 
     def start_service(self):
         try:
@@ -1192,7 +1146,6 @@ class connman:
     def init_netfilter(self, **kwargs):
         try:
             self.oe.dbg_log('connman::init_netfilter', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -1206,7 +1159,6 @@ class connman:
             else:
                 state = 0
             self.oe.set_service('iptables', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('connman::init_netfilter', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.dbg_log('system::init_netfilter', 'ERROR: (' + repr(e) + ')')
