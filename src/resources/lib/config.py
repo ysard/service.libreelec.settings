@@ -10,6 +10,8 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 
+BUS = ravel.system_bus()
+
 ADDON = xbmcaddon.Addon()
 ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_NAME = ADDON.getAddonInfo('name')
@@ -17,9 +19,7 @@ ADDON_NAME = ADDON.getAddonInfo('name')
 LOG_HEADER = f'{ADDON_NAME}:'
 LOG_LEVEL = xbmc.LOGDEBUG
 
-BUS = ravel.system_bus()
 _LOOP = asyncio.get_event_loop()
-
 BUS.attach_asyncio(_LOOP)
 threading.Thread(target=_LOOP.run_forever, daemon=True).start()
 
@@ -46,6 +46,7 @@ def log_function(function):
             xbmc.log(f'{header}#{repr(e)}', xbmc.LOGERROR)
             xbmc.log(traceback.format_exc(), xbmc.LOGERROR)
     return wrapper
+
 
 @log_function
 def notification(message, heading=ADDON_NAME, icon=ADDON_ICON):
