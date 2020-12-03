@@ -3,6 +3,7 @@
 
 import asyncio
 import dbussy
+import os
 import ravel
 import threading
 import traceback
@@ -40,8 +41,8 @@ def log_function(function):
         try:
             xbmc.log(f'{header}<{args}{kwargs}', LOG_LEVEL)
             result = function(*args, **kwargs)
-            return result
             xbmc.log(f'{header}>{result}', LOG_LEVEL)
+            return result
         except Exception as e:
             xbmc.log(f'{header}#{repr(e)}', xbmc.LOGERROR)
             xbmc.log(traceback.format_exc(), xbmc.LOGERROR)
