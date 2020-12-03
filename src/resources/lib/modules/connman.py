@@ -17,6 +17,7 @@ import string
 import config
 import dbussy
 import ravel
+import regdom
 
 
 ####################################################################
@@ -476,8 +477,6 @@ class connman:
     CONNMAN_DAEMON = None
     WAIT_CONF_FILE = None
     NF_CUSTOM_PATH = "/storage/.config/iptables/"
-    REGDOMAIN_CONF = "/storage/.cache/regdomain.conf"
-    REGDOMAIN_DEFAULT = "NOT SET (DEFAULT)"
     connect_attempt = 0
     log_error = 1
     net_disconnected = 0
@@ -698,230 +697,46 @@ class connman:
         except Exception as e:
             self.oe.dbg_log('connman::exit', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+    @config.log_function
     def load_values(self):
-        try:
-            self.oe.dbg_log('connman::load_values', 'enter_function', self.oe.LOGDEBUG)
-
-            # Network Wait
-
-            self.struct['advanced']['settings']['wait_for_network']['value'] = '0'
-            self.struct['advanced']['settings']['wait_for_network_time']['value'] = '10'
-            if os.path.exists(self.WAIT_CONF_FILE):
-                wait_file = open(self.WAIT_CONF_FILE, 'r')
-                for line in wait_file:
-                    if 'WAIT_NETWORK=' in line:
-                        if line.split('=')[-1].lower().strip().replace('"', '') == 'true':
-                            self.struct['advanced']['settings']['wait_for_network']['value'] = '1'
-                        else:
-                            self.struct['advanced']['settings']['wait_for_network']['value'] = '0'
-                    if 'WAIT_NETWORK_TIME=' in line:
-                        self.struct['advanced']['settings']['wait_for_network_time']['value'] = line.split('=')[-1].lower().strip().replace('"',
-                                '')
-                wait_file.close()
-            # IPTABLES
-            nf_values = [self.oe._(32397), self.oe._(32398), self.oe._(32399)]
-            nf_custom_rules = [self.NF_CUSTOM_PATH + "rules.v4" , self.NF_CUSTOM_PATH + "rules.v6"]
-            for custom_rule in nf_custom_rules:
-                if os.path.exists(custom_rule):
-                    nf_values.append(self.oe._(32396))
-                    break
-            self.struct['advanced']['settings']['netfilter']['values'] = nf_values
-            if self.oe.get_service_state('iptables') == '1':
-                nf_option = self.oe.get_service_option('iptables', 'RULES', 'home')
-                if nf_option == "custom":
-                    nf_option_str = self.oe._(32396)
-                elif nf_option == "home":
-                    nf_option_str = self.oe._(32398)
-                elif nf_option == "public":
-                    nf_option_str = self.oe._(32399)
-            else:
-                nf_option_str = self.oe._(32397)
-            self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
-
-            # CUSTOM regdom
-            regList = [
-                self.REGDOMAIN_DEFAULT,
-                "GLOBAL (00)",
-                "Afghanistan (AF)",
-                "Albania (AL)",
-                "Algeria (DZ)",
-                "American Samoa (AS)",
-                "Andorra (AD)",
-                "Anguilla (AI)",
-                "Argentina (AR)",
-                "Armenia (AM)",
-                "Aruba (AW)",
-                "Australia (AU)",
-                "Austria (AT)",
-                "Azerbaijan (AZ)",
-                "Bahamas (BS)",
-                "Bahrain (BH)",
-                "Bangladesh (BD)",
-                "Barbados (BB)",
-                "Belarus (BY)",
-                "Belgium (BE)",
-                "Belize (BZ)",
-                "Bermuda (BM)",
-                "Bhutan (BT)",
-                "Bolivia (BO)",
-                "Bosnia and Herzegovina (BA)",
-                "Brazil (BR)",
-                "Brunei Darussalam (BN)",
-                "Bulgaria (BG)",
-                "Burkina Faso (BF)",
-                "Cambodia (KH)",
-                "Canada (CA)",
-                "Cayman Islands (KY)",
-                "Central African Republic (CF)",
-                "Chad (TD)",
-                "Chile (CL)",
-                "China (CN)",
-                "Christmas Island (CX)",
-                "Colombia (CO)",
-                "Costa Rica (CR)",
-                "Côte d'Ivoire (CI)",
-                "Croatia (HR)",
-                "Cyprus (CY)",
-                "Czechia (CZ)",
-                "Denmark (DK)",
-                "Dominica (DM)",
-                "Dominican Republic (DO)",
-                "Ecuador (EC)",
-                "Egypt (EG)",
-                "El Salvador (SV)",
-                "Estonia (EE)",
-                "Ethiopia (ET)",
-                "Finland (FI)",
-                "France (FR)",
-                "French Guiana (GF)",
-                "French Polynesia (PF)",
-                "Georgia (GE)",
-                "Germany (DE)",
-                "Ghana (GH)",
-                "Greece (GR)",
-                "Greenland (GL)",
-                "Grenada (GD)",
-                "Guadelope (GP)",
-                "Guam (GU)",
-                "Guatemala (GT)",
-                "Guyana (GY)",
-                "Haiti (HT)",
-                "Honduras (HN)",
-                "Hong Kong (HK)",
-                "Hungary (HU)",
-                "Iceland (IS)",
-                "India (IN)",
-                "Indonesia (ID)",
-                "Iran (IR)",
-                "Ireland (IE)",
-                "Israel (IL)",
-                "Italy (IT)",
-                "Jamaica (JM)",
-                "Japan (JP)",
-                "Jordan (JO)",
-                "Kazakhstan (KZ)",
-                "Kenya (KE)",
-                "Korea (North) (KP)",
-                "Korea (South) (KR)",
-                "Kuwait (KW)",
-                "Latvia (LV)",
-                "Lebanon (LB)",
-                "Lesotho (LS)",
-                "Liechtenstein (LI)",
-                "Lithuania (LT)",
-                "Luxembourg (LU)",
-                "Macao (MO)",
-                "Malawi (MW)",
-                "Malaysia (MY)",
-                "Malta (MT)",
-                "Marshall Islands (MH)",
-                "Martinique (MQ)",
-                "Mauritania (MR)",
-                "Mauritius (MU)",
-                "Mayotte (YT)",
-                "Mexico (MX)",
-                "Micronesian (FM)",
-                "Moldova (MD)",
-                "Monaco (MC)",
-                "Mongolia (MN)",
-                "Montenegro (ME)",
-                "Morocco (MA)",
-                "Nepal (NP)",
-                "Netherlands (NL)",
-                "New Zealand (NZ)",
-                "Nicaragua (NI)",
-                "North Macedonia (MK)",
-                "Northern Mariana Islands (MP)",
-                "Norway (NO)",
-                "Oman (OM)",
-                "Pakistan (PK)",
-                "Palau (PW)",
-                "Panama (PA)",
-                "Papua New Guinea (PG)",
-                "Paraguay (PY)",
-                "Peru (PE)",
-                "Philipines (PH)",
-                "Poland (PL)",
-                "Portugal (PT)",
-                "Puerto Rico (PR)",
-                "Qatar (QA)",
-                "Réunion (RE)",
-                "Romania (RO)",
-                "Russian Federation (RU)",
-                "Rwanda (RW)",
-                "Saint Barthélemy (BL)",
-                "Saint Kitts and Nevis (KN)",
-                "Saint Lucia (LC)",
-                "Saint Martin (MF)",
-                "Saint Pierre and Miquelon (PM)",
-                "Saint Vincent and the Grenadines (VC)",
-                "Saudi Arabia (SA)",
-                "Senegal (SN)",
-                "Serbia (RS)",
-                "Singapore (SG)",
-                "Slovakia (SK)",
-                "Slovenia (SI)",
-                "South Africa (ZA)",
-                "Spain (ES)",
-                "Sri Lanka (LK)",
-                "Suriname (SR)",
-                "Sweden (SE)",
-                "Switzerland (CH)",
-                "Syria (SY)",
-                "Taiwan (TW)",
-                "Thailand (TH)",
-                "Togo (TG)",
-                "Trinidan and Tobago (TT)",
-                "Tunisia (TN)",
-                "Turkey (TR)",
-                "Turks and Caicos Islands (TC)",
-                "Uganda (UG)",
-                "Ukraine (UA)",
-                "United Arab Emirates (AE)",
-                "United Kingdom (GB)",
-                "United States (US)",
-                "Uraguay (UY)",
-                "Uzbekistan (UZ)",
-                "Vanuatu (VU)",
-                "Venzuela (VE)",
-                "Vietnam (VN)",
-                "Virgin Islands (VI)",
-                "Wallis and Futuna (WF)",
-                "Yemen (YE)",
-                "Zimbabwe (ZW)"
-                ]
-            self.struct['/net/connman/technology/wifi']['settings']['regdom']['values'] = regList
-            if os.path.isfile(self.REGDOMAIN_CONF):
-                regLine = open(self.REGDOMAIN_CONF).readline().rstrip()
-                regCode = '(%s)' % regLine[-2:]
-                regValue = next((v for v in regList if regCode in v), self.REGDOMAIN_DEFAULT)
-            else:
-                regValue = self.REGDOMAIN_DEFAULT
-            self.struct['/net/connman/technology/wifi']['settings']['regdom']['value'] = str(regValue)
-            self.oe.dbg_log('connman::load_values', 'exit_function', self.oe.LOGDEBUG)
-
-        except Exception as e:
-            self.oe.dbg_log('connman::load_values', 'ERROR: (' + repr(e) + ')')
+        # Network Wait
+        self.struct['advanced']['settings']['wait_for_network']['value'] = '0'
+        self.struct['advanced']['settings']['wait_for_network_time']['value'] = '10'
+        if os.path.exists(self.WAIT_CONF_FILE):
+            wait_file = open(self.WAIT_CONF_FILE, 'r')
+            for line in wait_file:
+                if 'WAIT_NETWORK=' in line:
+                    if line.split('=')[-1].lower().strip().replace('"', '') == 'true':
+                        self.struct['advanced']['settings']['wait_for_network']['value'] = '1'
+                    else:
+                        self.struct['advanced']['settings']['wait_for_network']['value'] = '0'
+                if 'WAIT_NETWORK_TIME=' in line:
+                    self.struct['advanced']['settings']['wait_for_network_time']['value'] = line.split('=')[-1].lower().strip().replace('"',
+                            '')
+            wait_file.close()
+        # IPTABLES
+        nf_values = [self.oe._(32397), self.oe._(32398), self.oe._(32399)]
+        nf_custom_rules = [self.NF_CUSTOM_PATH + "rules.v4" , self.NF_CUSTOM_PATH + "rules.v6"]
+        for custom_rule in nf_custom_rules:
+            if os.path.exists(custom_rule):
+                nf_values.append(self.oe._(32396))
+                break
+        self.struct['advanced']['settings']['netfilter']['values'] = nf_values
+        if self.oe.get_service_state('iptables') == '1':
+            nf_option = self.oe.get_service_option('iptables', 'RULES', 'home')
+            if nf_option == "custom":
+                nf_option_str = self.oe._(32396)
+            elif nf_option == "home":
+                nf_option_str = self.oe._(32398)
+            elif nf_option == "public":
+                nf_option_str = self.oe._(32399)
+        else:
+            nf_option_str = self.oe._(32397)
+        self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
+        # regdom
+        self.struct['/net/connman/technology/wifi']['settings']['regdom']['values'] = regdom.REGDOM_LIST
+        regValue = regdom.get_regdom()
+        self.struct['/net/connman/technology/wifi']['settings']['regdom']['value'] = str(regValue)
 
     def menu_connections(self, focusItem, services={}, removed={}, force=False):
         try:
@@ -1207,27 +1022,17 @@ class connman:
             self.oe.set_busy(0)
             self.oe.dbg_log('connman::set_technologies', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
+    @config.log_function
     def custom_regdom(self, **kwargs):
         try:
-            self.oe.dbg_log('connman::custom_regdom', 'enter_function', self.oe.LOGDEBUG)
             self.oe.set_busy(1)
             if 'listItem' in kwargs:
-                if str((kwargs['listItem']).getProperty('value')) == self.REGDOMAIN_DEFAULT:
-                    os.remove(self.REGDOMAIN_CONF)
-                    regScript = 'iw reg set 00'
-                else:
-                    regSelect = str((kwargs['listItem']).getProperty('value'))
-                    regCode = regSelect[-3:-1]
-                    with open(self.REGDOMAIN_CONF, 'w') as regfile:
-                        regfile.write('REGDOMAIN=%s\n' % regCode)
-                    regScript = 'iw reg set %s' % regCode
-                self.oe.execute(regScript)
+                regSelect = str((kwargs['listItem']).getProperty('value'))
+                regdom.set_regdom(regSelect)
                 self.set_value(kwargs['listItem'])
             self.oe.set_busy(0)
-            self.oe.dbg_log('connman::custom_regdom', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
+        finally:
             self.oe.set_busy(0)
-            self.oe.dbg_log('connman::custom_regdom', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def configure_network(self, listItem=None):
         try:

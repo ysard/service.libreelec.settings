@@ -11,11 +11,13 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 
-BUS = ravel.system_bus()
-
 ADDON = xbmcaddon.Addon()
 ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_NAME = ADDON.getAddonInfo('name')
+
+BUS = ravel.system_bus()
+
+CONFIG_CACHE = os.environ.get('CONFIG_CACHE', '/storage/.cache')
 
 LOG_HEADER = f'{ADDON_NAME}:'
 LOG_LEVEL = xbmc.LOGDEBUG
