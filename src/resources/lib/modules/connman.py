@@ -6,10 +6,8 @@
 import oe
 import os
 import xbmc
-import time
 import dbus
 import dbus.service
-import uuid
 import xbmcgui
 import threading
 import oeWindows
@@ -1055,7 +1053,7 @@ class connman:
                 os.makedirs(os.path.dirname(self.WAIT_CONF_FILE))
             wait_conf = open(self.WAIT_CONF_FILE, 'w')
             wait_conf.write('WAIT_NETWORK="true"\n')
-            wait_conf.write('WAIT_NETWORK_TIME="%s"\n' % self.struct['advanced']['settings']['wait_for_network_time']['value'])
+            wait_conf.write(f"WAIT_NETWORK_TIME=\"{self.struct['advanced']['settings']['wait_for_network_time']['value']}\"\n")
             wait_conf.close()
 
     def init_netfilter(self, **kwargs):
