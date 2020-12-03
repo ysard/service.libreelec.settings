@@ -287,11 +287,10 @@ class connmanService(object):
             9: {'Timeservers': 'Timeservers'},
             10: {'Timeservers.Configuration': 'Timeservers'},
             }
-        self.oe = oeMain
-        self.winOeCon = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', self.oe.__cwd__, 'Default', oeMain=oeMain, isChild=True)
+        self.winOeCon = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', oe.__cwd__, 'Default', oeMain=oe, isChild=True)
         self.servicePath = servicePath
-        self.oe.dictModules['connmanNetworkConfig'] = self
-        self.service = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', servicePath), 'net.connman.Service')
+        oe.dictModules['connmanNetworkConfig'] = self
+        self.service = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', servicePath), 'net.connman.Service')
         self.service_properties = self.service.GetProperties()
         for entry in sorted(self.datamap):
             for (key, value) in self.datamap[entry].items():
@@ -312,14 +311,14 @@ class connmanService(object):
         for strEntry in sorted(self.struct, key=lambda x: self.struct[x]['order']):
             dictProperties = {
                 'modul': 'connmanNetworkConfig',
-                'listTyp': self.oe.listObject['list'],
+                'listTyp': oe.listObject['list'],
                 'menuLoader': 'menu_loader',
                 'category': strEntry,
                 }
             self.winOeCon.addMenuItem(self.struct[strEntry]['name'], dictProperties)
         self.winOeCon.doModal()
         del self.winOeCon
-        del self.oe.dictModules['connmanNetworkConfig']
+        del oe.dictModules['connmanNetworkConfig']
 
     @config.log_function
     def cancel(self):
@@ -337,7 +336,7 @@ class connmanService(object):
             ok_window = xbmcgui.Dialog()
             answer = ok_window.ok('Not allowed', 'IPv4 method is set to DHCP.\n\nChanging this option is not allowed')
             return
-        self.oe.dbg_log('connmanService::set_value_checkdhcp', 'enter_function', self.oe.LOGDEBUG)
+        oe.dbg_log('connmanService::set_value_checkdhcp', 'enter_function', oe.LOGDEBUG)
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
@@ -379,7 +378,7 @@ class connmanService(object):
 
     def save_network(self):
         try:
-            self.oe.dbg_log('connmanService::save_network', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('connmanService::save_network', 'enter_function', oe.LOGDEBUG)
             if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
                 for setting in self.struct['Nameservers']['settings']:
                     self.struct['Nameservers']['settings'][setting]['changed'] = True
@@ -401,40 +400,40 @@ class connmanService(object):
                 (category, value) = self.dbus_config(category)
                 if value != None:
                     self.service.SetProperty(dbus.String(category), value)
-            self.oe.dbg_log('connmanService::save_network', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('connmanService::save_network', 'exit_function', oe.LOGDEBUG)
             return 'close'
         except Exception as e:
-            self.oe.dbg_log('connmanService::save_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('connmanService::save_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
             return 'close'
 
     def delete_network(self):
         try:
-            self.oe.dbg_log('connmanService::delete_network', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.dictModules['connman'].delete_network(None)
-            self.oe.dbg_log('connmanService::delete_network', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('connmanService::delete_network', 'enter_function', oe.LOGDEBUG)
+            oe.dictModules['connman'].delete_network(None)
+            oe.dbg_log('connmanService::delete_network', 'exit_function', oe.LOGDEBUG)
             return 'close'
         except Exception as e:
-            self.oe.dbg_log('connmanService::delete_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('connmanService::delete_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
             return 'close'
 
     def connect_network(self):
         try:
-            self.oe.dbg_log('connmanService::connect_network', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.dictModules['connman'].connect_network(None)
-            self.oe.dbg_log('connmanService::connect_network', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('connmanService::connect_network', 'enter_function', oe.LOGDEBUG)
+            oe.dictModules['connman'].connect_network(None)
+            oe.dbg_log('connmanService::connect_network', 'exit_function', oe.LOGDEBUG)
             return 'close'
         except Exception as e:
-            self.oe.dbg_log('connmanService::connect_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('connmanService::connect_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
             return 'close'
 
     def disconnect_network(self):
         try:
-            self.oe.dbg_log('connmanService::disconnect_network', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.dictModules['connman'].disconnect_network(None)
-            self.oe.dbg_log('connmanService::disconnect_network', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('connmanService::disconnect_network', 'enter_function', oe.LOGDEBUG)
+            oe.dictModules['connman'].disconnect_network(None)
+            oe.dbg_log('connmanService::disconnect_network', 'exit_function', oe.LOGDEBUG)
             return 'close'
         except Exception as e:
-            self.oe.dbg_log('connmanService::disconnect_network', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('connmanService::disconnect_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
             return 'close'
 
 
@@ -635,7 +634,6 @@ class connman:
             }
 
         self.busy = 0
-        self.oe = oeMain
         self.visible = False
 
     @config.log_function
@@ -653,7 +651,7 @@ class connman:
     def exit(self):
         self.visible = False
         self.clear_list()
-        self.oe.dbg_log('connman::exit', 'exit_function', self.oe.LOGDEBUG)
+        oe.dbg_log('connman::exit', 'exit_function', oe.LOGDEBUG)
 
     @config.log_function
     def load_values(self):
@@ -673,23 +671,23 @@ class connman:
                             '')
             wait_file.close()
         # IPTABLES
-        nf_values = [self.oe._(32397), self.oe._(32398), self.oe._(32399)]
+        nf_values = [oe._(32397), oe._(32398), oe._(32399)]
         nf_custom_rules = [self.NF_CUSTOM_PATH + "rules.v4" , self.NF_CUSTOM_PATH + "rules.v6"]
         for custom_rule in nf_custom_rules:
             if os.path.exists(custom_rule):
-                nf_values.append(self.oe._(32396))
+                nf_values.append(oe._(32396))
                 break
         self.struct['advanced']['settings']['netfilter']['values'] = nf_values
-        if self.oe.get_service_state('iptables') == '1':
-            nf_option = self.oe.get_service_option('iptables', 'RULES', 'home')
+        if oe.get_service_state('iptables') == '1':
+            nf_option = oe.get_service_option('iptables', 'RULES', 'home')
             if nf_option == "custom":
-                nf_option_str = self.oe._(32396)
+                nf_option_str = oe._(32396)
             elif nf_option == "home":
-                nf_option_str = self.oe._(32398)
+                nf_option_str = oe._(32398)
             elif nf_option == "public":
-                nf_option_str = self.oe._(32399)
+                nf_option_str = oe._(32399)
         else:
-            nf_option_str = self.oe._(32397)
+            nf_option_str = oe._(32397)
         self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
         # regdom
         self.struct['/net/connman/technology/wifi']['settings']['regdom']['values'] = regdom.REGDOM_LIST
@@ -746,18 +744,18 @@ class connman:
                 'values': ['Ethernet', 'Interface'],
                 },
             }
-        dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
+        dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
         dbusServices = dbusConnmanManager.GetServices()
         dbusConnmanManager = None
         rebuildList = 0
         if len(dbusServices) != len(self.listItems) or force:
             rebuildList = 1
-            self.oe.winOeMain.getControl(int(self.oe.listObject['netlist'])).reset()
+            oe.winOeMain.getControl(int(oe.listObject['netlist'])).reset()
         else:
             for (dbusServicePath, dbusServiceValues) in dbusServices:
                 if dbusServicePath not in self.listItems:
                     rebuildList = 1
-                    self.oe.winOeMain.getControl(int(self.oe.listObject['netlist'])).reset()
+                    oe.winOeMain.getControl(int(oe.listObject['netlist'])).reset()
                     break
         for (dbusServicePath, dbusServiceProperties) in dbusServices:
             dictProperties = {}
@@ -766,7 +764,7 @@ class connman:
                     apName = dbusServiceProperties['Name']
                 else:
                     if 'Security' in dbusServiceProperties:
-                        apName = self.oe._(32208) + ' (' + str(dbusServiceProperties['Security'][0]) + ')'
+                        apName = oe._(32208) + ' (' + str(dbusServiceProperties['Security'][0]) + ')'
                     else:
                         apName = ''
                 if apName != '':
@@ -801,16 +799,16 @@ class connman:
                         if self.listItems[dbusServicePath] != None:
                             self.listItems[dbusServicePath].setProperty(value, result)
             if rebuildList == 1:
-                self.listItems[dbusServicePath] = self.oe.winOeMain.addConfigItem(apName, dictProperties, self.oe.listObject['netlist'])
+                self.listItems[dbusServicePath] = oe.winOeMain.addConfigItem(apName, dictProperties, oe.listObject['netlist'])
 
     @config.log_function
     def menu_loader(self, menuItem=None):
         if menuItem == None:
-            menuItem = self.oe.winOeMain.getControl(self.oe.winOeMain.guiMenList).getSelectedItem()
-        dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
+            menuItem = oe.winOeMain.getControl(oe.winOeMain.guiMenList).getSelectedItem()
+        dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
         self.technologie_properties = dbusConnmanManager.GetTechnologies()
         dbusConnmanManager = None
-        self.clock = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Clock')
+        self.clock = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Clock')
         self.clock_properties = self.clock.GetProperties()
         self.struct['/net/connman/technology/wifi']['hidden'] = 'true'
         self.struct['/net/connman/technology/ethernet']['hidden'] = 'true'
@@ -827,41 +825,41 @@ class connman:
                     self.struct['Timeservers']['settings'][setting]['value'] = self.clock_properties['Timeservers'][int(setting)]
             else:
                 self.struct['Timeservers']['settings'][setting]['value'] = ''
-        self.oe.winOeMain.build_menu(self.struct)
+        oe.winOeMain.build_menu(self.struct)
 
     @config.log_function
     def open_context_menu(self, listItem):
         values = {}
         if listItem is None:
-            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+            listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         if listItem is None:
-            self.oe.dbg_log('connman::open_context_menu', 'exit_function (listItem=None)', self.oe.LOGDEBUG)
+            oe.dbg_log('connman::open_context_menu', 'exit_function (listItem=None)', oe.LOGDEBUG)
             return
         if listItem.getProperty('State') in ['ready', 'online']:
             values[1] = {
-                'text': self.oe._(32143),
+                'text': oe._(32143),
                 'action': 'disconnect_network',
                 }
         else:
             values[1] = {
-                'text': self.oe._(32144),
+                'text': oe._(32144),
                 'action': 'connect_network',
                 }
         if listItem.getProperty('Favorite') == '1':
             values[2] = {
-                'text': self.oe._(32150),
+                'text': oe._(32150),
                 'action': 'configure_network',
                 }
         if listItem.getProperty('Favorite') == '1' and listItem.getProperty('netType') == 'wifi':
             values[3] = {
-                'text': self.oe._(32141),
+                'text': oe._(32141),
                 'action': 'delete_network',
                 }
         if hasattr(self, 'technologie_properties'):
             for (path, technologie) in self.technologie_properties:
                 if path == '/net/connman/technology/wifi':
                     values[4] = {
-                        'text': self.oe._(32142),
+                        'text': oe._(32142),
                         'action': 'refresh_network',
                         }
                     break
@@ -871,7 +869,7 @@ class connman:
             items.append(values[key]['text'])
             actions.append(values[key]['action'])
         select_window = xbmcgui.Dialog()
-        title = self.oe._(32012)
+        title = oe._(32012)
         result = select_window.select(title, items)
         if result >= 0:
             getattr(self, actions[result])(listItem)
@@ -880,8 +878,8 @@ class connman:
     def set_timeservers(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        self.oe.dbg_log('connman::set_timeservers', 'enter_function', self.oe.LOGDEBUG)
-        self.clock = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Clock')
+        oe.dbg_log('connman::set_timeservers', 'enter_function', oe.LOGDEBUG)
+        self.clock = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Clock')
         timeservers = dbus.Array([], signature=dbus.Signature('s'), variant_level=1)
         for setting in sorted(self.struct['Timeservers']['settings']):
             if self.struct['Timeservers']['settings'][setting]['value'] != '':
@@ -897,7 +895,7 @@ class connman:
     def set_technologie(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
+        dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
         self.technologie_properties = dbusConnmanManager.GetTechnologies()
         dbusConnmanManager = None
         techPath = '/net/connman/technology/wifi'
@@ -905,13 +903,13 @@ class connman:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
                     settings = self.struct[techPath]['settings']
-                    self.Technology = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
+                    self.Technology = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
                             self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
                         if settings['Tethering']['value'] == '1' and dbus.String(settings['TetheringIdentifier']['value']) != '' \
                             and dbus.String(settings['TetheringPassphrase']['value']) != '':
-                            self.oe.xbmcm.waitForAbort(5)
+                            oe.xbmcm.waitForAbort(5)
                             self.Technology.SetProperty('TetheringIdentifier', dbus.String(settings['TetheringIdentifier']['value'],
                                                         variant_level=1))
                             self.Technology.SetProperty('TetheringPassphrase', dbus.String(settings['TetheringPassphrase']['value'],
@@ -931,7 +929,7 @@ class connman:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
                     settings = self.struct[techPath]['settings']
-                    self.Technology = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
+                    self.Technology = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
                             self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
@@ -952,8 +950,8 @@ class connman:
     @config.log_function
     def configure_network(self, listItem=None):
         if listItem == None:
-            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
-        self.configureService = connmanService(listItem.getProperty('entry'), self.oe)
+            listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
+        self.configureService = connmanService(listItem.getProperty('entry'), oe)
         del self.configureService
         self.menu_connections(None)
 
@@ -961,7 +959,7 @@ class connman:
     def connect_network(self, listItem=None):
         self.connect_attempt += 1
         if listItem == None:
-            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+            listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
         try:
             config.BUS['net.connman'][entry].get_interface('net.connman.Service').Connect()
@@ -988,7 +986,7 @@ class connman:
                 if self.connect_attempt == 1:
                     self.log_error = 0
                     self.notify_error = 0
-                    self.oe.xbmcm.waitForAbort(5)
+                    oe.xbmcm.waitForAbort(5)
                     self.connect_network()
                 else:
                     self.log_error = 1
@@ -1000,11 +998,11 @@ class connman:
                 self.log_error = 1
                 self.notify_error = 1
             if self.notify_error == 1:
-                self.oe.notify('Network Error', err_message)
+                oe.notify('Network Error', err_message)
             else:
                 self.notify_error = 1
             if self.log_error == 1:
-                self.oe.dbg_log('connman::dbus_error_handler', 'ERROR: (' + err_message + ')', self.oe.LOGERROR)
+                oe.dbg_log('connman::dbus_error_handler', 'ERROR: (' + err_message + ')', oe.LOGERROR)
             else:
                 self.log_error = 1
 
@@ -1013,7 +1011,7 @@ class connman:
         self.connect_attempt = 0
         self.net_disconnected = 1
         if listItem == None:
-            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+            listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
         config.BUS['net.connman'][entry].get_interface('net.connman.Service').Disconnect()
 
@@ -1021,12 +1019,12 @@ class connman:
     def delete_network(self, listItem=None):
         self.connect_attempt = 0
         if listItem == None:
-            listItem = self.oe.winOeMain.getControl(self.oe.listObject['netlist']).getSelectedItem()
+            listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         service_path = listItem.getProperty('entry')
         network_type = listItem.getProperty('netType')
         config.BUS['net.connman'][service_path].get_interface('net.connman.Service').Remove()
         del service_object
-        self.oe.dbg_log('connman::delete_network', 'exit_function', self.oe.LOGDEBUG)
+        oe.dbg_log('connman::delete_network', 'exit_function', oe.LOGDEBUG)
 
     @config.log_function
     def refresh_network(self, listItem=None):
@@ -1065,39 +1063,38 @@ class connman:
             self.set_value(kwargs['listItem'])
         state = 1
         options = {}
-        if self.struct['advanced']['settings']['netfilter']['value'] == self.oe._(32396):
+        if self.struct['advanced']['settings']['netfilter']['value'] == oe._(32396):
             options['RULES'] = "custom"
-        elif self.struct['advanced']['settings']['netfilter']['value'] == self.oe._(32398):
+        elif self.struct['advanced']['settings']['netfilter']['value'] == oe._(32398):
             options['RULES'] = "home"
-        elif self.struct['advanced']['settings']['netfilter']['value'] == self.oe._(32399):
+        elif self.struct['advanced']['settings']['netfilter']['value'] == oe._(32399):
             options['RULES'] = "public"
         else:
             state = 0
-        self.oe.set_service('iptables', options, state)
+        oe.set_service('iptables', options, state)
 
     @config.log_function
     def do_wizard(self):
-        self.oe.winOeMain.set_wizard_title(self.oe._(32305))
-        self.oe.winOeMain.set_wizard_text(self.oe._(32306))
-        self.oe.winOeMain.set_wizard_button_title('')
-        self.oe.winOeMain.set_wizard_list_title(self.oe._(32309))
-        self.oe.winOeMain.getControl(1391).setLabel('show')
+        oe.winOeMain.set_wizard_title(oe._(32305))
+        oe.winOeMain.set_wizard_text(oe._(32306))
+        oe.winOeMain.set_wizard_button_title('')
+        oe.winOeMain.set_wizard_list_title(oe._(32309))
+        oe.winOeMain.getControl(1391).setLabel('show')
 
-        self.oe.winOeMain.getControl(self.oe.winOeMain.buttons[2]['id'
-                                     ]).controlUp(self.oe.winOeMain.getControl(self.oe.winOeMain.guiNetList))
-        self.oe.winOeMain.getControl(self.oe.winOeMain.buttons[2]['id'
-                                     ]).controlRight(self.oe.winOeMain.getControl(self.oe.winOeMain.buttons[1]['id']))
-        self.oe.winOeMain.getControl(self.oe.winOeMain.buttons[1]['id'
-                                     ]).controlUp(self.oe.winOeMain.getControl(self.oe.winOeMain.guiNetList))
-        self.oe.winOeMain.getControl(self.oe.winOeMain.buttons[1]['id'
-                                     ]).controlLeft(self.oe.winOeMain.getControl(self.oe.winOeMain.buttons[2]['id']))
+        oe.winOeMain.getControl(oe.winOeMain.buttons[2]['id'
+                                     ]).controlUp(oe.winOeMain.getControl(oe.winOeMain.guiNetList))
+        oe.winOeMain.getControl(oe.winOeMain.buttons[2]['id'
+                                     ]).controlRight(oe.winOeMain.getControl(oe.winOeMain.buttons[1]['id']))
+        oe.winOeMain.getControl(oe.winOeMain.buttons[1]['id'
+                                     ]).controlUp(oe.winOeMain.getControl(oe.winOeMain.guiNetList))
+        oe.winOeMain.getControl(oe.winOeMain.buttons[1]['id'
+                                     ]).controlLeft(oe.winOeMain.getControl(oe.winOeMain.buttons[2]['id']))
         self.menu_connections(None)
 
     class monitor:
 
         @config.log_function
         def __init__(self, oeMain, parent):
-            self.oe = oeMain
             self.signal_receivers = []
             self.NameOwnerWatch = None
             self.parent = parent
@@ -1129,7 +1126,7 @@ class connman:
                 func=self.technologyChanged,
                 path='/',
                 name='PropertyChanged')
-            self.conNameOwnerWatch = self.oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
+            self.conNameOwnerWatch = oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
 
         @config.log_function
         def remove_signal_receivers(self):
@@ -1151,18 +1148,18 @@ class connman:
         @config.log_function
         def initialize_agent(self):
             if not hasattr(self, 'wifiAgent'):
-            dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-            self.wifiAgent = connmanWifiAgent(self.oe.dbusSystemBus, self.wifiAgentPath)
-            self.wifiAgent.oe = self.oe
+            dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
+            self.wifiAgent = connmanWifiAgent(oe.dbusSystemBus, self.wifiAgentPath)
+            self.wifiAgent.oe = oe
             dbusConnmanManager.RegisterAgent(self.wifiAgentPath)
             dbusConnmanManager = None
 
         @config.log_function
         def remove_agent(self):
             if hasattr(self, 'wifiAgent'):
-                self.wifiAgent.remove_from_connection(self.oe.dbusSystemBus, self.wifiAgentPath)
+                self.wifiAgent.remove_from_connection(oe.dbusSystemBus, self.wifiAgentPath)
                 try:
-                    dbusConnmanManager = dbus.Interface(self.oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
+                    dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
                     dbusConnmanManager.UnregisterAgent(self.wifiAgentPath)
                     dbusConnmanManager = None
                 except:
@@ -1225,9 +1222,9 @@ class connman:
 
         @config.log_function
         def forceRender(self):
-                focusId = self.oe.winOeMain.getFocusId()
-                self.oe.winOeMain.setFocusId(self.oe.listObject['netlist'])
-                self.oe.winOeMain.setFocusId(focusId)
+                focusId = oe.winOeMain.getFocusId()
+                oe.winOeMain.setFocusId(oe.listObject['netlist'])
+                oe.winOeMain.setFocusId(focusId)
 
 
 class Failed(dbus.DBusException):
@@ -1253,22 +1250,22 @@ class LaunchBrowser(dbus.DBusException):
 class connmanWifiAgent(dbus.service.Object):
 
     def busy(self):
-        self.oe.input_request = False
+        oe.input_request = False
 
     @dbus.service.method('net.connman.Agent', in_signature='', out_signature='')
     def Release(self):
-        self.oe.dbg_log('connman::connmanWifiAgent::Release', 'enter_function', self.oe.LOGDEBUG)
-        self.oe.dbg_log('connman::connmanWifiAgent::Release', 'exit_function', self.oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::Release', 'enter_function', oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::Release', 'exit_function', oe.LOGDEBUG)
         return {}
 
     @dbus.service.method('net.connman.Agent', in_signature='oa{sv}', out_signature='a{sv}')
     def RequestInput(self, path, fields):
         try:
-            self.oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.input_request = True
+            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'enter_function', oe.LOGDEBUG)
+            oe.input_request = True
             response = {}
             if 'Name' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32146))
+                xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1282,7 +1279,7 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             if 'Passphrase' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32147))
+                xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1300,7 +1297,7 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             if 'Username' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32148))
+                xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1314,7 +1311,7 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             if 'Password' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', self.oe._(32148), True)
+                xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
                 xbmcKeyboard.doModal()
                 if xbmcKeyboard.isConfirmed():
                     if xbmcKeyboard.getText() != '':
@@ -1328,26 +1325,26 @@ class connmanWifiAgent(dbus.service.Object):
                     raise Canceled('canceled')
                     return response
             self.busy()
-            self.oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'exit_function', oe.LOGDEBUG)
             return response
         except Exception as e:
-            self.oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
 
     @dbus.service.method('net.connman.Agent', in_signature='os', out_signature='')
     def RequestBrowser(self, path, url):
-        self.oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'enter_function', self.oe.LOGDEBUG)
-        self.oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'exit_function', self.oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'enter_function', oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'exit_function', oe.LOGDEBUG)
         return
 
     @dbus.service.method('net.connman.Agent', in_signature='os', out_signature='')
     def ReportError(self, path, error):
-        self.oe.dbg_log('connman::connmanWifiAgent::ReportError', 'enter_function', self.oe.LOGDEBUG)
-        self.oe.dbg_log('connman::connmanWifiAgent::ReportError', 'exit_function (CANCELED)', self.oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::ReportError', 'enter_function', oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::ReportError', 'exit_function (CANCELED)', oe.LOGDEBUG)
         raise Failed()
         return
 
     @dbus.service.method('net.connman.Agent', in_signature='', out_signature='')
     def Cancel(self):
-        self.oe.dbg_log('connman::connmanWifiAgent::Cancel', 'enter_function', self.oe.LOGDEBUG)
-        self.oe.dbg_log('connman::connmanWifiAgent::Cancel', 'exit_function', self.oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::Cancel', 'enter_function', oe.LOGDEBUG)
+        oe.dbg_log('connman::connmanWifiAgent::Cancel', 'exit_function', oe.LOGDEBUG)
         return
