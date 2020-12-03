@@ -1148,11 +1148,10 @@ class connman:
         @config.log_function
         def initialize_agent(self):
             if not hasattr(self, 'wifiAgent'):
-            dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-            self.wifiAgent = connmanWifiAgent(oe.dbusSystemBus, self.wifiAgentPath)
-            self.wifiAgent.oe = oe
-            dbusConnmanManager.RegisterAgent(self.wifiAgentPath)
-            dbusConnmanManager = None
+                dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
+                self.wifiAgent = connmanWifiAgent(oe.dbusSystemBus, self.wifiAgentPath)
+                self.wifiAgent.oe = oe
+                dbusConnmanManager.RegisterAgent(self.wifiAgentPath)
 
         @config.log_function
         def remove_agent(self):
@@ -1161,10 +1160,8 @@ class connman:
                 try:
                     dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
                     dbusConnmanManager.UnregisterAgent(self.wifiAgentPath)
-                    dbusConnmanManager = None
-                except:
-                    dbusConnmanManager = None
-                del self.wifiAgent
+                finally:
+                    del self.wifiAgent
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         @config.log_function
@@ -1178,9 +1175,9 @@ class connman:
         def technologyChanged(self, name, value, path):
             value = config.convert_dbussy(value)
             if self.parent.visible:
-                if self.parent.oe.winOeMain.lastMenu == 1:
-                    self.parent.oe.winOeMain.lastMenu = -1
-                    self.parent.oe.winOeMain.onFocus(self.parent.oe.winOeMain.guiMenList)
+                if oe.winOeMain.lastMenu == 1:
+                    oe.winOeMain.lastMenu = -1
+                    oe.winOeMain.onFocus(oe.winOeMain.guiMenList)
                 else:
                     self.updateGui(name, value, path)
 
