@@ -41,7 +41,6 @@ xbmcm = xbmc.Monitor()
 
 is_service = False
 conf_lock = False
-__busy__ = 0
 xbmcIsPlaying = 0
 input_request = False
 dictModules = {}
@@ -559,24 +558,6 @@ def copy_file(source, destination, silent=False):
 
     except Exception as e:
         dbg_log(f'oe::copy_file({source},{destination})', f'ERROR: ({repr(e)})')
-
-
-def is_busy():
-    global __busy__
-    return __busy__ > 0
-
-
-def set_busy(state):
-    global __busy__, __oe__, input_request, is_service
-    try:
-        if not is_service:
-            if state == 1:
-                __busy__ = __busy__ + 1
-            else:
-                __busy__ = __busy__ - 1
-            dbg_log('oe::set_busy', f'__busy__ = {str(__busy__)}', LOGDEBUG)
-    except Exception as e:
-        dbg_log('oe::set_busy', f'ERROR: ({repr(e)})', LOGERROR)
 
 
 def start_service():
