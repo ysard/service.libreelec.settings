@@ -2,6 +2,9 @@
 # Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
+import config
+import oe
+
 
 class about:
 
@@ -11,59 +14,33 @@ class about:
         'menuLoader': 'menu_loader',
         'listTyp': 'other',
         'InfoText': 705,
-        }}
+    }}
 
+    @config.log_function
     def __init__(self, oeMain):
-        try:
-            oeMain.dbg_log('about::__init__', 'enter_function', oeMain.LOGDEBUG)
-            self.oe = oeMain
-            self.controls = {}
-            self.oe.dbg_log('about::__init__', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('about::__init__', f'ERROR: ({repr(e)})')
+        self.controls = {}
 
+    @config.log_function
     def menu_loader(self, menuItem):
-        try:
-            self.oe.dbg_log('about::menu_loader', 'enter_function', self.oe.LOGDEBUG)
-            if len(self.controls) == 0:
-                self.init_controls()
-            self.oe.dbg_log('about::menu_loader', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('about::menu_loader', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
+        pass
 
+    @config.log_function
     def exit_addon(self):
-        try:
-            self.oe.dbg_log('about::exit_addon', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.winOeMain.close()
-            self.oe.dbg_log('about::exit_addon', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('about::exit_addon', f'ERROR: ({repr(e)})')
+        oe.winOeMain.close()
 
+    @config.log_function
     def init_controls(self):
-        try:
-            self.oe.dbg_log('about::init_controls', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.dbg_log('about::init_controls', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('about::init_controls', f'ERROR: ({repr(e)})')
+        pass
 
+    @config.log_function
     def exit(self):
-        try:
-            self.oe.dbg_log('about::exit', 'enter_function', self.oe.LOGDEBUG)
-            for control in self.controls:
-                try:
-                    self.oe.winOeMain.removeControl(self.controls[control])
-                except:
-                    pass
-            self.controls = {}
-            self.oe.dbg_log('about::exit', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('about::exit', f'ERROR: ({repr(e)})')
+        for control in self.controls:
+            try:
+                oe.winOeMain.removeControl(self.controls[control])
+            finally:
+                self.controls = {}
 
+    @config.log_function
     def do_wizard(self):
-        try:
-            self.oe.dbg_log('about::do_wizard', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.winOeMain.set_wizard_title(self.oe._(32317))
-            self.oe.winOeMain.set_wizard_text(self.oe._(32318))
-            self.oe.dbg_log('about::do_wizard', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('about::do_wizard', f'ERROR: ({repr(e)})')
+        oe.winOeMain.set_wizard_title(oe._(32317))
+        oe.winOeMain.set_wizard_text(oe._(32318))
