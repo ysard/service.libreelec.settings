@@ -412,7 +412,6 @@ class services:
     def initialize_samba(self, **kwargs):
         try:
             self.oe.dbg_log('services::initialize_samba', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             options = {}
@@ -442,16 +441,13 @@ class services:
                 self.struct['samba']['settings']['samba_username']['hidden'] = True
                 self.struct['samba']['settings']['samba_password']['hidden'] = True
             self.oe.set_service('samba', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_samba', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
-            self.oe.dbg_log('services::initialize_samba', f'ERROR: (%{repr(e)})', self.oe.LOGERROR)
+            self.oe.dbg_log('services::initialize_samba', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def initialize_ssh(self, **kwargs):
         try:
             self.oe.dbg_log('services::initialize_ssh', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -467,16 +463,13 @@ class services:
             else:
                 state = 0
             self.oe.set_service('sshd', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_ssh', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_ssh', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def initialize_avahi(self, **kwargs):
         try:
             self.oe.dbg_log('services::initialize_avahi', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -484,16 +477,13 @@ class services:
             if self.struct['avahi']['settings']['avahi_autostart']['value'] != '1':
                 state = 0
             self.oe.set_service('avahi', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_avahi', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_avahi', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def initialize_cron(self, **kwargs):
         try:
             self.oe.dbg_log('services::initialize_cron', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -501,16 +491,13 @@ class services:
             if self.struct['cron']['settings']['cron_autostart']['value'] != '1':
                 state = 0
             self.oe.set_service('crond', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_cron', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::initialize_cron', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def init_bluetooth(self, **kwargs):
         try:
             self.oe.dbg_log('services::init_bluetooth', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -525,16 +512,13 @@ class services:
                 if 'hidden' in self.struct['bluez']['settings']['obex_root']:
                     del self.struct['bluez']['settings']['obex_root']['hidden']
             self.oe.set_service('bluez', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::init_bluetooth', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::init_bluetooth', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def init_obex(self, **kwargs):
         try:
             self.oe.dbg_log('services::init_obex', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -544,23 +528,18 @@ class services:
             else:
                 state = 0
             self.oe.set_service('obexd', options, state)
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::init_obex', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::init_obex', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def idle_timeout(self, **kwargs):
         try:
             self.oe.dbg_log('services::idle_timeout', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             self.oe.write_setting('bluetooth', 'idle_timeout', self.struct['bluez']['settings']['idle_timeout']['value'])
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::idle_timeout', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('services::idle_timeout', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
 
     def exit(self):
