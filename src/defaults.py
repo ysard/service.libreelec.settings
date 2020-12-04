@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
+# Copyright (C) 2020-present Team LibreELEC (https://libreelec.tv)
 
 import os
 
@@ -18,7 +19,7 @@ USER_CONFIG = os.environ.get('USER_CONFIG', '/storage/.config')
 
 connman = {
     'CONNMAN_DAEMON': '/usr/sbin/connmand',
-    'WAIT_CONF_FILE': '%s/libreelec/network_wait' % CONFIG_CACHE,
+    'WAIT_CONF_FILE': f'{CONFIG_CACHE}/libreelec/network_wait',
     'ENABLED': lambda : (True if os.path.exists(connman['CONNMAN_DAEMON']) and not os.path.exists('/dev/.kernel_ipconfig') else False),
     }
 connman['ENABLED'] = connman['ENABLED']()
@@ -62,10 +63,10 @@ system = {
     'ENABLED': True,
     'KERNEL_CMD': '/proc/cmdline',
     'SET_CLOCK_CMD': '/sbin/hwclock --systohc --utc',
-    'XBMC_RESET_FILE': '%s/reset_xbmc' % CONFIG_CACHE,
-    'LIBREELEC_RESET_FILE': '%s/reset_oe' % CONFIG_CACHE,
+    'XBMC_RESET_FILE': f'{CONFIG_CACHE}/reset_xbmc',
+    'LIBREELEC_RESET_FILE': f'{CONFIG_CACHE}/reset_oe',
     'KEYBOARD_INFO': '/usr/share/X11/xkb/rules/base.xml',
-    'UDEV_KEYBOARD_INFO': '%s/xkb/layout' % CONFIG_CACHE,
+    'UDEV_KEYBOARD_INFO': f'{CONFIG_CACHE}/xkb/layout',
     'NOX_KEYBOARD_INFO': '/usr/lib/keymaps',
     'BACKUP_DIRS': [
         XBMC_USER_HOME,

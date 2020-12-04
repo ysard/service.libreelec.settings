@@ -20,7 +20,7 @@ class about:
             self.controls = {}
             self.oe.dbg_log('about::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('about::__init__', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('about::__init__', f'ERROR: ({repr(e)})')
 
     def menu_loader(self, menuItem):
         try:
@@ -29,7 +29,7 @@ class about:
                 self.init_controls()
             self.oe.dbg_log('about::menu_loader', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('about::menu_loader', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            self.oe.dbg_log('about::menu_loader', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def exit_addon(self):
         try:
@@ -37,14 +37,14 @@ class about:
             self.oe.winOeMain.close()
             self.oe.dbg_log('about::exit_addon', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('about::exit_addon', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('about::exit_addon', f'ERROR: ({repr(e)})')
 
     def init_controls(self):
         try:
             self.oe.dbg_log('about::init_controls', 'enter_function', self.oe.LOGDEBUG)
             self.oe.dbg_log('about::init_controls', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('about::init_controls', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('about::init_controls', f'ERROR: ({repr(e)})')
 
     def exit(self):
         try:
@@ -57,7 +57,7 @@ class about:
             self.controls = {}
             self.oe.dbg_log('about::exit', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('about::exit', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('about::exit', f'ERROR: ({repr(e)})')
 
     def do_wizard(self):
         try:
@@ -66,4 +66,4 @@ class about:
             self.oe.winOeMain.set_wizard_text(self.oe._(32318))
             self.oe.dbg_log('about::do_wizard', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('about::do_wizard', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('about::do_wizard', f'ERROR: ({repr(e)})')

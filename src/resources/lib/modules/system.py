@@ -208,7 +208,7 @@ class system:
             self.arrVariants = {}
             self.oe.dbg_log('system::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::__init__', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::__init__', f'ERROR: ({repr(e)})')
 
     def start_service(self):
         try:
@@ -221,7 +221,7 @@ class system:
             del self.is_service
             self.oe.dbg_log('system::start_service', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::start_service', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::start_service', f'ERROR: ({repr(e)})')
 
     def stop_service(self):
         try:
@@ -230,14 +230,14 @@ class system:
                 self.update_thread.stop()
             self.oe.dbg_log('system::stop_service', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::stop_service', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::stop_service', f'ERROR: ({repr(e)})')
 
     def do_init(self):
         try:
             self.oe.dbg_log('system::do_init', 'enter_function', self.oe.LOGDEBUG)
             self.oe.dbg_log('system::do_init', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::do_init', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_init', f'ERROR: ({repr(e)})')
 
     def exit(self):
         self.oe.dbg_log('system::exit', 'enter_function', self.oe.LOGDEBUG)
@@ -296,7 +296,7 @@ class system:
             self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if self.oe.PIN.isEnabled() else '0'
 
         except Exception as e:
-            self.oe.dbg_log('system::load_values', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::load_values', f'ERROR: ({repr(e)})')
 
     def load_menu(self, focusItem):
         try:
@@ -304,7 +304,7 @@ class system:
             self.oe.winOeMain.build_menu(self.struct)
             self.oe.dbg_log('system::load_menu', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::load_menu', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::load_menu', f'ERROR: ({repr(e)})')
 
     def set_value(self, listItem):
         try:
@@ -313,7 +313,7 @@ class system:
             self.oe.write_setting('system', listItem.getProperty('entry'), str(listItem.getProperty('value')))
             self.oe.dbg_log('system::set_value', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::set_value', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::set_value', f'ERROR: ({repr(e)})')
 
     def set_keyboard_layout(self, listItem=None):
         try:
@@ -337,11 +337,10 @@ class system:
                 if not os.path.exists(os.path.dirname(self.UDEV_KEYBOARD_INFO)):
                     os.makedirs(os.path.dirname(self.UDEV_KEYBOARD_INFO))
                 config_file = open(self.UDEV_KEYBOARD_INFO, 'w')
-                config_file.write('XKBMODEL="' + self.struct['keyboard']['settings']['KeyboardType']['value'] + '"\n')
-                config_file.write('XKBVARIANT="%s,%s"\n' % (self.struct['keyboard']['settings']['KeyboardVariant1']['value'],
-                                  self.struct['keyboard']['settings']['KeyboardVariant2']['value']))
-                config_file.write('XKBLAYOUT="' + self.struct['keyboard']['settings']['KeyboardLayout1']['value'] + ',' + self.struct['keyboard'
-                                  ]['settings']['KeyboardLayout2']['value'] + '"\n')
+                config_file.write(f"XKBMODEL=\"{self.struct['keyboard']['settings']['KeyboardType']['value']}\"\n")
+                config_file.write(f"XKBVARIANT=\"{self.struct['keyboard']['settings']['KeyboardVariant1']['value']}, \
+                                                 {self.struct['keyboard']['settings']['KeyboardVariant2']['value']}\"\n")
+                config_file.write(f"XKBLAYOUT=\"{self.struct['keyboard']['settings']['KeyboardLayout1']['value']}, {self.struct['keyboard']['settings']['KeyboardLayout2']['value']}\"\n")
                 config_file.write('XKBOPTIONS="grp:alt_shift_toggle"\n')
                 config_file.close()
                 parameters = [
@@ -357,12 +356,12 @@ class system:
             elif self.nox_keyboard_layouts == True:
                 self.oe.dbg_log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']), self.oe.LOGINFO)
                 parameter = self.struct['keyboard']['settings']['KeyboardLayout1']['value']
-                command = 'loadkmap < `ls -1 %s/*/%s.bmap`' % (self.NOX_KEYBOARD_INFO, parameter)
+                command = f'loadkmap < `ls -1 {self.NOX_KEYBOARD_INFO}/*/{parameter}.bmap`'
                 self.oe.dbg_log('system::set_keyboard_layout', command, self.oe.LOGINFO)
                 self.oe.execute(command)
             self.oe.dbg_log('system::set_keyboard_layout', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::set_keyboard_layout', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::set_keyboard_layout', f'ERROR: ({repr(e)})')
 
     def set_hostname(self, listItem=None):
         try:
@@ -376,17 +375,17 @@ class system:
                 hostname = open('/proc/sys/kernel/hostname', 'w')
                 hostname.write(self.struct['ident']['settings']['hostname']['value'])
                 hostname.close()
-                hostname = open('%s/hostname' % self.oe.CONFIG_CACHE, 'w')
+                hostname = open(f'{self.oe.CONFIG_CACHE}/hostname', 'w')
                 hostname.write(self.struct['ident']['settings']['hostname']['value'])
                 hostname.close()
                 hosts = open('/etc/hosts', 'w')
-                user_hosts_file = os.environ['HOME'] + '/.config/hosts.conf'
+                user_hosts_file = f"{os.environ['HOME']}/.config/hosts.conf"
                 if os.path.isfile(user_hosts_file):
                     user_hosts = open(user_hosts_file, 'r')
                     hosts.write(user_hosts.read())
                     user_hosts.close()
-                hosts.write('127.0.0.1\tlocalhost %s\n' % self.struct['ident']['settings']['hostname']['value'])
-                hosts.write('::1\tlocalhost ip6-localhost ip6-loopback %s\n' % self.struct['ident']['settings']['hostname']['value'])
+                hosts.write(f"127.0.0.1\tlocalhost {self.struct['ident']['settings']['hostname']['value']}\n")
+                hosts.write(f"::1\tlocalhost ip6-localhost ip6-loopback {self.struct['ident']['settings']['hostname']['value']}\n")
                 hosts.close()
             else:
                 self.oe.dbg_log('system::set_hostname', 'is empty', self.oe.LOGINFO)
@@ -394,7 +393,7 @@ class system:
             self.oe.dbg_log('system::set_hostname', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('system::set_hostname', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::set_hostname', f'ERROR: ({repr(e)})')
 
     def get_keyboard_layouts(self):
         try:
@@ -403,7 +402,7 @@ class system:
             arrVariants = {}
             arrTypes = []
             if os.path.exists(self.NOX_KEYBOARD_INFO):
-                for layout in glob.glob(self.NOX_KEYBOARD_INFO + '/*/*.bmap'):
+                for layout in glob.glob(f'{self.NOX_KEYBOARD_INFO}/*/*.bmap'):
                     if os.path.isfile(layout):
                         arrLayouts.append(layout.split('/')[-1].split('.')[0])
                 arrLayouts.sort()
@@ -461,16 +460,16 @@ class system:
                 arrVariants,
                 )
         except Exception as e:
-            self.oe.dbg_log('system::get_keyboard_layouts', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::get_keyboard_layouts', f'ERROR: ({repr(e)})')
 
 
     def set_hw_clock(self):
         try:
             self.oe.dbg_log('system::set_hw_clock', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.execute('%s 2>/dev/null' % self.SET_CLOCK_CMD)
+            self.oe.execute(f'{self.SET_CLOCK_CMD} 2>/dev/null')
             self.oe.dbg_log('system::set_hw_clock', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::set_hw_clock', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            self.oe.dbg_log('system::set_hw_clock', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def reset_xbmc(self, listItem=None):
         try:
@@ -485,7 +484,7 @@ class system:
             self.oe.dbg_log('system::reset_xbmc', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('system::reset_xbmc', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            self.oe.dbg_log('system::reset_xbmc', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def reset_oe(self, listItem=None):
         try:
@@ -500,13 +499,13 @@ class system:
             self.oe.dbg_log('system::reset_oe', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('system::reset_oe', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            self.oe.dbg_log('system::reset_oe', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def ask_sure_reset(self, part):
         try:
             self.oe.dbg_log('system::ask_sure_reset', 'enter_function', self.oe.LOGDEBUG)
             xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno(part + ' Reset', '%s\n\n%s' % (self.oe._(32326), self.oe._(32328)))
+            answer = xbmcDialog.yesno(part + ' Reset', f'{self.oe._(32326)}\n\n{self.oe._(32328)}')
             if answer == 1:
                 if self.oe.reboot_counter(30, self.oe._(32323)) == 1:
                     return 1
@@ -515,7 +514,7 @@ class system:
             self.oe.dbg_log('system::ask_sure_reset', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
             self.oe.set_busy(0)
-            self.oe.dbg_log('system::ask_sure_reset', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            self.oe.dbg_log('system::ask_sure_reset', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def do_backup(self, listItem=None):
         try:
@@ -548,7 +547,7 @@ class system:
                     if self.total_backup_size > free_space:
                         txt = self.oe.split_dialog_text(self.oe._(32379))
                         xbmcDialog = xbmcgui.Dialog()
-                        answer = xbmcDialog.ok('Backup', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
+                        answer = xbmcDialog.ok('Backup', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
                         return 0
                 except:
                     pass
@@ -568,7 +567,7 @@ class system:
 
         except Exception as e:
             self.backup_dlg.close()
-            self.oe.dbg_log('system::do_backup', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_backup', f'ERROR: ({repr(e)})')
 
     def do_restore(self, listItem=None):
         try:
@@ -601,15 +600,15 @@ class system:
                 if self.oe.copy_file(restore_file_path, self.RESTORE_DIR + restore_file_name) != None:
                     copy_success = 1
                 else:
-                    self.oe.execute('rm -rf %s' % self.RESTORE_DIR)
+                    self.oe.execute(f'rm -rf {self.RESTORE_DIR}')
             else:
                 txt = self.oe.split_dialog_text(self.oe._(32379))
                 xbmcDialog = xbmcgui.Dialog()
-                answer = xbmcDialog.ok('Restore', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
+                answer = xbmcDialog.ok('Restore', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
             if copy_success == 1:
                 txt = self.oe.split_dialog_text(self.oe._(32380))
                 xbmcDialog = xbmcgui.Dialog()
-                answer = xbmcDialog.yesno('Restore', '%s\n%s\n%s' % (txt[0], txt[1], txt[2]))
+                answer = xbmcDialog.yesno('Restore', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
                 if answer == 1:
                     if self.oe.reboot_counter(10, self.oe._(32371)) == 1:
                         self.oe.winOeMain.close()
@@ -617,10 +616,10 @@ class system:
                         xbmc.executebuiltin('Reboot')
                 else:
                     self.oe.dbg_log('system::do_restore', 'User Abort!', self.oe.LOGDEBUG)
-                    self.oe.execute('rm -rf %s' % self.RESTORE_DIR)
+                    self.oe.execute(f'rm -rf {self.RESTORE_DIR}')
             self.oe.dbg_log('system::do_restore', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::do_restore', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_restore', f'ERROR: ({repr(e)})')
 
     def do_send_system_logs(self, listItem=None):
         try:
@@ -628,7 +627,7 @@ class system:
             self.do_send_logs('/usr/bin/pastekodi')
             self.oe.dbg_log('system::do_send_system_logs', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::do_do_send_system_logs', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_do_send_system_logs', f'ERROR: ({repr(e)})')
 
     def do_send_crash_logs(self, listItem=None):
         try:
@@ -636,7 +635,7 @@ class system:
             self.do_send_logs('/usr/bin/pastecrash')
             self.oe.dbg_log('system::do_send_crash_logs', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::do_do_send_crash_logs', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_do_send_crash_logs', f'ERROR: ({repr(e)})')
 
     def do_send_logs(self, log_cmd):
         try:
@@ -653,13 +652,13 @@ class system:
                 link = result.find('http')
                 if link != -1:
                     self.oe.dbg_log('system::do_send_logs', result[link:], self.oe.LOGWARNING)
-                    done_dlg.ok('Paste complete', 'Log files pasted to %s' % result[link:])
+                    done_dlg.ok('Paste complete', f'Log files pasted to {result[link:]}')
                 else:
                     done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
 
             self.oe.dbg_log('system::do_send_logs', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::do_do_send_logs', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_do_send_logs', f'ERROR: ({repr(e)})')
 
     def tar_add_folder(self, tar, folder):
         try:
@@ -687,10 +686,10 @@ class system:
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), '%s\n%s' % (folder, item))
+                        self.backup_dlg.update(int(progress), f'{folder}\n{item}')
         except Exception as e:
             self.backup_dlg.close()
-            self.oe.dbg_log('system::tar_add_folder', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::tar_add_folder', f'ERROR: ({repr(e)})')
 
     def get_folder_size(self, folder):
         for item in os.listdir(folder):
@@ -720,7 +719,7 @@ class system:
 
             self.oe.dbg_log('system::init_pinlock', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::init_pinlock', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('system::init_pinlock', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def set_pinlock(self, listItem=None):
         try:
@@ -732,7 +731,7 @@ class system:
                    xbmcDialog.ok(self.oe._(32228), self.oe._(32229))
                else:
                    self.oe.PIN.set(newpin)
-                   xbmcDialog.ok(self.oe._(32230), '%s\n\n%s' % (self.oe._(32231), newpin))
+                   xbmcDialog.ok(self.oe._(32230), f'{self.oe._(32231)}\n\n{newpin}')
             else:
                 xbmcDialog.ok(self.oe._(32232), self.oe._(32229))
             if self.oe.PIN.isSet() == False:
@@ -740,7 +739,7 @@ class system:
                 self.oe.PIN.disable()
             self.oe.dbg_log('system::set_pinlock', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::set_pinlock', 'ERROR: (%s)' % repr(e), self.oe.LOGERROR)
+            self.oe.dbg_log('system::set_pinlock', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def do_wizard(self):
         try:
@@ -751,7 +750,7 @@ class system:
             self.oe.winOeMain.set_wizard_button_1(self.struct['ident']['settings']['hostname']['value'], self, 'wizard_set_hostname')
             self.oe.dbg_log('system::do_wizard', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::do_wizard', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::do_wizard', f'ERROR: ({repr(e)})')
 
     def wizard_set_hostname(self):
         try:
@@ -776,4 +775,4 @@ class system:
                 self.oe.write_setting('system', 'hostname', self.struct['ident']['settings']['hostname']['value'])
             self.oe.dbg_log('system::wizard_set_hostname', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('system::wizard_set_hostname', 'ERROR: (' + repr(e) + ')')
+            self.oe.dbg_log('system::wizard_set_hostname', f'ERROR: ({repr(e)})')
