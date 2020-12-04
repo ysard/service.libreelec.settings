@@ -68,7 +68,6 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                 self.setFocusId(self.guiMenList)
                 self.onFocus(self.guiMenList)
                 return
-            self.oe.set_busy(1)
             self.setProperty('arch', self.oe.ARCHITECTURE)
             self.setProperty('distri', self.oe.DISTRIBUTION)
             self.setProperty('version', self.oe.VERSION)
@@ -92,9 +91,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                             self.addMenuItem(module.menu[men]['name'], dictProperties)
             self.setFocusId(self.guiMenList)
             self.onFocus(self.guiMenList)
-            self.oe.set_busy(0)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('oeWindows.mainWindow::onInit', f'ERROR: ({repr(e)})')
 
     def addMenuItem(self, strName, dictProperties):
