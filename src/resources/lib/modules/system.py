@@ -366,7 +366,6 @@ class system:
     def set_hostname(self, listItem=None):
         try:
             self.oe.dbg_log('system::set_hostname', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.set_busy(1)
             if not listItem == None:
                 self.set_value(listItem)
             if not self.struct['ident']['settings']['hostname']['value'] is None and not self.struct['ident']['settings']['hostname']['value'] \
@@ -389,10 +388,8 @@ class system:
                 hosts.close()
             else:
                 self.oe.dbg_log('system::set_hostname', 'is empty', self.oe.LOGINFO)
-            self.oe.set_busy(0)
             self.oe.dbg_log('system::set_hostname', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('system::set_hostname', f'ERROR: ({repr(e)})')
 
     def get_keyboard_layouts(self):
@@ -475,30 +472,24 @@ class system:
         try:
             self.oe.dbg_log('system::reset_xbmc', 'enter_function', self.oe.LOGDEBUG)
             if self.ask_sure_reset('Soft') == 1:
-                self.oe.set_busy(1)
                 open(self.XBMC_RESET_FILE, 'a').close()
                 self.oe.winOeMain.close()
                 self.oe.xbmcm.waitForAbort(1)
                 xbmc.executebuiltin('Reboot')
-            self.oe.set_busy(0)
             self.oe.dbg_log('system::reset_xbmc', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('system::reset_xbmc', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def reset_oe(self, listItem=None):
         try:
             self.oe.dbg_log('system::reset_oe', 'enter_function', self.oe.LOGDEBUG)
             if self.ask_sure_reset('Hard') == 1:
-                self.oe.set_busy(1)
                 open(self.LIBREELEC_RESET_FILE, 'a').close()
                 self.oe.winOeMain.close()
                 self.oe.xbmcm.waitForAbort(1)
                 xbmc.executebuiltin('Reboot')
-                self.oe.set_busy(0)
             self.oe.dbg_log('system::reset_oe', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('system::reset_oe', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def ask_sure_reset(self, part):
@@ -513,7 +504,6 @@ class system:
                     return 0
             self.oe.dbg_log('system::ask_sure_reset', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
-            self.oe.set_busy(0)
             self.oe.dbg_log('system::ask_sure_reset', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
 
     def do_backup(self, listItem=None):
@@ -523,12 +513,10 @@ class system:
             self.done_backup_size = 1
 
             try:
-                self.oe.set_busy(1)
                 for directory in self.BACKUP_DIRS:
                     self.get_folder_size(directory)
-                self.oe.set_busy(0)
             except:
-                self.oe.set_busy(0)
+                pass
 
             xbmcDialog = xbmcgui.Dialog()
             bckDir = xbmcDialog.browse( 0,
