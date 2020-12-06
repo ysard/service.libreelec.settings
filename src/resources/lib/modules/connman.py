@@ -17,7 +17,9 @@ import config
 import dbussy
 import ravel
 import regdom
+import dbus_connman
 
+CONNMAN = dbus_connman.Dbus_Connman()
 
 ####################################################################
 ## Connection properties class
@@ -288,8 +290,7 @@ class connmanService(object):
         self.winOeCon = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', oe.__cwd__, 'Default', oeMain=oe, isChild=True)
         self.servicePath = servicePath
         oe.dictModules['connmanNetworkConfig'] = self
-        self.service = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', servicePath), 'net.connman.Service')
-        self.service_properties = self.service.GetProperties()
+        self.service_properties = CONNMAN.service_get_properties(servicePath)
         for entry in sorted(self.datamap):
             for (key, value) in self.datamap[entry].items():
                 if self.struct[value]['type'] == 'Boolean':
@@ -468,7 +469,7 @@ class connman:
     def __init__(self, oeMain):
         self.listItems = {}
         self.struct = {
-            '/net/connman/technology/wifi': {
+            dbus_connman.PATH_TECH_WIFI: {
                 'hidden': 'true',
                 'order': 1,
                 'name': 32102,
@@ -540,7 +541,7 @@ class connman:
                     },
                 'order': 0,
                 },
-            '/net/connman/technology/ethernet': {
+            dbus_connman.PATH_TECH_ETHERNET: {
                 'hidden': 'true',
                 'order': 2,
                 'name': 32103,
@@ -688,9 +689,9 @@ class connman:
             nf_option_str = oe._(32397)
         self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
         # regdom
-        self.struct['/net/connman/technology/wifi']['settings']['regdom']['values'] = regdom.REGDOM_LIST
+        self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['values'] = regdom.REGDOM_LIST
         regValue = regdom.get_regdom()
-        self.struct['/net/connman/technology/wifi']['settings']['regdom']['value'] = str(regValue)
+        self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['value'] = str(regValue)
 
     @config.log_function
     def menu_connections(self, focusItem, services={}, removed={}, force=False):
@@ -742,8 +743,7 @@ class connman:
                 'values': ['Ethernet', 'Interface'],
                 },
             }
-        dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-        dbusServices = dbusConnmanManager.GetServices()
+        dbusServices = CONNMAN.manager_get_services()
         dbusConnmanManager = None
         rebuildList = 0
         if len(dbusServices) != len(self.listItems) or force:
@@ -803,13 +803,10 @@ class connman:
     def menu_loader(self, menuItem=None):
         if menuItem == None:
             menuItem = oe.winOeMain.getControl(oe.winOeMain.guiMenList).getSelectedItem()
-        dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-        self.technologie_properties = dbusConnmanManager.GetTechnologies()
-        dbusConnmanManager = None
-        self.clock = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Clock')
-        self.clock_properties = self.clock.GetProperties()
-        self.struct['/net/connman/technology/wifi']['hidden'] = 'true'
-        self.struct['/net/connman/technology/ethernet']['hidden'] = 'true'
+        self.technologie_properties = CONNMAN.manager_get_technologies()
+        self.clock_properties = CONNMAN.clock_get_properties()
+        self.struct[dbus_connman.PATH_TECH_WIFI]['hidden'] = 'true'
+        self.struct[dbus_connman.PATH_TECH_ETHERNET]['hidden'] = 'true'
         for (path, technologie) in self.technologie_properties:
             if path in self.struct:
                 if 'hidden' in self.struct[path]:
@@ -855,7 +852,7 @@ class connman:
                 }
         if hasattr(self, 'technologie_properties'):
             for (path, technologie) in self.technologie_properties:
-                if path == '/net/connman/technology/wifi':
+                if path == dbus_connman.PATH_TECH_WIFI:
                     values[4] = {
                         'text': oe._(32142),
                         'action': 'refresh_network',
@@ -876,13 +873,11 @@ class connman:
     def set_timeservers(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        oe.dbg_log('connman::set_timeservers', 'enter_function', oe.LOGDEBUG)
-        self.clock = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Clock')
-        timeservers = dbus.Array([], signature=dbus.Signature('s'), variant_level=1)
+        timeservers = []
         for setting in sorted(self.struct['Timeservers']['settings']):
             if self.struct['Timeservers']['settings'][setting]['value'] != '':
                 timeservers.append(self.struct['Timeservers']['settings'][setting]['value'])
-        self.clock.SetProperty(dbus.String('Timeservers'), timeservers)
+        CONNMAN.clock_set_timeservers(timeservers)
 
     @config.log_function
     def set_value(self, listItem=None):
@@ -893,10 +888,8 @@ class connman:
     def set_technologie(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-        self.technologie_properties = dbusConnmanManager.GetTechnologies()
-        dbusConnmanManager = None
-        techPath = '/net/connman/technology/wifi'
+        self.technologie_properties = CONNMAN.manager_get_technologies()
+        techPath = dbus_connman.PATH_TECH_WIFI
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
@@ -922,7 +915,7 @@ class connman:
                         if technologie['Powered'] != False:
                             self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
                     break
-        techPath = '/net/connman/technology/ethernet'
+        techPath = dbus_connman.PATH_TECH_ETHERNET
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
@@ -960,7 +953,7 @@ class connman:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
         try:
-            config.BUS['net.connman'][entry].get_interface('net.connman.Service').Connect()
+            CONNMAN.service_connect(entry)
             self.menu_connections(None)
         except dbussy.DBusError as e:
             config.notification(repr(e))
@@ -1011,7 +1004,7 @@ class connman:
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
-        config.BUS['net.connman'][entry].get_interface('net.connman.Service').Disconnect()
+        CONNMAN.service_disconnect(entry)
 
     @config.log_function
     def delete_network(self, listItem=None):
@@ -1019,14 +1012,11 @@ class connman:
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         service_path = listItem.getProperty('entry')
-        network_type = listItem.getProperty('netType')
-        config.BUS['net.connman'][service_path].get_interface('net.connman.Service').Remove()
-        del service_object
-        oe.dbg_log('connman::delete_network', 'exit_function', oe.LOGDEBUG)
+        CONNMAN.service_remove(service_path)
 
     @config.log_function
     def refresh_network(self, listItem=None):
-        config.BUS['net.connman']['/net/connman/technology/wifi'].get_interface('net.connman.Technology').Scan()
+        CONNMAN.technology_scan_wifi()
         self.menu_connections(None)
 
     @config.log_function
