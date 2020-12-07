@@ -75,6 +75,19 @@ class Dbus_Connman(dbus_utils.Dbus):
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
 class Connman_Agent(object):
 
+    agent = None
+
+    @classmethod
+    def register_agent(cls):
+        if cls.agent is not None:
+            raise RuntimeError('An agent is already registered')
+        cls.agent = cls()
+        dbus_utils.BUS.request_name(
+            BUS_NAME, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
+        dbus_utils.BUS.register(
+            path=PATH_AGENT, interface=cls.agent, fallback=True)
+        return cls.agent
+
     @ravel.method(
         in_signature='os',
         out_signature='',
@@ -85,7 +98,7 @@ class Connman_Agent(object):
         self.report_error(path, error)
 
     def report_error(self, path, error):
-        print(path, error)
+        pass
 
     @ravel.method(
         in_signature='oa{sv}',
@@ -95,11 +108,10 @@ class Connman_Agent(object):
     )
     async def RequestInput(self, request, reply):
         request = dbus_utils.convert_from_dbussy(request)
-        input = self.request_input(request)
+        input = self.request_input(*request)
         input = {k: (dbussy.DBUS.Signature('s'), v)
                  for (k, v) in input.items()}
         reply[0] = input
 
     def request_input(self, request):
-        print(request)
-        return {'Passphrase': 'Secret'}
+        pass

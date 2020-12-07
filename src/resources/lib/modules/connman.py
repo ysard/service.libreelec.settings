@@ -1087,7 +1087,6 @@ class connman:
             self.signal_receivers = []
             self.NameOwnerWatch = None
             self.parent = parent
-            self.wifiAgentPath = '/LibreELEC/agent_wifi'
 
         @config.log_function
         def add_signal_receivers(self):
@@ -1115,42 +1114,10 @@ class connman:
                 func=self.technologyChanged,
                 path='/',
                 name='PropertyChanged')
-            self.conNameOwnerWatch = oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
 
         @config.log_function
         def remove_signal_receivers(self):
-            for signal_receiver in self.signal_receivers:
-                signal_receiver.remove()
-                signal_receiver = None
-            self.conNameOwnerWatch.cancel()
-            self.conNameOwnerWatch = None
-            if hasattr(self, 'wifiAgent'):
-                self.remove_agent()
-
-        @config.log_function
-        def conNameOwnerChanged(self, proxy):
-            if proxy:
-                self.initialize_agent()
-            else:
-                self.remove_agent()
-
-        @config.log_function
-        def initialize_agent(self):
-            if not hasattr(self, 'wifiAgent'):
-                dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-                self.wifiAgent = connmanWifiAgent(oe.dbusSystemBus, self.wifiAgentPath)
-                self.wifiAgent.oe = oe
-                dbusConnmanManager.RegisterAgent(self.wifiAgentPath)
-
-        @config.log_function
-        def remove_agent(self):
-            if hasattr(self, 'wifiAgent'):
-                self.wifiAgent.remove_from_connection(oe.dbusSystemBus, self.wifiAgentPath)
-                try:
-                    dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-                    dbusConnmanManager.UnregisterAgent(self.wifiAgentPath)
-                finally:
-                    del self.wifiAgent
+            pass
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         @config.log_function
@@ -1213,124 +1180,80 @@ class connman:
                 oe.winOeMain.setFocusId(focusId)
 
 
-class Failed(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Error.Failed'
-
-
-class Canceled(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Error.Canceled'
-
-
-class Retry(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Agent.Error.Retry'
-
-
-class LaunchBrowser(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Agent.Error.LaunchBrowser'
-
-
-class connmanWifiAgent(dbus.service.Object):
+class Kodi_Wifi_Agent(dbus_connman.Connman_Agent):
 
     def busy(self):
         oe.input_request = False
 
-    @dbus.service.method('net.connman.Agent', in_signature='', out_signature='')
     def Release(self):
-        oe.dbg_log('connman::connmanWifiAgent::Release', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::Release', 'exit_function', oe.LOGDEBUG)
-        return {}
+        pass
 
-    @dbus.service.method('net.connman.Agent', in_signature='oa{sv}', out_signature='a{sv}')
-    def RequestInput(self, path, fields):
-        try:
-            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'enter_function', oe.LOGDEBUG)
-            oe.input_request = True
-            response = {}
-            if 'Name' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Name'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+    def request_input(self, path, fields):
+        oe.input_request = True
+        response = {}
+        if 'Name' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Name'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            if 'Passphrase' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Passphrase'] = xbmcKeyboard.getText()
-                        if 'Identity' in fields:
-                            response['Identity'] = xbmcKeyboard.getText()
-                        if 'wpspin' in fields:
-                            response['wpspin'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+            else:
+                self.busy()
+                return response
+        if 'Passphrase' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Passphrase'] = xbmcKeyboard.getText()
+                    if 'Identity' in fields:
+                        response['Identity'] = xbmcKeyboard.getText()
+                    if 'wpspin' in fields:
+                        response['wpspin'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            if 'Username' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Username'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+            else:
+                self.busy()
+                return response
+        if 'Username' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Username'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            if 'Password' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Password'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+            else:
+                self.busy()
+                return response
+        if 'Password' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Password'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            self.busy()
-            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'exit_function', oe.LOGDEBUG)
-            return response
-        except Exception as e:
-            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+            else:
+                self.busy()
+                return response
+        self.busy()
+        return response
 
-    @dbus.service.method('net.connman.Agent', in_signature='os', out_signature='')
     def RequestBrowser(self, path, url):
-        oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'exit_function', oe.LOGDEBUG)
-        return
+        pass
 
-    @dbus.service.method('net.connman.Agent', in_signature='os', out_signature='')
-    def ReportError(self, path, error):
-        oe.dbg_log('connman::connmanWifiAgent::ReportError', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::ReportError', 'exit_function (CANCELED)', oe.LOGDEBUG)
-        raise Failed()
-        return
+    def report_error(self, path, error):
+        config.notification(error)
 
-    @dbus.service.method('net.connman.Agent', in_signature='', out_signature='')
     def Cancel(self):
-        oe.dbg_log('connman::connmanWifiAgent::Cancel', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::Cancel', 'exit_function', oe.LOGDEBUG)
-        return
+        pass
+
+CONNMAN.manager_register_agent()
+AGENT = Kodi_Wifi_Agent.register_agent()
