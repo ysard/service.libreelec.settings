@@ -2,17 +2,11 @@
 # Copyright (C) 2020-present Team LibreELEC
 import asyncio
 import dbussy
-import config
-import threading
 import ravel
 
-'''
+LOOP = asyncio.get_event_loop()
 BUS = ravel.system_bus()
-_LOOP = asyncio.get_event_loop()
-BUS.attach_asyncio(_LOOP)
-threading.Thread(target=_LOOP.run_forever, daemon=True).start()
-'''
-BUS = config.BUS
+BUS.attach_asyncio(LOOP)
 
 
 def convert_from_dbussy(data):
@@ -41,11 +35,20 @@ class Dbus(object):
     def __init__(self, bus_name):
         self.bus_name = bus_name
 
-    def call_method(self, path, interface, method_name, *args, **kwargs):
-        dbus_interface = BUS[self.bus_name][path].get_interface(interface)
-        method = getattr(dbus_interface, method_name)
-        result = convert_from_dbussy(method(*args, **kwargs))
-        return next(iter(result or []), None)
+    async def call_async_method(self, path, interface, method_name, *args, **kwargs):
+        interface = await BUS[self.bus_name][path].get_async_interface(interface)
+        method = getattr(interface, method_name)
+        result = await method(*args, **kwargs)
+        first = next(iter(result or []), None)
+        return convert_from_dbussy(first)
 
-    def get_signature(self, signature):
-        return dbussy.parse_signature(signature)
+    def call_method(self, path, interface, method_name, *args, **kwargs):
+        interface = BUS[self.bus_name][path].get_interface(interface)
+        method = getattr(interface, method_name)
+        result = method(*args, **kwargs)
+        first = next(iter(result or []), None)
+        return convert_from_dbussy(first)
+
+    def run_method(self, path, interface, method_name, *args, **kwargs):
+        LOOP.run_until_complete(self.call_async_method(
+            path, interface, method_name, *args, **kwargs))

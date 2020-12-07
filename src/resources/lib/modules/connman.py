@@ -18,6 +18,7 @@ import dbussy
 import ravel
 import regdom
 import dbus_connman
+import dbus_utils
 
 CONNMAN = dbus_connman.Dbus_Connman()
 
@@ -1016,7 +1017,7 @@ class connman:
 
     @config.log_function
     def refresh_network(self, listItem=None):
-        CONNMAN.technology_scan_wifi()
+        CONNMAN.technology_wifi_scan()
         self.menu_connections(None)
 
     @config.log_function
@@ -1090,25 +1091,25 @@ class connman:
 
         @config.log_function
         def add_signal_receivers(self):
-            config.BUS.listen_signal(
+            dbus_utils.BUS.listen_signal(
                 interface='net.connman.Manager',
                 fallback=True,
                 func=self.propertyChanged,
                 path='/',
                 name='PropertyChanged')
-            config.BUS.listen_signal(
+            dbus_utils.BUS.listen_signal(
                 interface='net.connman.Service',
                 fallback=True,
                 func=self.propertyChanged,
                 path='/',
                 name='PropertyChanged')
-            config.BUS.listen_signal(
+            dbus_utils.BUS.listen_signal(
                 interface='net.connman.Manager',
                 fallback=True,
                 func=self.servicesChanged,
                 path='/',
                 name='ServicesChanged')
-            config.BUS.listen_signal(
+            dbus_utils.BUS.listen_signal(
                 interface='net.connman.Technology',
                 fallback=True,
                 func=self.technologyChanged,
@@ -1154,14 +1155,14 @@ class connman:
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         @config.log_function
         def propertyChanged(self, name, value, path):
-            value = config.convert_dbussy(value)
+            value = dbus_utils.convert_from_dbussy(value)
             if self.parent.visible:
                 self.updateGui(name, value, path)
 
         @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
         @config.log_function
         def technologyChanged(self, name, value, path):
-            value = config.convert_dbussy(value)
+            value = dbus_utils.convert_from_dbussy(value)
             if self.parent.visible:
                 if oe.winOeMain.lastMenu == 1:
                     oe.winOeMain.lastMenu = -1
@@ -1172,8 +1173,8 @@ class connman:
         @ravel.signal(name='PropertyChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
         @config.log_function
         def servicesChanged(self, services, removed):
-            services = config.convert_dbussy(services)
-            removed = config.convert_dbussy(removed)
+            services = dbus_utils.convert_from_dbussy(services)
+            removed = dbus_utils.convert_from_dbussy(removed)
             if self.parent.visible:
                 self.parent.menu_connections(None, services, removed, force=True)
 
