@@ -1024,6 +1024,10 @@ class connman:
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
+        CONNMAN.manager_register_agent()
+        self.agent = Kodi_Wifi_Agent.register_agent()
+        self.listener = Listener(self)
+        self.listener.listen()
 
     @config.log_function
     def stop_service(self):
@@ -1080,104 +1084,98 @@ class connman:
                                      ]).controlLeft(oe.winOeMain.getControl(oe.winOeMain.buttons[2]['id']))
         self.menu_connections(None)
 
-    class monitor:
 
-        @config.log_function
-        def __init__(self, oeMain, parent):
-            self.signal_receivers = []
-            self.NameOwnerWatch = None
-            self.parent = parent
+class Listener(object):
 
-        @config.log_function
-        def add_signal_receivers(self):
-            dbus_utils.BUS.listen_signal(
-                interface='net.connman.Manager',
-                fallback=True,
-                func=self.propertyChanged,
-                path='/',
-                name='PropertyChanged')
-            dbus_utils.BUS.listen_signal(
-                interface='net.connman.Service',
-                fallback=True,
-                func=self.propertyChanged,
-                path='/',
-                name='PropertyChanged')
-            dbus_utils.BUS.listen_signal(
-                interface='net.connman.Manager',
-                fallback=True,
-                func=self.servicesChanged,
-                path='/',
-                name='ServicesChanged')
-            dbus_utils.BUS.listen_signal(
-                interface='net.connman.Technology',
-                fallback=True,
-                func=self.technologyChanged,
-                path='/',
-                name='PropertyChanged')
+    @config.log_function
+    def __init__(self, parent):
+        self.parent = parent
 
-        @config.log_function
-        def remove_signal_receivers(self):
-            pass
+    def listen(self):
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self.propertyChanged,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Service',
+            fallback=True,
+            func=self.propertyChanged,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self.servicesChanged,
+            path='/',
+            name='ServicesChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Technology',
+            fallback=True,
+            func=self.technologyChanged,
+            path='/',
+            name='PropertyChanged')
 
-        @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-        @config.log_function
-        def propertyChanged(self, name, value, path):
-            value = dbus_utils.convert_from_dbussy(value)
-            if self.parent.visible:
+    @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
+    @config.log_function
+    def propertyChanged(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        if self.parent.visible:
+            self.updateGui(name, value, path)
+
+    @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
+    @config.log_function
+    def technologyChanged(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        if self.parent.visible:
+            if oe.winOeMain.lastMenu == 1:
+                oe.winOeMain.lastMenu = -1
+                oe.winOeMain.onFocus(oe.winOeMain.guiMenList)
+            else:
                 self.updateGui(name, value, path)
 
-        @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-        @config.log_function
-        def technologyChanged(self, name, value, path):
-            value = dbus_utils.convert_from_dbussy(value)
-            if self.parent.visible:
-                if oe.winOeMain.lastMenu == 1:
-                    oe.winOeMain.lastMenu = -1
-                    oe.winOeMain.onFocus(oe.winOeMain.guiMenList)
-                else:
-                    self.updateGui(name, value, path)
+    @ravel.signal(name='ServicesChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
+    @config.log_function
+    def servicesChanged(self, services, removed):
+        services = dbus_utils.convert_from_dbussy(services)
+        removed = dbus_utils.convert_from_dbussy(removed)
+        if self.parent.visible:
+            self.parent.menu_connections(None, services, removed, force=True)
 
-        @ravel.signal(name='PropertyChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
-        @config.log_function
-        def servicesChanged(self, services, removed):
-            services = dbus_utils.convert_from_dbussy(services)
-            removed = dbus_utils.convert_from_dbussy(removed)
-            if self.parent.visible:
-                self.parent.menu_connections(None, services, removed, force=True)
-
-        @config.log_function
-        def updateGui(self, name, value, path):
-            try:
-                if name == 'Strength':
-                    value = str(int(value))
-                    self.parent.listItems[path].setProperty(name, value)
-                    self.forceRender()
-                elif name == 'State':
-                    value = str(value)
-                    self.parent.listItems[path].setProperty(name, value)
-                    self.forceRender()
-                elif name == 'IPv4':
-                    if 'Address' in value:
-                        value = str(value['Address'])
-                        self.parent.listItems[path].setProperty('Address', value)
-                    if 'Method' in value:
-                        value = str(value['Method'])
-                        self.parent.listItems[path].setProperty('Address', value)
-                    self.forceRender()
-                elif name == 'Favorite':
-                    value = str(int(value))
-                    self.parent.listItems[path].setProperty(name, value)
-                    self.forceRender()
-                if hasattr(self.parent, 'is_wizard'):
-                    self.parent.menu_connections(None, {}, {}, force=True)
-            except KeyError:
+    @config.log_function
+    def updateGui(self, name, value, path):
+        try:
+            if name == 'Strength':
+                value = str(int(value))
+                self.parent.listItems[path].setProperty(name, value)
+                self.forceRender()
+            elif name == 'State':
+                value = str(value)
+                self.parent.listItems[path].setProperty(name, value)
+                self.forceRender()
+            elif name == 'IPv4':
+                if 'Address' in value:
+                    value = str(value['Address'])
+                    self.parent.listItems[path].setProperty('Address', value)
+                if 'Method' in value:
+                    value = str(value['Method'])
+                    self.parent.listItems[path].setProperty('Address', value)
+                self.forceRender()
+            elif name == 'Favorite':
+                value = str(int(value))
+                self.parent.listItems[path].setProperty(name, value)
+                self.forceRender()
+            if hasattr(self.parent, 'is_wizard'):
                 self.parent.menu_connections(None, {}, {}, force=True)
+        except KeyError:
+            self.parent.menu_connections(None, {}, {}, force=True)
 
-        @config.log_function
-        def forceRender(self):
-                focusId = oe.winOeMain.getFocusId()
-                oe.winOeMain.setFocusId(oe.listObject['netlist'])
-                oe.winOeMain.setFocusId(focusId)
+    @config.log_function
+    def forceRender(self):
+            focusId = oe.winOeMain.getFocusId()
+            oe.winOeMain.setFocusId(oe.listObject['netlist'])
+            oe.winOeMain.setFocusId(focusId)
 
 
 class Kodi_Wifi_Agent(dbus_connman.Connman_Agent):
@@ -1254,6 +1252,3 @@ class Kodi_Wifi_Agent(dbus_connman.Connman_Agent):
 
     def Cancel(self):
         pass
-
-CONNMAN.manager_register_agent()
-AGENT = Kodi_Wifi_Agent.register_agent()

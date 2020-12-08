@@ -3,10 +3,12 @@
 import asyncio
 import dbussy
 import ravel
+import threading
 
 LOOP = asyncio.get_event_loop()
 BUS = ravel.system_bus()
 BUS.attach_asyncio(LOOP)
+LOOP_THREAD = threading.Thread(target=LOOP.run_forever, daemon=True).start()
 
 
 def convert_from_dbussy(data):
