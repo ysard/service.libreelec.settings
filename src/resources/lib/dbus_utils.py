@@ -52,4 +52,5 @@ class Dbus(object):
         return convert_from_dbussy(first)
 
     def run_method(self, path, interface, method_name, *args, **kwargs):
-        return asyncio.run_coroutine_threadsafe(self.call_async_method(path, interface, method_name, *args, **kwargs), LOOP)
+        future = asyncio.run_coroutine_threadsafe(self.call_async_method(path, interface, method_name, *args, **kwargs), LOOP)
+        return future.result()

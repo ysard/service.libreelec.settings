@@ -1119,14 +1119,14 @@ class Listener(object):
 
     @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
     @config.log_function
-    def propertyChanged(self, name, value, path):
+    async def propertyChanged(self, name, value, path):
         value = dbus_utils.convert_from_dbussy(value)
         if self.parent.visible:
             self.updateGui(name, value, path)
 
     @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
     @config.log_function
-    def technologyChanged(self, name, value, path):
+    async def technologyChanged(self, name, value, path):
         value = dbus_utils.convert_from_dbussy(value)
         if self.parent.visible:
             if oe.winOeMain.lastMenu == 1:
@@ -1137,7 +1137,7 @@ class Listener(object):
 
     @ravel.signal(name='ServicesChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
     @config.log_function
-    def servicesChanged(self, services, removed):
+    async def servicesChanged(self, services, removed):
         services = dbus_utils.convert_from_dbussy(services)
         removed = dbus_utils.convert_from_dbussy(removed)
         if self.parent.visible:
