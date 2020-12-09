@@ -265,7 +265,7 @@ class updates:
     def get_hardware_flags(self):
         if self.oe.PROJECT == "Generic":
             return self.get_hardware_flags_x86_64()
-        elif self.oe.PROJECT in ['Allwinner', 'Amlogic', 'NXP', 'Qualcomm', 'Rockchip', 'RPi', 'Samsung' ]:
+        elif self.oe.ARCHITECTURE.split('.')[1] in ['aarch64', 'arm' ]:
             return self.get_hardware_flags_dtflag()
         else:
             self.oe.dbg_log('updates::get_hardware_flags', f'Project is {self.oe.PROJECT}, no hardware flag available', self.oe.LOGDEBUG)
