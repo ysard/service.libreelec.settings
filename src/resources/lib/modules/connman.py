@@ -18,6 +18,7 @@ import dbussy
 import ravel
 import regdom
 import dbus_connman
+import dbus_utils
 
 CONNMAN = dbus_connman.Dbus_Connman()
 
@@ -1016,13 +1017,17 @@ class connman:
 
     @config.log_function
     def refresh_network(self, listItem=None):
-        CONNMAN.technology_scan_wifi()
+        CONNMAN.technology_wifi_scan()
         self.menu_connections(None)
 
     @config.log_function
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
+        CONNMAN.manager_register_agent()
+        self.agent = Kodi_Wifi_Agent.register_agent()
+        self.listener = Listener(self)
+        self.listener.listen()
 
     @config.log_function
     def stop_service(self):
@@ -1079,257 +1084,171 @@ class connman:
                                      ]).controlLeft(oe.winOeMain.getControl(oe.winOeMain.buttons[2]['id']))
         self.menu_connections(None)
 
-    class monitor:
 
-        @config.log_function
-        def __init__(self, oeMain, parent):
-            self.signal_receivers = []
-            self.NameOwnerWatch = None
-            self.parent = parent
-            self.wifiAgentPath = '/LibreELEC/agent_wifi'
+class Listener(object):
 
-        @config.log_function
-        def add_signal_receivers(self):
-            config.BUS.listen_signal(
-                interface='net.connman.Manager',
-                fallback=True,
-                func=self.propertyChanged,
-                path='/',
-                name='PropertyChanged')
-            config.BUS.listen_signal(
-                interface='net.connman.Service',
-                fallback=True,
-                func=self.propertyChanged,
-                path='/',
-                name='PropertyChanged')
-            config.BUS.listen_signal(
-                interface='net.connman.Manager',
-                fallback=True,
-                func=self.servicesChanged,
-                path='/',
-                name='ServicesChanged')
-            config.BUS.listen_signal(
-                interface='net.connman.Technology',
-                fallback=True,
-                func=self.technologyChanged,
-                path='/',
-                name='PropertyChanged')
-            self.conNameOwnerWatch = oe.dbusSystemBus.watch_name_owner('net.connman', self.conNameOwnerChanged)
+    @config.log_function
+    def __init__(self, parent):
+        self.parent = parent
 
-        @config.log_function
-        def remove_signal_receivers(self):
-            for signal_receiver in self.signal_receivers:
-                signal_receiver.remove()
-                signal_receiver = None
-            self.conNameOwnerWatch.cancel()
-            self.conNameOwnerWatch = None
-            if hasattr(self, 'wifiAgent'):
-                self.remove_agent()
+    def listen(self):
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self.propertyChanged,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Service',
+            fallback=True,
+            func=self.propertyChanged,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self.servicesChanged,
+            path='/',
+            name='ServicesChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Technology',
+            fallback=True,
+            func=self.technologyChanged,
+            path='/',
+            name='PropertyChanged')
 
-        @config.log_function
-        def conNameOwnerChanged(self, proxy):
-            if proxy:
-                self.initialize_agent()
+    @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
+    @config.log_function
+    def propertyChanged(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        if self.parent.visible:
+            self.updateGui(name, value, path)
+
+    @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
+    @config.log_function
+    def technologyChanged(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        if self.parent.visible:
+            if oe.winOeMain.lastMenu == 1:
+                oe.winOeMain.lastMenu = -1
+                oe.winOeMain.onFocus(oe.winOeMain.guiMenList)
             else:
-                self.remove_agent()
-
-        @config.log_function
-        def initialize_agent(self):
-            if not hasattr(self, 'wifiAgent'):
-                dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-                self.wifiAgent = connmanWifiAgent(oe.dbusSystemBus, self.wifiAgentPath)
-                self.wifiAgent.oe = oe
-                dbusConnmanManager.RegisterAgent(self.wifiAgentPath)
-
-        @config.log_function
-        def remove_agent(self):
-            if hasattr(self, 'wifiAgent'):
-                self.wifiAgent.remove_from_connection(oe.dbusSystemBus, self.wifiAgentPath)
-                try:
-                    dbusConnmanManager = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', '/'), 'net.connman.Manager')
-                    dbusConnmanManager.UnregisterAgent(self.wifiAgentPath)
-                finally:
-                    del self.wifiAgent
-
-        @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-        @config.log_function
-        def propertyChanged(self, name, value, path):
-            value = config.convert_dbussy(value)
-            if self.parent.visible:
                 self.updateGui(name, value, path)
 
-        @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-        @config.log_function
-        def technologyChanged(self, name, value, path):
-            value = config.convert_dbussy(value)
-            if self.parent.visible:
-                if oe.winOeMain.lastMenu == 1:
-                    oe.winOeMain.lastMenu = -1
-                    oe.winOeMain.onFocus(oe.winOeMain.guiMenList)
-                else:
-                    self.updateGui(name, value, path)
+    @ravel.signal(name='ServicesChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
+    @config.log_function
+    def servicesChanged(self, services, removed):
+        services = dbus_utils.convert_from_dbussy(services)
+        removed = dbus_utils.convert_from_dbussy(removed)
+        if self.parent.visible:
+            self.parent.menu_connections(None, services, removed, force=True)
 
-        @ravel.signal(name='PropertyChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
-        @config.log_function
-        def servicesChanged(self, services, removed):
-            services = config.convert_dbussy(services)
-            removed = config.convert_dbussy(removed)
-            if self.parent.visible:
-                self.parent.menu_connections(None, services, removed, force=True)
-
-        @config.log_function
-        def updateGui(self, name, value, path):
-            try:
-                if name == 'Strength':
-                    value = str(int(value))
-                    self.parent.listItems[path].setProperty(name, value)
-                    self.forceRender()
-                elif name == 'State':
-                    value = str(value)
-                    self.parent.listItems[path].setProperty(name, value)
-                    self.forceRender()
-                elif name == 'IPv4':
-                    if 'Address' in value:
-                        value = str(value['Address'])
-                        self.parent.listItems[path].setProperty('Address', value)
-                    if 'Method' in value:
-                        value = str(value['Method'])
-                        self.parent.listItems[path].setProperty('Address', value)
-                    self.forceRender()
-                elif name == 'Favorite':
-                    value = str(int(value))
-                    self.parent.listItems[path].setProperty(name, value)
-                    self.forceRender()
-                if hasattr(self.parent, 'is_wizard'):
-                    self.parent.menu_connections(None, {}, {}, force=True)
-            except KeyError:
+    @config.log_function
+    def updateGui(self, name, value, path):
+        try:
+            if name == 'Strength':
+                value = str(int(value))
+                self.parent.listItems[path].setProperty(name, value)
+                self.forceRender()
+            elif name == 'State':
+                value = str(value)
+                self.parent.listItems[path].setProperty(name, value)
+                self.forceRender()
+            elif name == 'IPv4':
+                if 'Address' in value:
+                    value = str(value['Address'])
+                    self.parent.listItems[path].setProperty('Address', value)
+                if 'Method' in value:
+                    value = str(value['Method'])
+                    self.parent.listItems[path].setProperty('Address', value)
+                self.forceRender()
+            elif name == 'Favorite':
+                value = str(int(value))
+                self.parent.listItems[path].setProperty(name, value)
+                self.forceRender()
+            if hasattr(self.parent, 'is_wizard'):
                 self.parent.menu_connections(None, {}, {}, force=True)
+        except KeyError:
+            self.parent.menu_connections(None, {}, {}, force=True)
 
-        @config.log_function
-        def forceRender(self):
-                focusId = oe.winOeMain.getFocusId()
-                oe.winOeMain.setFocusId(oe.listObject['netlist'])
-                oe.winOeMain.setFocusId(focusId)
-
-
-class Failed(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Error.Failed'
+    @config.log_function
+    def forceRender(self):
+            focusId = oe.winOeMain.getFocusId()
+            oe.winOeMain.setFocusId(oe.listObject['netlist'])
+            oe.winOeMain.setFocusId(focusId)
 
 
-class Canceled(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Error.Canceled'
-
-
-class Retry(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Agent.Error.Retry'
-
-
-class LaunchBrowser(dbus.DBusException):
-
-    _dbus_error_name = 'net.connman.Agent.Error.LaunchBrowser'
-
-
-class connmanWifiAgent(dbus.service.Object):
+class Kodi_Wifi_Agent(dbus_connman.Connman_Agent):
 
     def busy(self):
         oe.input_request = False
 
-    @dbus.service.method('net.connman.Agent', in_signature='', out_signature='')
     def Release(self):
-        oe.dbg_log('connman::connmanWifiAgent::Release', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::Release', 'exit_function', oe.LOGDEBUG)
-        return {}
+        pass
 
-    @dbus.service.method('net.connman.Agent', in_signature='oa{sv}', out_signature='a{sv}')
-    def RequestInput(self, path, fields):
-        try:
-            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'enter_function', oe.LOGDEBUG)
-            oe.input_request = True
-            response = {}
-            if 'Name' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Name'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+    def request_input(self, path, fields):
+        oe.input_request = True
+        response = {}
+        if 'Name' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Name'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            if 'Passphrase' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Passphrase'] = xbmcKeyboard.getText()
-                        if 'Identity' in fields:
-                            response['Identity'] = xbmcKeyboard.getText()
-                        if 'wpspin' in fields:
-                            response['wpspin'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+            else:
+                self.busy()
+                return response
+        if 'Passphrase' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Passphrase'] = xbmcKeyboard.getText()
+                    if 'Identity' in fields:
+                        response['Identity'] = xbmcKeyboard.getText()
+                    if 'wpspin' in fields:
+                        response['wpspin'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            if 'Username' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Username'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+            else:
+                self.busy()
+                return response
+        if 'Username' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Username'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            if 'Password' in fields:
-                xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    if xbmcKeyboard.getText() != '':
-                        response['Password'] = xbmcKeyboard.getText()
-                    else:
-                        self.busy()
-                        raise Canceled('canceled')
-                        return response
+            else:
+                self.busy()
+                return response
+        if 'Password' in fields:
+            xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
+            xbmcKeyboard.doModal()
+            if xbmcKeyboard.isConfirmed():
+                if xbmcKeyboard.getText() != '':
+                    response['Password'] = xbmcKeyboard.getText()
                 else:
                     self.busy()
-                    raise Canceled('canceled')
                     return response
-            self.busy()
-            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'exit_function', oe.LOGDEBUG)
-            return response
-        except Exception as e:
-            oe.dbg_log('connman::connmanWifiAgent::RequestInput', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+            else:
+                self.busy()
+                return response
+        self.busy()
+        return response
 
-    @dbus.service.method('net.connman.Agent', in_signature='os', out_signature='')
     def RequestBrowser(self, path, url):
-        oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::RequestBrowser', 'exit_function', oe.LOGDEBUG)
-        return
+        pass
 
-    @dbus.service.method('net.connman.Agent', in_signature='os', out_signature='')
-    def ReportError(self, path, error):
-        oe.dbg_log('connman::connmanWifiAgent::ReportError', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::ReportError', 'exit_function (CANCELED)', oe.LOGDEBUG)
-        raise Failed()
-        return
+    def report_error(self, path, error):
+        config.notification(error)
 
-    @dbus.service.method('net.connman.Agent', in_signature='', out_signature='')
     def Cancel(self):
-        oe.dbg_log('connman::connmanWifiAgent::Cancel', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('connman::connmanWifiAgent::Cancel', 'exit_function', oe.LOGDEBUG)
-        return
+        pass
