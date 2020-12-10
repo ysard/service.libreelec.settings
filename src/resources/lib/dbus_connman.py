@@ -15,63 +15,6 @@ PATH_TECH_WIFI = '/net/connman/technology/wifi'
 PATH_AGENT = '/kodi/agent'
 
 
-class Dbus_Connman(dbus_utils.Dbus):
-
-    def __init__(self):
-        super().__init__(BUS_NAME)
-
-    def clock_get_properties(self):
-        return self.call_method('/', INTERFACE_CLOCK, 'GetProperties')
-
-    def clock_set_timeservers(self, timeservers):
-        return self.call_method('/', INTERFACE_CLOCK, 'SetProperty', 'Timeservers', (dbussy.DBUS.Signature('as'), timeservers))
-
-    def manager_get_properties(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'GetProperties')
-
-    def manager_get_services(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'GetServices')
-
-    def manager_get_technologies(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'GetTechnologies')
-
-    def manager_register_agent(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
-
-    def manager_unregister_agent(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT)
-
-    def service_connect(self, path):
-        return self.run_method(path, INTERFACE_SERVICE, 'Connect')
-
-    def service_disconnect(self, path):
-        return self.call_method(path, INTERFACE_SERVICE, 'Disconnect')
-
-    def service_get_properties(self, path):
-        return self.call_method(path, INTERFACE_SERVICE, 'GetProperties')
-
-    def service_remove(self, path):
-        return self.call_method(path, INTERFACE_SERVICE, 'Remove')
-
-    def technology_wifi_scan(self):
-        return self.call_method(PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'Scan')
-
-    def technology_wifi_set_property(self, name, value):
-        return self.call_method(PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'SetProperty', name, value)
-
-    def technology_wifi_set_powered(self, state):
-        return self.technology_wifi_set_property('Powered', (dbussy.DBUS.Signature('b'), state))
-
-    def technology_wifi_set_tethering(self, state):
-        return self.technology_wifi_set_property('Tethering', (dbussy.DBUS.Signature('b'), state))
-
-    def technology_wifi_set_tethering_identifier(self, identifier):
-        return self.technology_wifi_set_property('TetheringIdentifier', (dbussy.DBUS.Signature('s'), identifier))
-
-    def technology_wifi_set_tethering_passphrase(self, passphrase):
-        return self.technology_wifi_set_property('TetheringPassphrase', (dbussy.DBUS.Signature('s'), passphrase))
-
-
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
 class Connman_Agent(object):
 
@@ -115,3 +58,71 @@ class Connman_Agent(object):
 
     def request_input(self, request):
         pass
+
+
+def clock_get_properties():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'GetProperties')
+
+
+def clock_set_timeservers(timeservers):
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'SetProperty', 'Timeservers', (dbussy.DBUS.Signature('as'), timeservers))
+
+
+def manager_get_properties():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetProperties')
+
+
+def manager_get_services():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetServices')
+
+
+def manager_get_technologies():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetTechnologies')
+
+
+def manager_register_agent():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
+
+
+def manager_unregister_agent():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT)
+
+
+def service_connect(path):
+    return dbus_utils.run_method(BUS_NAME, path, INTERFACE_SERVICE, 'Connect')
+
+
+def service_disconnect(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'Disconnect')
+
+
+def service_get_properties(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'GetProperties')
+
+
+def service_remove(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'Remove')
+
+
+def technology_wifi_scan():
+    return dbus_utils.call_method(BUS_NAME, PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'Scan')
+
+
+def technology_wifi_set_property(name, value):
+    return dbus_utils.call_method(BUS_NAME, PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'SetProperty', name, value)
+
+
+def technology_wifi_set_powered(state):
+    return self.technology_wifi_set_property('Powered', (dbussy.DBUS.Signature('b'), state))
+
+
+def technology_wifi_set_tethering(state):
+    return self.technology_wifi_set_property('Tethering', (dbussy.DBUS.Signature('b'), state))
+
+
+def technology_wifi_set_tethering_identifier(identifier):
+    return self.technology_wifi_set_property('TetheringIdentifier', (dbussy.DBUS.Signature('s'), identifier))
+
+
+def technology_wifi_set_tethering_passphrase(passphrase):
+    return self.technology_wifi_set_property('TetheringPassphrase', (dbussy.DBUS.Signature('s'), passphrase))

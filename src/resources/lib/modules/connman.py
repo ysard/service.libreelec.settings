@@ -21,8 +21,6 @@ import dbus_connman
 import dbus_utils
 import log
 
-CONNMAN = dbus_connman.Dbus_Connman()
-
 ####################################################################
 ## Connection properties class
 ####################################################################
@@ -292,7 +290,7 @@ class connmanService(object):
         self.winOeCon = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', oe.__cwd__, 'Default', oeMain=oe, isChild=True)
         self.servicePath = servicePath
         oe.dictModules['connmanNetworkConfig'] = self
-        self.service_properties = CONNMAN.service_get_properties(servicePath)
+        self.service_properties = dbus_connman.service_get_properties(servicePath)
         for entry in sorted(self.datamap):
             for (key, value) in self.datamap[entry].items():
                 if self.struct[value]['type'] == 'Boolean':
@@ -745,7 +743,7 @@ class connman:
                 'values': ['Ethernet', 'Interface'],
                 },
             }
-        dbusServices = CONNMAN.manager_get_services()
+        dbusServices = dbus_connman.manager_get_services()
         dbusConnmanManager = None
         rebuildList = 0
         if len(dbusServices) != len(self.listItems) or force:
@@ -805,8 +803,8 @@ class connman:
     def menu_loader(self, menuItem=None):
         if menuItem == None:
             menuItem = oe.winOeMain.getControl(oe.winOeMain.guiMenList).getSelectedItem()
-        self.technologie_properties = CONNMAN.manager_get_technologies()
-        self.clock_properties = CONNMAN.clock_get_properties()
+        self.technologie_properties = dbus_connman.manager_get_technologies()
+        self.clock_properties = dbus_connman.clock_get_properties()
         self.struct[dbus_connman.PATH_TECH_WIFI]['hidden'] = 'true'
         self.struct[dbus_connman.PATH_TECH_ETHERNET]['hidden'] = 'true'
         for (path, technologie) in self.technologie_properties:
@@ -879,7 +877,7 @@ class connman:
         for setting in sorted(self.struct['Timeservers']['settings']):
             if self.struct['Timeservers']['settings'][setting]['value'] != '':
                 timeservers.append(self.struct['Timeservers']['settings'][setting]['value'])
-        CONNMAN.clock_set_timeservers(timeservers)
+        dbus_connman.clock_set_timeservers(timeservers)
 
     @log.log_function()
     def set_value(self, listItem=None):
@@ -890,7 +888,7 @@ class connman:
     def set_technologie(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        self.technologie_properties = CONNMAN.manager_get_technologies()
+        self.technologie_properties = dbus_connman.manager_get_technologies()
         techPath = dbus_connman.PATH_TECH_WIFI
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
@@ -955,7 +953,7 @@ class connman:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
         try:
-            CONNMAN.service_connect(entry)
+            dbus_connman.service_connect(entry)
             self.menu_connections(None)
         except dbussy.DBusError as e:
             config.notification(repr(e))
@@ -1006,7 +1004,7 @@ class connman:
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
-        CONNMAN.service_disconnect(entry)
+        dbus_connman.service_disconnect(entry)
 
     @log.log_function()
     def delete_network(self, listItem=None):
@@ -1014,18 +1012,18 @@ class connman:
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         service_path = listItem.getProperty('entry')
-        CONNMAN.service_remove(service_path)
+        dbus_connman.service_remove(service_path)
 
     @log.log_function()
     def refresh_network(self, listItem=None):
-        CONNMAN.technology_wifi_scan()
+        dbus_connman.technology_wifi_scan()
         self.menu_connections(None)
 
     @log.log_function()
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
-        CONNMAN.manager_register_agent()
+        dbus_connman.manager_register_agent()
         self.agent = Kodi_Wifi_Agent.register_agent()
         self.listener = Listener(self)
         self.listener.listen()
