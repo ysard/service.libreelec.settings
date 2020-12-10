@@ -301,11 +301,11 @@ def _(code):
     return codeNew
 
 
-def dbg_log(source, text, level=4):
-    if level == 0 and os.environ.get('DEBUG', 'no') == 'no':
+def dbg_log(source, text, level=LOGERROR):
+    if level == LOGDEBUG and os.environ.get('DEBUG', 'no') == 'no':
         return
     xbmc.log(f"## LibreELEC Addon ## {source} ## {text}", level)
-    if level == 4:
+    if level == LOGERROR:
         tracedata = traceback.format_exc()
         if tracedata != "NoneType: None\n":
             xbmc.log(tracedata, level)
