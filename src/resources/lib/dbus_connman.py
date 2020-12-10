@@ -16,7 +16,7 @@ PATH_AGENT = '/kodi/agent'
 
 
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
-class Connman_Agent(object):
+class Agent(object):
 
     agent = None
 
@@ -58,6 +58,51 @@ class Connman_Agent(object):
 
     def request_input(self, request):
         pass
+
+
+class Listener(object):
+
+    def listen(self):
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self._on_property_changed,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Service',
+            fallback=True,
+            func=self._on_property_changed,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self._on_services_changed,
+            path='/',
+            name='ServicesChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Technology',
+            fallback=True,
+            func=self._on_technology_changed,
+            path='/',
+            name='PropertyChanged')
+
+    @ravel.signal(name='PropertyChanged', in_signature='sv', arg_keys=('name', 'value'), path_keyword='path')
+    async def _on_property_changed(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        await self.on_property_changed(name, value, path)
+
+    @ravel.signal(name='ServicesChanged', in_signature='a(oa{sv})ao', arg_keys=('services', 'removed'))
+    async def _on_services_changed(self, services, removed):
+        services = dbus_utils.convert_from_dbussy(services)
+        removed = dbus_utils.convert_from_dbussy(removed)
+        await self.on_services_changed(services, removed)
+
+    @ravel.signal(name='PropertyChanged', in_signature='sv', arg_keys=('name', 'value'), path_keyword='path')
+    async def _on_technology_changed(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        await self.on_technology_changed(name, value, path)
 
 
 def clock_get_properties():
