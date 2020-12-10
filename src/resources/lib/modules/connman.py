@@ -19,6 +19,7 @@ import ravel
 import regdom
 import dbus_connman
 import dbus_utils
+import log
 
 CONNMAN = dbus_connman.Dbus_Connman()
 
@@ -30,7 +31,7 @@ class connmanService(object):
 
     menu = {}
 
-    @config.log_function
+    @log.log_function()
     def __init__(self, servicePath, oeMain):
         self.struct = {
             'AutoConnect': {
@@ -320,17 +321,17 @@ class connmanService(object):
         del self.winOeCon
         del oe.dictModules['connmanNetworkConfig']
 
-    @config.log_function
+    @log.log_function()
     def cancel(self):
         self.winOeCon.close()
 
-    @config.log_function
+    @log.log_function()
     def menu_loader(self, menuItem):
         self.winOeCon.showButton(1, 32140, 'connmanNetworkConfig', 'save_network')
         self.winOeCon.showButton(2, 32212, 'connmanNetworkConfig', 'cancel')
         self.winOeCon.build_menu(self.struct, fltr=[menuItem.getProperty('category')])
 
-    @config.log_function
+    @log.log_function()
     def set_value_checkdhcp(self, listItem):
         if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
             ok_window = xbmcgui.Dialog()
@@ -340,12 +341,12 @@ class connmanService(object):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
-    @config.log_function
+    @log.log_function()
     def set_value(self, listItem):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
-    @config.log_function
+    @log.log_function()
     def dbus_config(self, category):
         value = None
         postfix = ''
@@ -466,7 +467,7 @@ class connman:
             },
         }
 
-    @config.log_function
+    @log.log_function()
     def __init__(self, oeMain):
         self.listItems = {}
         self.struct = {
@@ -636,24 +637,24 @@ class connman:
         self.busy = 0
         self.visible = False
 
-    @config.log_function
+    @log.log_function()
     def clear_list(self):
         remove = [entry for entry in self.listItems]
         for entry in remove:
             self.listItems[entry] = None
             del self.listItems[entry]
 
-    @config.log_function
+    @log.log_function()
     def do_init(self):
         self.visible = True
 
-    @config.log_function
+    @log.log_function()
     def exit(self):
         self.visible = False
         self.clear_list()
         oe.dbg_log('connman::exit', 'exit_function', oe.LOGDEBUG)
 
-    @config.log_function
+    @log.log_function()
     def load_values(self):
         # Network Wait
         self.struct['advanced']['settings']['wait_for_network']['value'] = '0'
@@ -694,7 +695,7 @@ class connman:
         regValue = regdom.get_regdom()
         self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['value'] = str(regValue)
 
-    @config.log_function
+    @log.log_function()
     def menu_connections(self, focusItem, services={}, removed={}, force=False):
         # type 1=int, 2=string, 3=array
         properties = {
@@ -800,7 +801,7 @@ class connman:
             if rebuildList == 1:
                 self.listItems[dbusServicePath] = oe.winOeMain.addConfigItem(apName, dictProperties, oe.listObject['netlist'])
 
-    @config.log_function
+    @log.log_function()
     def menu_loader(self, menuItem=None):
         if menuItem == None:
             menuItem = oe.winOeMain.getControl(oe.winOeMain.guiMenList).getSelectedItem()
@@ -823,7 +824,7 @@ class connman:
                 self.struct['Timeservers']['settings'][setting]['value'] = ''
         oe.winOeMain.build_menu(self.struct)
 
-    @config.log_function
+    @log.log_function()
     def open_context_menu(self, listItem):
         values = {}
         if listItem is None:
@@ -870,7 +871,7 @@ class connman:
         if result >= 0:
             getattr(self, actions[result])(listItem)
 
-    @config.log_function
+    @log.log_function()
     def set_timeservers(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
@@ -880,12 +881,12 @@ class connman:
                 timeservers.append(self.struct['Timeservers']['settings'][setting]['value'])
         CONNMAN.clock_set_timeservers(timeservers)
 
-    @config.log_function
+    @log.log_function()
     def set_value(self, listItem=None):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
-    @config.log_function
+    @log.log_function()
     def set_technologie(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
@@ -932,14 +933,14 @@ class connman:
         self.technologie_properties = None
         self.menu_loader(None)
 
-    @config.log_function
+    @log.log_function()
     def custom_regdom(self, **kwargs):
             if 'listItem' in kwargs:
                 regSelect = str((kwargs['listItem']).getProperty('value'))
                 regdom.set_regdom(regSelect)
                 self.set_value(kwargs['listItem'])
 
-    @config.log_function
+    @log.log_function()
     def configure_network(self, listItem=None):
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
@@ -947,7 +948,7 @@ class connman:
         del self.configureService
         self.menu_connections(None)
 
-    @config.log_function
+    @log.log_function()
     def connect_network(self, listItem=None):
         self.connect_attempt += 1
         if listItem == None:
@@ -959,11 +960,11 @@ class connman:
         except dbussy.DBusError as e:
             config.notification(repr(e))
 
-    @config.log_function
+    @log.log_function()
     def connect_reply_handler(self):
         self.menu_connections(None)
 
-    @config.log_function
+    @log.log_function()
     def dbus_error_handler(self, error):
         err_name = error.get_dbus_name()
         if 'InProgress' in err_name:
@@ -998,7 +999,7 @@ class connman:
             else:
                 self.log_error = 1
 
-    @config.log_function
+    @log.log_function()
     def disconnect_network(self, listItem=None):
         self.connect_attempt = 0
         self.net_disconnected = 1
@@ -1007,7 +1008,7 @@ class connman:
         entry = listItem.getProperty('entry')
         CONNMAN.service_disconnect(entry)
 
-    @config.log_function
+    @log.log_function()
     def delete_network(self, listItem=None):
         self.connect_attempt = 0
         if listItem == None:
@@ -1015,12 +1016,12 @@ class connman:
         service_path = listItem.getProperty('entry')
         CONNMAN.service_remove(service_path)
 
-    @config.log_function
+    @log.log_function()
     def refresh_network(self, listItem=None):
         CONNMAN.technology_wifi_scan()
         self.menu_connections(None)
 
-    @config.log_function
+    @log.log_function()
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
@@ -1029,13 +1030,13 @@ class connman:
         self.listener = Listener(self)
         self.listener.listen()
 
-    @config.log_function
+    @log.log_function()
     def stop_service(self):
         if hasattr(self, 'dbusConnmanManager'):
             self.dbusConnmanManager = None
             del self.dbusConnmanManager
 
-    @config.log_function
+    @log.log_function()
     def set_network_wait(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
@@ -1066,7 +1067,7 @@ class connman:
             state = 0
         oe.set_service('iptables', options, state)
 
-    @config.log_function
+    @log.log_function()
     def do_wizard(self):
         oe.winOeMain.set_wizard_title(oe._(32305))
         oe.winOeMain.set_wizard_text(oe._(32306))
@@ -1087,7 +1088,7 @@ class connman:
 
 class Listener(object):
 
-    @config.log_function
+    @log.log_function()
     def __init__(self, parent):
         self.parent = parent
 
@@ -1118,14 +1119,14 @@ class Listener(object):
             name='PropertyChanged')
 
     @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-    @config.log_function
+    @log.log_function()
     async def propertyChanged(self, name, value, path):
         value = dbus_utils.convert_from_dbussy(value)
         if self.parent.visible:
             self.updateGui(name, value, path)
 
     @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-    @config.log_function
+    @log.log_function()
     async def technologyChanged(self, name, value, path):
         value = dbus_utils.convert_from_dbussy(value)
         if self.parent.visible:
@@ -1136,14 +1137,14 @@ class Listener(object):
                 self.updateGui(name, value, path)
 
     @ravel.signal(name='ServicesChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
-    @config.log_function
+    @log.log_function()
     async def servicesChanged(self, services, removed):
         services = dbus_utils.convert_from_dbussy(services)
         removed = dbus_utils.convert_from_dbussy(removed)
         if self.parent.visible:
             self.parent.menu_connections(None, services, removed, force=True)
 
-    @config.log_function
+    @log.log_function()
     def updateGui(self, name, value, path):
         try:
             if name == 'Strength':
@@ -1171,7 +1172,7 @@ class Listener(object):
         except KeyError:
             self.parent.menu_connections(None, {}, {}, force=True)
 
-    @config.log_function
+    @log.log_function()
     def forceRender(self):
             focusId = oe.winOeMain.getFocusId()
             oe.winOeMain.setFocusId(oe.listObject['netlist'])
