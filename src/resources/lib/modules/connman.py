@@ -955,7 +955,7 @@ class connman:
             dbus_connman.service_connect(entry)
             self.menu_connections(None)
         except DBusError as e:
-            config.notification(repr(e))
+            self.dbus_error_handler(e)
 
     @log.log_function()
     def connect_reply_handler(self):
@@ -963,7 +963,7 @@ class connman:
 
     @log.log_function()
     def dbus_error_handler(self, error):
-        err_name = error.get_dbus_name()
+        err_name = error.name
         if 'InProgress' in err_name:
             if self.net_disconnected != 1:
                 self.disconnect_network()
@@ -971,7 +971,7 @@ class connman:
                 self.net_disconnected = 0
             self.connect_network()
         else:
-            err_message = error.get_dbus_message()
+            err_message = error.message
             if 'Operation aborted' in err_message or 'Input/output error' in err_message:
                 if self.connect_attempt == 1:
                     self.log_error = 0
@@ -988,11 +988,11 @@ class connman:
                 self.log_error = 1
                 self.notify_error = 1
             if self.notify_error == 1:
-                oe.notify('Network Error', err_message)
+                config.notification(err_message, 'Network Error')
             else:
                 self.notify_error = 1
             if self.log_error == 1:
-                oe.dbg_log('connman::dbus_error_handler', 'ERROR: (' + err_message + ')', oe.LOGERROR)
+                log.log(repr(error), log.ERROR)
             else:
                 self.log_error = 1
 
