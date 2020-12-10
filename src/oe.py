@@ -301,11 +301,11 @@ def _(code):
     return codeNew
 
 
-def dbg_log(source, text, level=4):
-    if level == 0 and os.environ.get('DEBUG', 'no') == 'no':
+def dbg_log(source, text, level=LOGERROR):
+    if level == LOGDEBUG and os.environ.get('DEBUG', 'no') == 'no':
         return
     xbmc.log(f"## LibreELEC Addon ## {source} ## {text}", level)
-    if level == 4:
+    if level == LOGERROR:
         tracedata = traceback.format_exc()
         if tracedata != "NoneType: None\n":
             xbmc.log(tracedata, level)
@@ -491,7 +491,7 @@ def download_file(source, destination, silent=False):
                 progress.update(part)
             else:
                 if progress.getPercent() - last_percent > 5 or not part:
-                    dbg_log(f'oe::download_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s')
+                    dbg_log(f'oe::download_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s', LOGINFO)
                     last_percent = progress.getPercent()
 
             if part:
@@ -538,7 +538,7 @@ def copy_file(source, destination, silent=False):
                 progress.update(part)
             else:
                 if progress.getPercent() - last_percent > 5 or not part:
-                    dbg_log(f'oe::copy_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s')
+                    dbg_log(f'oe::copy_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s', LOGINFO)
                     last_percent = progress.getPercent()
 
             if part:
