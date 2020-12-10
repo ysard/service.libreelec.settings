@@ -491,7 +491,7 @@ def download_file(source, destination, silent=False):
                 progress.update(part)
             else:
                 if progress.getPercent() - last_percent > 5 or not part:
-                    dbg_log(f'oe::download_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s')
+                    dbg_log(f'oe::download_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s', LOGINFO)
                     last_percent = progress.getPercent()
 
             if part:
@@ -538,7 +538,7 @@ def copy_file(source, destination, silent=False):
                 progress.update(part)
             else:
                 if progress.getPercent() - last_percent > 5 or not part:
-                    dbg_log(f'oe::copy_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s')
+                    dbg_log(f'oe::copy_file({destination})', f'{progress.getPercent()}%% with {progress.getSpeed()} KB/s', LOGINFO)
                     last_percent = progress.getPercent()
 
             if part:
