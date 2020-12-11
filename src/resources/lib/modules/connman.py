@@ -7,14 +7,11 @@ import oe
 import os
 import xbmc
 import dbus
-import dbus.service
 import xbmcgui
-import threading
 import oeWindows
 import random
 import string
 import config
-import dbussy
 import regdom
 import dbus_connman
 import log
@@ -910,7 +907,7 @@ class connman:
                             if technologie['Tethering'] != False:
                                 self.Technology.SetProperty('Tethering', dbus.Boolean(False, variant_level=1))
                     else:
-                        xbmc.log('####' + repr(technologie['Powered']))
+                        log.log('####' + repr(technologie['Powered']))
                         if technologie['Powered'] != False:
                             self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
                     break
