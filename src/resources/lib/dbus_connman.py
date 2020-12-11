@@ -5,6 +5,7 @@ import dbussy
 import ravel
 
 BUS_NAME = 'net.connman'
+ERROR_AGENT_CANCELLED = ravel.ErrorReturn('net.connman.Agent.Error.Canceled', '')
 INTERFACE_AGENT = 'net.connman.Agent'
 INTERFACE_CLOCK = 'net.connman.Clock'
 INTERFACE_MANAGER = 'net.connman.Manager'

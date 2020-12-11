@@ -1121,7 +1121,7 @@ class Agent(dbus_connman.Agent):
                     return response
             else:
                 self.busy()
-                return response
+                raise dbus_connman.ERROR_AGENT_CANCELLED
         if 'Username' in fields:
             xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
             xbmcKeyboard.doModal()
