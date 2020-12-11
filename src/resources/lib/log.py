@@ -25,7 +25,7 @@ except ModuleNotFoundError:
 
 
 def log(message, level=_DEFAULT):
-    _log(f'{_HEADER}{sys._getframe().f_back.f_code.co_name} # {message}')
+    _log(f'{_HEADER}{sys._getframe().f_back.f_code.co_name} # {message}', level)
 
 
 def log_function(level=_DEFAULT):
