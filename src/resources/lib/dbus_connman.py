@@ -5,7 +5,7 @@ import dbussy
 import ravel
 
 BUS_NAME = 'net.connman'
-ERROR_AGENT_CANCELLED = ravel.ErrorReturn('net.connman.Agent.Error.Canceled', '')
+ERROR_AGENT_CANCELLED = 'net.connman.Agent.Error.Canceled'
 INTERFACE_AGENT = 'net.connman.Agent'
 INTERFACE_CLOCK = 'net.connman.Clock'
 INTERFACE_MANAGER = 'net.connman.Manager'
@@ -33,6 +33,20 @@ class Agent(object):
         return cls.agent
 
     @ravel.method(
+        in_signature='',
+        out_signature=''
+    )
+    def Cancel(self):
+        raise NotImplementedError
+
+    @ravel.method(
+        in_signature='',
+        out_signature=''
+    )
+    def Release(self):
+        raise NotImplementedError
+
+    @ravel.method(
         in_signature='os',
         out_signature='',
         arg_keys=['path', 'error'],
@@ -43,6 +57,14 @@ class Agent(object):
 
     def report_error(self, path, error):
         pass
+
+    @ravel.method(
+        in_signature='os',
+        out_signature='',
+        arg_keys=['service', 'url'],
+    )
+    def RequestBrowser(self, path, url):
+        raise NotImplementedError
 
     @ravel.method(
         in_signature='oa{sv}',
@@ -105,6 +127,9 @@ class Listener(object):
         value = dbus_utils.convert_from_dbussy(value)
         await self.on_technology_changed(name, value, path)
 
+
+def agent_abort():
+    raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
 
 def clock_get_properties():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'GetProperties')

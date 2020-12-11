@@ -973,7 +973,12 @@ class connman:
         else:
             err_message = error.message
             if 'Operation aborted' in err_message or 'Input/output error' in err_message:
-                if self.connect_attempt == 1:
+                if oe.input_request:
+                    oe.input_request = False
+                    self.connect_attempt = 0
+                    self.log_error = 1
+                    self.notify_error = 0
+                elif self.connect_attempt == 1:
                     self.log_error = 0
                     self.notify_error = 0
                     oe.xbmcm.waitForAbort(5)
@@ -1085,78 +1090,35 @@ class connman:
 
 class Agent(dbus_connman.Agent):
 
-    def busy(self):
-        oe.input_request = False
-
-    def Release(self):
-        pass
-
     def request_input(self, path, fields):
         oe.input_request = True
         response = {}
-        if 'Name' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Name'] = xbmcKeyboard.getText()
+        input_fields = {
+            'Name': 32146,
+            'Passphrase': 32147,
+            'Username': 32148,
+            'Password': 32148,
+        }
+        for field, label in input_fields.items():
+            if field in fields:
+                xbmcKeyboard = xbmc.Keyboard('', oe._(label))
+                xbmcKeyboard.doModal()
+                if xbmcKeyboard.isConfirmed() and xbmcKeyboard.getText():
+                    response[field] = xbmcKeyboard.getText()
                 else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        if 'Passphrase' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Passphrase'] = xbmcKeyboard.getText()
-                    if 'Identity' in fields:
-                        response['Identity'] = xbmcKeyboard.getText()
-                    if 'wpspin' in fields:
-                        response['wpspin'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                raise dbus_connman.ERROR_AGENT_CANCELLED
-        if 'Username' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Username'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        if 'Password' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Password'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        self.busy()
+                    dbus_connman.agent_abort()
+        passphrase = response.get('Passphrase')
+        if passphrase:
+            if 'Identity' in fields:
+                response['Identity'] = passphrase
+            if 'wpspin' in fields:
+                response['wpspin'] = passphrase
+        oe.input_request = False
         return response
 
-    def RequestBrowser(self, path, url):
-        pass
-
     def report_error(self, path, error):
+        oe.input_request = False
         config.notification(error)
-
-    def Cancel(self):
-        pass
 
 
 class Listener(dbus_connman.Listener):
