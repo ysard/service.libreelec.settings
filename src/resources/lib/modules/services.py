@@ -225,7 +225,7 @@ class services(modules.Module):
                         'order': 1,
                         'name': 32344,
                         'value': None,
-                        'action': 'init_bluetooth',
+                        'action': 'initialize_bluetooth',
                         'type': 'bool',
                         'InfoText': 720,
                         },
@@ -285,7 +285,7 @@ class services(modules.Module):
         self.initialize_ssh(service=1)
         self.initialize_avahi(service=1)
         self.initialize_cron(service=1)
-        self.init_bluetooth(service=1)
+        self.initialize_bluetooth(service=1)
 
     @log.log_function()
     def do_init(self):
@@ -436,7 +436,7 @@ class services(modules.Module):
         oe.set_service('crond', options, state)
 
     @log.log_function()
-    def init_bluetooth(self, **kwargs):
+    def initialize_bluetooth(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
         options = {}
