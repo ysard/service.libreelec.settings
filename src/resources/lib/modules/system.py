@@ -208,314 +208,246 @@ class system(modules.Module):
                 },
             }
 
+    @log.log_function()
     def start_service(self):
-        try:
-            oe.dbg_log('system::start_service', 'enter_function', oe.LOGDEBUG)
-            self.is_service = True
-            self.load_values()
-            self.set_hostname()
-            self.set_keyboard_layout()
-            self.set_hw_clock()
-            del self.is_service
-            oe.dbg_log('system::start_service', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::start_service', f'ERROR: ({repr(e)})')
+        self.is_service = True
+        self.load_values()
+        self.set_hostname()
+        self.set_keyboard_layout()
+        self.set_hw_clock()
+        del self.is_service
 
+    @log.log_function()
     def stop_service(self):
-        try:
-            oe.dbg_log('system::stop_service', 'enter_function', oe.LOGDEBUG)
-            if hasattr(self, 'update_thread'):
-                self.update_thread.stop()
-            oe.dbg_log('system::stop_service', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::stop_service', f'ERROR: ({repr(e)})')
+        if hasattr(self, 'update_thread'):
+            self.update_thread.stop()
 
-    def do_init(self):
-        try:
-            oe.dbg_log('system::do_init', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('system::do_init', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::do_init', f'ERROR: ({repr(e)})')
-
-    def exit(self):
-        oe.dbg_log('system::exit', 'enter_function', oe.LOGDEBUG)
-        oe.dbg_log('system::exit', 'exit_function', oe.LOGDEBUG)
-        pass
-
+    @log.log_function()
     def load_values(self):
-        try:
-            oe.dbg_log('system::load_values', 'enter_function', oe.LOGDEBUG)
-
-            # Keyboard Layout
-            (
-                arrLayouts,
-                arrTypes,
-                self.arrVariants,
-                ) = self.get_keyboard_layouts()
-            if not arrTypes is None:
-                self.struct['keyboard']['settings']['KeyboardType']['values'] = arrTypes
-                value = oe.read_setting('system', 'KeyboardType')
-                if not value is None:
-                    self.struct['keyboard']['settings']['KeyboardType']['value'] = value
-            if not arrLayouts is None:
-                self.struct['keyboard']['settings']['KeyboardLayout1']['values'] = arrLayouts
-                self.struct['keyboard']['settings']['KeyboardLayout2']['values'] = arrLayouts
-                value = oe.read_setting('system', 'KeyboardLayout1')
-                if not value is None:
-                    self.struct['keyboard']['settings']['KeyboardLayout1']['value'] = value
-                value = oe.read_setting('system', 'KeyboardVariant1')
-                if not value is None:
-                    self.struct['keyboard']['settings']['KeyboardVariant1']['value'] = value
-                value = oe.read_setting('system', 'KeyboardLayout2')
-                if not value is None:
-                    self.struct['keyboard']['settings']['KeyboardLayout2']['value'] = value
-                value = oe.read_setting('system', 'KeyboardVariant2')
-                if not value is None:
-                    self.struct['keyboard']['settings']['KeyboardVariant2']['value'] = value
-                if not arrTypes == None:
-                    self.keyboard_layouts = True
-
-            if not os.path.exists('/usr/bin/setxkbmap'):
-                self.struct['keyboard']['settings']['KeyboardLayout2']['hidden'] = 'true'
-                self.struct['keyboard']['settings']['KeyboardType']['hidden'] = 'true'
-                self.struct['keyboard']['settings']['KeyboardVariant1']['hidden'] = 'true'
-                self.struct['keyboard']['settings']['KeyboardVariant2']['hidden'] = 'true'
-                self.nox_keyboard_layouts = True
-
-            # Hostname
-
-            value = oe.read_setting('system', 'hostname')
+        # Keyboard Layout
+        (
+            arrLayouts,
+            arrTypes,
+            self.arrVariants,
+            ) = self.get_keyboard_layouts()
+        if not arrTypes is None:
+            self.struct['keyboard']['settings']['KeyboardType']['values'] = arrTypes
+            value = oe.read_setting('system', 'KeyboardType')
             if not value is None:
-                self.struct['ident']['settings']['hostname']['value'] = value
-            else:
-                self.struct['ident']['settings']['hostname']['value'] = oe.DISTRIBUTION
+                self.struct['keyboard']['settings']['KeyboardType']['value'] = value
+        if not arrLayouts is None:
+            self.struct['keyboard']['settings']['KeyboardLayout1']['values'] = arrLayouts
+            self.struct['keyboard']['settings']['KeyboardLayout2']['values'] = arrLayouts
+            value = oe.read_setting('system', 'KeyboardLayout1')
+            if not value is None:
+                self.struct['keyboard']['settings']['KeyboardLayout1']['value'] = value
+            value = oe.read_setting('system', 'KeyboardVariant1')
+            if not value is None:
+                self.struct['keyboard']['settings']['KeyboardVariant1']['value'] = value
+            value = oe.read_setting('system', 'KeyboardLayout2')
+            if not value is None:
+                self.struct['keyboard']['settings']['KeyboardLayout2']['value'] = value
+            value = oe.read_setting('system', 'KeyboardVariant2')
+            if not value is None:
+                self.struct['keyboard']['settings']['KeyboardVariant2']['value'] = value
+            if not arrTypes == None:
+                self.keyboard_layouts = True
+        if not os.path.exists('/usr/bin/setxkbmap'):
+            self.struct['keyboard']['settings']['KeyboardLayout2']['hidden'] = 'true'
+            self.struct['keyboard']['settings']['KeyboardType']['hidden'] = 'true'
+            self.struct['keyboard']['settings']['KeyboardVariant1']['hidden'] = 'true'
+            self.struct['keyboard']['settings']['KeyboardVariant2']['hidden'] = 'true'
+            self.nox_keyboard_layouts = True
+        # Hostname
+        value = oe.read_setting('system', 'hostname')
+        if not value is None:
+            self.struct['ident']['settings']['hostname']['value'] = value
+        else:
+            self.struct['ident']['settings']['hostname']['value'] = oe.DISTRIBUTION
+        # PIN Lock
+        self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if oe.PIN.isEnabled() else '0'
 
-            # PIN Lock
-            self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if oe.PIN.isEnabled() else '0'
-
-        except Exception as e:
-            oe.dbg_log('system::load_values', f'ERROR: ({repr(e)})')
-
+    @log.log_function()
     def load_menu(self, focusItem):
-        try:
-            oe.dbg_log('system::load_menu', 'enter_function', oe.LOGDEBUG)
-            oe.winOeMain.build_menu(self.struct)
-            oe.dbg_log('system::load_menu', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::load_menu', f'ERROR: ({repr(e)})')
+        oe.winOeMain.build_menu(self.struct)
 
+    @log.log_function()
     def set_value(self, listItem):
-        try:
-            oe.dbg_log('system::set_value', 'enter_function', oe.LOGDEBUG)
-            self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
-            oe.write_setting('system', listItem.getProperty('entry'), str(listItem.getProperty('value')))
-            oe.dbg_log('system::set_value', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::set_value', f'ERROR: ({repr(e)})')
+        self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
+        oe.write_setting('system', listItem.getProperty('entry'), str(listItem.getProperty('value')))
 
+    @log.log_function()
     def set_keyboard_layout(self, listItem=None):
-        try:
-            oe.dbg_log('system::set_keyboard_layout', 'enter_function', oe.LOGDEBUG)
-            if not listItem == None:
-                if listItem.getProperty('entry') == 'KeyboardLayout1':
-                    if self.struct['keyboard']['settings']['KeyboardLayout1']['value'] != listItem.getProperty('value'):
-                        self.struct['keyboard']['settings']['KeyboardVariant1']['value'] = ''
-                if listItem.getProperty('entry') == 'KeyboardLayout2':
-                    if self.struct['keyboard']['settings']['KeyboardLayout2']['value'] != listItem.getProperty('value'):
-                        self.struct['keyboard']['settings']['KeyboardVariant2']['value'] = ''
-                self.set_value(listItem)
-            if self.keyboard_layouts == True:
-                self.struct['keyboard']['settings']['KeyboardVariant1']['values'] = self.arrVariants[self.struct['keyboard']['settings'
-                        ]['KeyboardLayout1']['value']]
-                self.struct['keyboard']['settings']['KeyboardVariant2']['values'] = self.arrVariants[self.struct['keyboard']['settings'
-                        ]['KeyboardLayout2']['value']]
-                oe.dbg_log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']) + ','
-                                + str(self.struct['keyboard']['settings']['KeyboardLayout2']['value']) + ' ' + '-model '
-                                + str(self.struct['keyboard']['settings']['KeyboardType']['value']), oe.LOGINFO)
-                if not os.path.exists(os.path.dirname(self.UDEV_KEYBOARD_INFO)):
-                    os.makedirs(os.path.dirname(self.UDEV_KEYBOARD_INFO))
-                config_file = open(self.UDEV_KEYBOARD_INFO, 'w')
-                config_file.write(f"XKBMODEL=\"{self.struct['keyboard']['settings']['KeyboardType']['value']}\"\n")
-                config_file.write(f"XKBVARIANT=\"{self.struct['keyboard']['settings']['KeyboardVariant1']['value']}, \
-                                                 {self.struct['keyboard']['settings']['KeyboardVariant2']['value']}\"\n")
-                config_file.write(f"XKBLAYOUT=\"{self.struct['keyboard']['settings']['KeyboardLayout1']['value']}, {self.struct['keyboard']['settings']['KeyboardLayout2']['value']}\"\n")
-                config_file.write('XKBOPTIONS="grp:alt_shift_toggle"\n')
-                config_file.close()
-                parameters = [
-                    '-display ' + os.environ['DISPLAY'],
-                    '-layout ' + self.struct['keyboard']['settings']['KeyboardLayout1']['value'] + ',' + self.struct['keyboard']['settings'
-                            ]['KeyboardLayout2']['value'],
-                    '-variant ' + self.struct['keyboard']['settings']['KeyboardVariant1']['value'] + ',' + self.struct['keyboard']['settings'
-                            ]['KeyboardVariant2']['value'],
-                    '-model ' + str(self.struct['keyboard']['settings']['KeyboardType']['value']),
-                    '-option "grp:alt_shift_toggle"',
-                    ]
-                oe.execute('setxkbmap ' + ' '.join(parameters))
-            elif self.nox_keyboard_layouts == True:
-                oe.dbg_log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']), oe.LOGINFO)
-                parameter = self.struct['keyboard']['settings']['KeyboardLayout1']['value']
-                command = f'loadkmap < `ls -1 {self.NOX_KEYBOARD_INFO}/*/{parameter}.bmap`'
-                oe.dbg_log('system::set_keyboard_layout', command, oe.LOGINFO)
-                oe.execute(command)
-            oe.dbg_log('system::set_keyboard_layout', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::set_keyboard_layout', f'ERROR: ({repr(e)})')
+        if not listItem == None:
+            if listItem.getProperty('entry') == 'KeyboardLayout1':
+                if self.struct['keyboard']['settings']['KeyboardLayout1']['value'] != listItem.getProperty('value'):
+                    self.struct['keyboard']['settings']['KeyboardVariant1']['value'] = ''
+            if listItem.getProperty('entry') == 'KeyboardLayout2':
+                if self.struct['keyboard']['settings']['KeyboardLayout2']['value'] != listItem.getProperty('value'):
+                    self.struct['keyboard']['settings']['KeyboardVariant2']['value'] = ''
+            self.set_value(listItem)
+        if self.keyboard_layouts == True:
+            self.struct['keyboard']['settings']['KeyboardVariant1']['values'] = self.arrVariants[self.struct['keyboard']['settings'
+                    ]['KeyboardLayout1']['value']]
+            self.struct['keyboard']['settings']['KeyboardVariant2']['values'] = self.arrVariants[self.struct['keyboard']['settings'
+                    ]['KeyboardLayout2']['value']]
+            log.log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']) + ','
+                            + str(self.struct['keyboard']['settings']['KeyboardLayout2']['value']) + ' ' + '-model '
+                            + str(self.struct['keyboard']['settings']['KeyboardType']['value']), log.INFO)
+            if not os.path.exists(os.path.dirname(self.UDEV_KEYBOARD_INFO)):
+                os.makedirs(os.path.dirname(self.UDEV_KEYBOARD_INFO))
+            config_file = open(self.UDEV_KEYBOARD_INFO, 'w')
+            config_file.write(f"XKBMODEL=\"{self.struct['keyboard']['settings']['KeyboardType']['value']}\"\n")
+            config_file.write(f"XKBVARIANT=\"{self.struct['keyboard']['settings']['KeyboardVariant1']['value']}, \
+                                             {self.struct['keyboard']['settings']['KeyboardVariant2']['value']}\"\n")
+            config_file.write(f"XKBLAYOUT=\"{self.struct['keyboard']['settings']['KeyboardLayout1']['value']}, {self.struct['keyboard']['settings']['KeyboardLayout2']['value']}\"\n")
+            config_file.write('XKBOPTIONS="grp:alt_shift_toggle"\n')
+            config_file.close()
+            parameters = [
+                '-display ' + os.environ['DISPLAY'],
+                '-layout ' + self.struct['keyboard']['settings']['KeyboardLayout1']['value'] + ',' + self.struct['keyboard']['settings'
+                        ]['KeyboardLayout2']['value'],
+                '-variant ' + self.struct['keyboard']['settings']['KeyboardVariant1']['value'] + ',' + self.struct['keyboard']['settings'
+                        ]['KeyboardVariant2']['value'],
+                '-model ' + str(self.struct['keyboard']['settings']['KeyboardType']['value']),
+                '-option "grp:alt_shift_toggle"',
+                ]
+            oe.execute('setxkbmap ' + ' '.join(parameters))
+        elif self.nox_keyboard_layouts == True:
+            log.log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']), log.INFO)
+            parameter = self.struct['keyboard']['settings']['KeyboardLayout1']['value']
+            command = f'loadkmap < `ls -1 {self.NOX_KEYBOARD_INFO}/*/{parameter}.bmap`'
+            log.log('system::set_keyboard_layout', command, log.INFO)
+            oe.execute(command)
 
+    @log.log_function()
     def set_hostname(self, listItem=None):
-        try:
-            oe.dbg_log('system::set_hostname', 'enter_function', oe.LOGDEBUG)
-            if not listItem == None:
-                self.set_value(listItem)
-            if not self.struct['ident']['settings']['hostname']['value'] is None and not self.struct['ident']['settings']['hostname']['value'] \
-                == '':
-                oe.dbg_log('system::set_hostname', self.struct['ident']['settings']['hostname']['value'], oe.LOGINFO)
-                hostname = open('/proc/sys/kernel/hostname', 'w')
-                hostname.write(self.struct['ident']['settings']['hostname']['value'])
-                hostname.close()
-                hostname = open(f'{oe.CONFIG_CACHE}/hostname', 'w')
-                hostname.write(self.struct['ident']['settings']['hostname']['value'])
-                hostname.close()
-                hosts = open('/etc/hosts', 'w')
-                user_hosts_file = f"{os.environ['HOME']}/.config/hosts.conf"
-                if os.path.isfile(user_hosts_file):
-                    user_hosts = open(user_hosts_file, 'r')
-                    hosts.write(user_hosts.read())
-                    user_hosts.close()
-                hosts.write(f"127.0.0.1\tlocalhost {self.struct['ident']['settings']['hostname']['value']}\n")
-                hosts.write(f"::1\tlocalhost ip6-localhost ip6-loopback {self.struct['ident']['settings']['hostname']['value']}\n")
-                hosts.close()
-            else:
-                oe.dbg_log('system::set_hostname', 'is empty', oe.LOGINFO)
-            oe.dbg_log('system::set_hostname', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::set_hostname', f'ERROR: ({repr(e)})')
+        if not listItem == None:
+            self.set_value(listItem)
+        if not self.struct['ident']['settings']['hostname']['value'] is None and not self.struct['ident']['settings']['hostname']['value'] \
+            == '':
+            log.log('system::set_hostname', self.struct['ident']['settings']['hostname']['value'], log.INFO)
+            hostname = open('/proc/sys/kernel/hostname', 'w')
+            hostname.write(self.struct['ident']['settings']['hostname']['value'])
+            hostname.close()
+            hostname = open(f'{oe.CONFIG_CACHE}/hostname', 'w')
+            hostname.write(self.struct['ident']['settings']['hostname']['value'])
+            hostname.close()
+            hosts = open('/etc/hosts', 'w')
+            user_hosts_file = f"{os.environ['HOME']}/.config/hosts.conf"
+            if os.path.isfile(user_hosts_file):
+                user_hosts = open(user_hosts_file, 'r')
+                hosts.write(user_hosts.read())
+                user_hosts.close()
+            hosts.write(f"127.0.0.1\tlocalhost {self.struct['ident']['settings']['hostname']['value']}\n")
+            hosts.write(f"::1\tlocalhost ip6-localhost ip6-loopback {self.struct['ident']['settings']['hostname']['value']}\n")
+            hosts.close()
+        else:
+            log.log('system::set_hostname', 'is empty', log.INFO)
 
+    @log.log_function()
     def get_keyboard_layouts(self):
-        try:
-            oe.dbg_log('system::get_keyboard_layouts', 'enter_function', oe.LOGDEBUG)
-            arrLayouts = []
-            arrVariants = {}
-            arrTypes = []
-            if os.path.exists(self.NOX_KEYBOARD_INFO):
-                for layout in glob.glob(f'{self.NOX_KEYBOARD_INFO}/*/*.bmap'):
-                    if os.path.isfile(layout):
-                        arrLayouts.append(layout.split('/')[-1].split('.')[0])
-                arrLayouts.sort()
-                arrTypes = None
-            elif os.path.exists(self.KEYBOARD_INFO):
-                objXmlFile = open(self.KEYBOARD_INFO, 'r', encoding='utf-8')
-                strXmlText = objXmlFile.read()
-                objXmlFile.close()
-                xml_conf = minidom.parseString(strXmlText)
-                for xml_layout in xml_conf.getElementsByTagName('layout'):
-                    for subnode_1 in xml_layout.childNodes:
-                        if subnode_1.nodeName == 'configItem':
-                            for subnode_2 in subnode_1.childNodes:
-                                if subnode_2.nodeName == 'name':
-                                    if hasattr(subnode_2.firstChild, 'nodeValue'):
-                                        value = subnode_2.firstChild.nodeValue
-                                if subnode_2.nodeName == 'description':
-                                    if hasattr(subnode_2.firstChild, 'nodeValue'):
-                                        arrLayouts.append(subnode_2.firstChild.nodeValue + ':' + value)
-                        if subnode_1.nodeName == 'variantList':
-                            arrVariants[value] = [':']
-                            for subnode_vl in subnode_1.childNodes:
-                                if subnode_vl.nodeName == 'variant':
-                                    for subnode_v in subnode_vl.childNodes:
-                                        if subnode_v.nodeName == 'configItem':
-                                            for subnode_ci in subnode_v.childNodes:
-                                                if subnode_ci.nodeName == 'name':
-                                                    if hasattr(subnode_ci.firstChild, 'nodeValue'):
-                                                        vvalue = subnode_ci.firstChild.nodeValue.replace(',', '')
-                                                if subnode_ci.nodeName == 'description':
-                                                    if hasattr(subnode_ci.firstChild, 'nodeValue'):
-                                                        try:
-                                                            arrVariants[value].append(subnode_ci.firstChild.nodeValue + ':' + vvalue)
-                                                        except:
-                                                            pass
-                for xml_layout in xml_conf.getElementsByTagName('model'):
-                    for subnode_1 in xml_layout.childNodes:
-                        if subnode_1.nodeName == 'configItem':
-                            for subnode_2 in subnode_1.childNodes:
-                                if subnode_2.nodeName == 'name':
-                                    if hasattr(subnode_2.firstChild, 'nodeValue'):
-                                        value = subnode_2.firstChild.nodeValue
-                                if subnode_2.nodeName == 'description':
-                                    if hasattr(subnode_2.firstChild, 'nodeValue'):
-                                        arrTypes.append(subnode_2.firstChild.nodeValue + ':' + value)
-                arrLayouts.sort()
-                arrTypes.sort()
-            else:
-                oe.dbg_log('system::get_keyboard_layouts', 'exit_function (no keyboard layouts found)', oe.LOGDEBUG)
-                return (None, None, None)
-            oe.dbg_log('system::get_keyboard_layouts', 'exit_function', oe.LOGDEBUG)
-            return (
-                arrLayouts,
-                arrTypes,
-                arrVariants,
-                )
-        except Exception as e:
-            oe.dbg_log('system::get_keyboard_layouts', f'ERROR: ({repr(e)})')
+        arrLayouts = []
+        arrVariants = {}
+        arrTypes = []
+        if os.path.exists(self.NOX_KEYBOARD_INFO):
+            for layout in glob.glob(f'{self.NOX_KEYBOARD_INFO}/*/*.bmap'):
+                if os.path.isfile(layout):
+                    arrLayouts.append(layout.split('/')[-1].split('.')[0])
+            arrLayouts.sort()
+            arrTypes = None
+        elif os.path.exists(self.KEYBOARD_INFO):
+            objXmlFile = open(self.KEYBOARD_INFO, 'r', encoding='utf-8')
+            strXmlText = objXmlFile.read()
+            objXmlFile.close()
+            xml_conf = minidom.parseString(strXmlText)
+            for xml_layout in xml_conf.getElementsByTagName('layout'):
+                for subnode_1 in xml_layout.childNodes:
+                    if subnode_1.nodeName == 'configItem':
+                        for subnode_2 in subnode_1.childNodes:
+                            if subnode_2.nodeName == 'name':
+                                if hasattr(subnode_2.firstChild, 'nodeValue'):
+                                    value = subnode_2.firstChild.nodeValue
+                            if subnode_2.nodeName == 'description':
+                                if hasattr(subnode_2.firstChild, 'nodeValue'):
+                                    arrLayouts.append(subnode_2.firstChild.nodeValue + ':' + value)
+                    if subnode_1.nodeName == 'variantList':
+                        arrVariants[value] = [':']
+                        for subnode_vl in subnode_1.childNodes:
+                            if subnode_vl.nodeName == 'variant':
+                                for subnode_v in subnode_vl.childNodes:
+                                    if subnode_v.nodeName == 'configItem':
+                                        for subnode_ci in subnode_v.childNodes:
+                                            if subnode_ci.nodeName == 'name':
+                                                if hasattr(subnode_ci.firstChild, 'nodeValue'):
+                                                    vvalue = subnode_ci.firstChild.nodeValue.replace(',', '')
+                                            if subnode_ci.nodeName == 'description':
+                                                if hasattr(subnode_ci.firstChild, 'nodeValue'):
+                                                    try:
+                                                        arrVariants[value].append(subnode_ci.firstChild.nodeValue + ':' + vvalue)
+                                                    except:
+                                                        pass
+            for xml_layout in xml_conf.getElementsByTagName('model'):
+                for subnode_1 in xml_layout.childNodes:
+                    if subnode_1.nodeName == 'configItem':
+                        for subnode_2 in subnode_1.childNodes:
+                            if subnode_2.nodeName == 'name':
+                                if hasattr(subnode_2.firstChild, 'nodeValue'):
+                                    value = subnode_2.firstChild.nodeValue
+                            if subnode_2.nodeName == 'description':
+                                if hasattr(subnode_2.firstChild, 'nodeValue'):
+                                    arrTypes.append(subnode_2.firstChild.nodeValue + ':' + value)
+            arrLayouts.sort()
+            arrTypes.sort()
+        else:
+            log.log('system::get_keyboard_layouts', 'exit_function (no keyboard layouts found)')
+            return (None, None, None)
+        log.log('system::get_keyboard_layouts', 'exit_function')
+        return (
+            arrLayouts,
+            arrTypes,
+            arrVariants,
+            )
 
-
+    @log.log_function()
     def set_hw_clock(self):
-        try:
-            oe.dbg_log('system::set_hw_clock', 'enter_function', oe.LOGDEBUG)
-            oe.execute(f'{self.SET_CLOCK_CMD} 2>/dev/null')
-            oe.dbg_log('system::set_hw_clock', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::set_hw_clock', f'ERROR: ({repr(e)})', oe.LOGERROR)
+        oe.execute(f'{self.SET_CLOCK_CMD} 2>/dev/null')
 
+    @log.log_function()
     def reset_xbmc(self, listItem=None):
-        try:
-            oe.dbg_log('system::reset_xbmc', 'enter_function', oe.LOGDEBUG)
-            if self.ask_sure_reset('Soft') == 1:
-                open(self.XBMC_RESET_FILE, 'a').close()
-                oe.winOeMain.close()
-                oe.xbmcm.waitForAbort(1)
-                xbmc.executebuiltin('Reboot')
-            oe.dbg_log('system::reset_xbmc', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::reset_xbmc', f'ERROR: ({repr(e)})', oe.LOGERROR)
+        if self.ask_sure_reset('Soft') == 1:
+            open(self.XBMC_RESET_FILE, 'a').close()
+            oe.winOeMain.close()
+            oe.xbmcm.waitForAbort(1)
+            xbmc.executebuiltin('Reboot')
 
+    @log.log_function()
     def reset_oe(self, listItem=None):
-        try:
-            oe.dbg_log('system::reset_oe', 'enter_function', oe.LOGDEBUG)
-            if self.ask_sure_reset('Hard') == 1:
-                open(self.LIBREELEC_RESET_FILE, 'a').close()
-                oe.winOeMain.close()
-                oe.xbmcm.waitForAbort(1)
-                xbmc.executebuiltin('Reboot')
-            oe.dbg_log('system::reset_oe', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::reset_oe', f'ERROR: ({repr(e)})', oe.LOGERROR)
+        if self.ask_sure_reset('Hard') == 1:
+            open(self.LIBREELEC_RESET_FILE, 'a').close()
+            oe.winOeMain.close()
+            oe.xbmcm.waitForAbort(1)
+            xbmc.executebuiltin('Reboot')
 
     def ask_sure_reset(self, part):
-        try:
-            oe.dbg_log('system::ask_sure_reset', 'enter_function', oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno(part + ' Reset', f'{oe._(32326)}\n\n{oe._(32328)}')
-            if answer == 1:
-                if oe.reboot_counter(30, oe._(32323)) == 1:
-                    return 1
-                else:
-                    return 0
-            oe.dbg_log('system::ask_sure_reset', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::ask_sure_reset', f'ERROR: ({repr(e)})', oe.LOGERROR)
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno(part + ' Reset', f'{oe._(32326)}\n\n{oe._(32328)}')
+        if answer == 1:
+            if oe.reboot_counter(30, oe._(32323)) == 1:
+                return 1
+            else:
+                return 0
 
+    @log.log_function()
     def do_backup(self, listItem=None):
         try:
-            oe.dbg_log('system::do_backup', 'enter_function', oe.LOGDEBUG)
             self.total_backup_size = 1
             self.done_backup_size = 1
-
             try:
                 for directory in self.BACKUP_DIRS:
                     self.get_folder_size(directory)
             except:
                 pass
-
             xbmcDialog = xbmcgui.Dialog()
             bckDir = xbmcDialog.browse( 0,
                                         oe._(32371),
@@ -537,7 +469,6 @@ class system(modules.Module):
                         return 0
                 except:
                     pass
-
                 self.backup_dlg = xbmcgui.DialogProgress()
                 self.backup_dlg.create('LibreELEC', oe._(32375))
                 if not os.path.exists(self.BACKUP_DESTINATION):
@@ -549,15 +480,11 @@ class system(modules.Module):
                 tar.close()
                 self.backup_dlg.close()
                 del self.backup_dlg
-            oe.dbg_log('system::do_backup', 'exit_function', oe.LOGDEBUG)
-
-        except Exception as e:
+        finally:
             self.backup_dlg.close()
-            oe.dbg_log('system::do_backup', f'ERROR: ({repr(e)})')
 
+    @log.log_function()
     def do_restore(self, listItem=None):
-        try:
-            oe.dbg_log('system::do_restore', 'enter_function', oe.LOGDEBUG)
             copy_success = 0
             xbmcDialog = xbmcgui.Dialog()
             restore_file_path = xbmcDialog.browse( 1,
@@ -567,13 +494,10 @@ class system(modules.Module):
                                                    False,
                                                    False,
                                                    self.BACKUP_DESTINATION )
-
             # Do nothing if the dialog is cancelled - path will be the backup destination
             if not os.path.isfile(restore_file_path):
                 return
-
             restore_file_name = restore_file_path.split('/')[-1]
-
             if os.path.exists(self.RESTORE_DIR):
                 oe.execute('rm -rf %s' % self.RESTORE_DIR)
             os.makedirs(self.RESTORE_DIR)
@@ -601,51 +525,33 @@ class system(modules.Module):
                         oe.xbmcm.waitForAbort(1)
                         xbmc.executebuiltin('Reboot')
                 else:
-                    oe.dbg_log('system::do_restore', 'User Abort!', oe.LOGDEBUG)
+                    log.log('system::do_restore', 'User Abort!')
                     oe.execute(f'rm -rf {self.RESTORE_DIR}')
-            oe.dbg_log('system::do_restore', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::do_restore', f'ERROR: ({repr(e)})')
 
+    @log.log_function()
     def do_send_system_logs(self, listItem=None):
-        try:
-            oe.dbg_log('system::do_send_system_logs', 'enter_function', oe.LOGDEBUG)
-            self.do_send_logs('/usr/bin/pastekodi')
-            oe.dbg_log('system::do_send_system_logs', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::do_do_send_system_logs', f'ERROR: ({repr(e)})')
+        self.do_send_logs('/usr/bin/pastekodi')
 
+    @log.log_function()
     def do_send_crash_logs(self, listItem=None):
-        try:
-            oe.dbg_log('system::do_send_crash_logs', 'enter_function', oe.LOGDEBUG)
-            self.do_send_logs('/usr/bin/pastecrash')
-            oe.dbg_log('system::do_send_crash_logs', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::do_do_send_crash_logs', f'ERROR: ({repr(e)})')
+        self.do_send_logs('/usr/bin/pastecrash')
 
+    @log.log_function()
     def do_send_logs(self, log_cmd):
-        try:
-            oe.dbg_log('system::do_send_logs', 'enter_function', oe.LOGDEBUG)
+        paste_dlg = xbmcgui.DialogProgress()
+        paste_dlg.create('Pasting log files', 'Pasting...')
+        result = oe.execute(log_cmd, get_result=1)
+        if not paste_dlg.iscanceled():
+            paste_dlg.close()
+            done_dlg = xbmcgui.Dialog()
+            link = result.find('http')
+            if link != -1:
+                log.log('system::do_send_logs', result[link:], log.WARNING)
+                done_dlg.ok('Paste complete', f'Log files pasted to {result[link:]}')
+            else:
+                done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
 
-            paste_dlg = xbmcgui.DialogProgress()
-            paste_dlg.create('Pasting log files', 'Pasting...')
-
-            result = oe.execute(log_cmd, get_result=1)
-
-            if not paste_dlg.iscanceled():
-                paste_dlg.close()
-                done_dlg = xbmcgui.Dialog()
-                link = result.find('http')
-                if link != -1:
-                    oe.dbg_log('system::do_send_logs', result[link:], oe.LOGWARNING)
-                    done_dlg.ok('Paste complete', f'Log files pasted to {result[link:]}')
-                else:
-                    done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
-
-            oe.dbg_log('system::do_send_logs', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::do_do_send_logs', f'ERROR: ({repr(e)})')
-
+    @log.log_function()
     def tar_add_folder(self, tar, folder):
         try:
             for item in os.listdir(folder):
@@ -673,10 +579,10 @@ class system(modules.Module):
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
                         self.backup_dlg.update(int(progress), f'{folder}\n{item}')
-        except Exception as e:
+        finally:
             self.backup_dlg.close()
-            oe.dbg_log('system::tar_add_folder', f'ERROR: ({repr(e)})')
 
+    @log.log_function()
     def get_folder_size(self, folder):
         for item in os.listdir(folder):
             itempath = os.path.join(folder, item)
@@ -689,76 +595,57 @@ class system(modules.Module):
             elif os.path.isdir(itempath):
                 self.get_folder_size(itempath)
 
+    @log.log_function()
     def init_pinlock(self, listItem=None):
-        try:
-            oe.dbg_log('system::init_pinlock', 'enter_function', oe.LOGDEBUG)
-            if not listItem == None:
-                self.set_value(listItem)
+        if not listItem == None:
+            self.set_value(listItem)
+        if self.struct['pinlock']['settings']['pinlock_enable']['value'] == '1':
+            oe.PIN.enable()
+        else:
+            oe.PIN.disable()
+        if oe.PIN.isEnabled() and oe.PIN.isSet() == False:
+            self.set_pinlock()
 
-            if self.struct['pinlock']['settings']['pinlock_enable']['value'] == '1':
-                oe.PIN.enable()
-            else:
-                oe.PIN.disable()
-
-            if oe.PIN.isEnabled() and oe.PIN.isSet() == False:
-                self.set_pinlock()
-
-            oe.dbg_log('system::init_pinlock', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::init_pinlock', f'ERROR: ({repr(e)})', oe.LOGERROR)
-
+    @log.log_function()
     def set_pinlock(self, listItem=None):
-        try:
-            oe.dbg_log('system::set_pinlock', 'enter_function', oe.LOGDEBUG)
-            newpin = xbmcDialog.input(oe._(32226), type=xbmcgui.INPUT_NUMERIC)
-            if len(newpin) == 4 :
-               newpinConfirm = xbmcDialog.input(oe._(32227), type=xbmcgui.INPUT_NUMERIC)
-               if newpin != newpinConfirm:
-                   xbmcDialog.ok(oe._(32228), oe._(32229))
-               else:
-                   oe.PIN.set(newpin)
-                   xbmcDialog.ok(oe._(32230), f'{oe._(32231)}\n\n{newpin}')
-            else:
-                xbmcDialog.ok(oe._(32232), oe._(32229))
-            if oe.PIN.isSet() == False:
-                self.struct['pinlock']['settings']['pinlock_enable']['value'] = '0'
-                oe.PIN.disable()
-            oe.dbg_log('system::set_pinlock', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::set_pinlock', f'ERROR: ({repr(e)})', oe.LOGERROR)
+        newpin = xbmcDialog.input(oe._(32226), type=xbmcgui.INPUT_NUMERIC)
+        if len(newpin) == 4 :
+           newpinConfirm = xbmcDialog.input(oe._(32227), type=xbmcgui.INPUT_NUMERIC)
+           if newpin != newpinConfirm:
+               xbmcDialog.ok(oe._(32228), oe._(32229))
+           else:
+               oe.PIN.set(newpin)
+               xbmcDialog.ok(oe._(32230), f'{oe._(32231)}\n\n{newpin}')
+        else:
+            xbmcDialog.ok(oe._(32232), oe._(32229))
+        if oe.PIN.isSet() == False:
+            self.struct['pinlock']['settings']['pinlock_enable']['value'] = '0'
+            oe.PIN.disable()
 
+    @log.log_function()
     def do_wizard(self):
-        try:
-            oe.dbg_log('system::do_wizard', 'enter_function', oe.LOGDEBUG)
-            oe.winOeMain.set_wizard_title(oe._(32003))
-            oe.winOeMain.set_wizard_text(oe._(32304))
-            oe.winOeMain.set_wizard_button_title(oe._(32308))
-            oe.winOeMain.set_wizard_button_1(self.struct['ident']['settings']['hostname']['value'], self, 'wizard_set_hostname')
-            oe.dbg_log('system::do_wizard', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::do_wizard', f'ERROR: ({repr(e)})')
+        oe.winOeMain.set_wizard_title(oe._(32003))
+        oe.winOeMain.set_wizard_text(oe._(32304))
+        oe.winOeMain.set_wizard_button_title(oe._(32308))
+        oe.winOeMain.set_wizard_button_1(self.struct['ident']['settings']['hostname']['value'], self, 'wizard_set_hostname')
 
+    @log.log_function()
     def wizard_set_hostname(self):
-        try:
-            oe.dbg_log('system::wizard_set_hostname', 'enter_function', oe.LOGDEBUG)
-            currentHostname = self.struct['ident']['settings']['hostname']['value']
-            xbmcKeyboard = xbmc.Keyboard(currentHostname)
-            result_is_valid = False
-            while not result_is_valid:
-                xbmcKeyboard.doModal()
-                if xbmcKeyboard.isConfirmed():
-                    result_is_valid = True
-                    validate_string = self.struct['ident']['settings']['hostname']['validate']
-                    if validate_string != '':
-                        if not re.search(validate_string, xbmcKeyboard.getText()):
-                            result_is_valid = False
-                else:
-                    result_is_valid = True
+        currentHostname = self.struct['ident']['settings']['hostname']['value']
+        xbmcKeyboard = xbmc.Keyboard(currentHostname)
+        result_is_valid = False
+        while not result_is_valid:
+            xbmcKeyboard.doModal()
             if xbmcKeyboard.isConfirmed():
-                self.struct['ident']['settings']['hostname']['value'] = xbmcKeyboard.getText()
-                self.set_hostname()
-                oe.winOeMain.getControl(1401).setLabel(self.struct['ident']['settings']['hostname']['value'])
-                oe.write_setting('system', 'hostname', self.struct['ident']['settings']['hostname']['value'])
-            oe.dbg_log('system::wizard_set_hostname', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('system::wizard_set_hostname', f'ERROR: ({repr(e)})')
+                result_is_valid = True
+                validate_string = self.struct['ident']['settings']['hostname']['validate']
+                if validate_string != '':
+                    if not re.search(validate_string, xbmcKeyboard.getText()):
+                        result_is_valid = False
+            else:
+                result_is_valid = True
+        if xbmcKeyboard.isConfirmed():
+            self.struct['ident']['settings']['hostname']['value'] = xbmcKeyboard.getText()
+            self.set_hostname()
+            oe.winOeMain.getControl(1401).setLabel(self.struct['ident']['settings']['hostname']['value'])
+            oe.write_setting('system', 'hostname', self.struct['ident']['settings']['hostname']['value'])
