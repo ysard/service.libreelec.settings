@@ -3,24 +3,21 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2017-present Team LibreELEC
 
+import log
+import modules
 import oe
 import os
 import xbmc
 import dbus
-import dbus.service
 import xbmcgui
-import threading
 import oeWindows
 import random
 import string
 import config
-import dbussy
-import ravel
 import regdom
 import dbus_connman
-import dbus_utils
-
-CONNMAN = dbus_connman.Dbus_Connman()
+import log
+from dbussy import DBusError
 
 ####################################################################
 ## Connection properties class
@@ -30,7 +27,7 @@ class connmanService(object):
 
     menu = {}
 
-    @config.log_function
+    @log.log_function()
     def __init__(self, servicePath, oeMain):
         self.struct = {
             'AutoConnect': {
@@ -291,7 +288,7 @@ class connmanService(object):
         self.winOeCon = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', oe.__cwd__, 'Default', oeMain=oe, isChild=True)
         self.servicePath = servicePath
         oe.dictModules['connmanNetworkConfig'] = self
-        self.service_properties = CONNMAN.service_get_properties(servicePath)
+        self.service_properties = dbus_connman.service_get_properties(servicePath)
         for entry in sorted(self.datamap):
             for (key, value) in self.datamap[entry].items():
                 if self.struct[value]['type'] == 'Boolean':
@@ -320,32 +317,31 @@ class connmanService(object):
         del self.winOeCon
         del oe.dictModules['connmanNetworkConfig']
 
-    @config.log_function
+    @log.log_function()
     def cancel(self):
         self.winOeCon.close()
 
-    @config.log_function
+    @log.log_function()
     def menu_loader(self, menuItem):
         self.winOeCon.showButton(1, 32140, 'connmanNetworkConfig', 'save_network')
         self.winOeCon.showButton(2, 32212, 'connmanNetworkConfig', 'cancel')
         self.winOeCon.build_menu(self.struct, fltr=[menuItem.getProperty('category')])
 
-    @config.log_function
+    @log.log_function()
     def set_value_checkdhcp(self, listItem):
         if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
             ok_window = xbmcgui.Dialog()
             answer = ok_window.ok('Not allowed', 'IPv4 method is set to DHCP.\n\nChanging this option is not allowed')
             return
-        oe.dbg_log('connmanService::set_value_checkdhcp', 'enter_function', oe.LOGDEBUG)
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
-    @config.log_function
+    @log.log_function()
     def set_value(self, listItem):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
-    @config.log_function
+    @log.log_function()
     def dbus_config(self, category):
         value = None
         postfix = ''
@@ -376,9 +372,9 @@ class connmanService(object):
                         value.append(getattr(dbus, setting['dbus'])(setting['value'], variant_level=1))
         return (category + postfix, value)
 
+    @log.log_function()
     def save_network(self):
         try:
-            oe.dbg_log('connmanService::save_network', 'enter_function', oe.LOGDEBUG)
             if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
                 for setting in self.struct['Nameservers']['settings']:
                     self.struct['Nameservers']['settings'][setting]['changed'] = True
@@ -400,40 +396,28 @@ class connmanService(object):
                 (category, value) = self.dbus_config(category)
                 if value != None:
                     self.service.SetProperty(dbus.String(category), value)
-            oe.dbg_log('connmanService::save_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::save_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
+    @log.log_function()
     def delete_network(self):
         try:
-            oe.dbg_log('connmanService::delete_network', 'enter_function', oe.LOGDEBUG)
             oe.dictModules['connman'].delete_network(None)
-            oe.dbg_log('connmanService::delete_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::delete_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
+    @log.log_function()
     def connect_network(self):
         try:
-            oe.dbg_log('connmanService::connect_network', 'enter_function', oe.LOGDEBUG)
             oe.dictModules['connman'].connect_network(None)
-            oe.dbg_log('connmanService::connect_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::connect_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
+    @log.log_function()
     def disconnect_network(self):
         try:
-            oe.dbg_log('connmanService::disconnect_network', 'enter_function', oe.LOGDEBUG)
             oe.dictModules['connman'].disconnect_network(None)
-            oe.dbg_log('connmanService::disconnect_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::disconnect_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
 
@@ -441,7 +425,7 @@ class connmanService(object):
 ## Connman main class
 ####################################################################
 
-class connman:
+class connman(modules.Module):
 
     ENABLED = False
     CONNMAN_DAEMON = None
@@ -466,8 +450,9 @@ class connman:
             },
         }
 
-    @config.log_function
+    @log.log_function()
     def __init__(self, oeMain):
+        super().__init__()
         self.listItems = {}
         self.struct = {
             dbus_connman.PATH_TECH_WIFI: {
@@ -636,24 +621,23 @@ class connman:
         self.busy = 0
         self.visible = False
 
-    @config.log_function
+    @log.log_function()
     def clear_list(self):
         remove = [entry for entry in self.listItems]
         for entry in remove:
             self.listItems[entry] = None
             del self.listItems[entry]
 
-    @config.log_function
+    @log.log_function()
     def do_init(self):
         self.visible = True
 
-    @config.log_function
+    @log.log_function()
     def exit(self):
         self.visible = False
         self.clear_list()
-        oe.dbg_log('connman::exit', 'exit_function', oe.LOGDEBUG)
 
-    @config.log_function
+    @log.log_function()
     def load_values(self):
         # Network Wait
         self.struct['advanced']['settings']['wait_for_network']['value'] = '0'
@@ -694,7 +678,7 @@ class connman:
         regValue = regdom.get_regdom()
         self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['value'] = str(regValue)
 
-    @config.log_function
+    @log.log_function()
     def menu_connections(self, focusItem, services={}, removed={}, force=False):
         # type 1=int, 2=string, 3=array
         properties = {
@@ -744,7 +728,7 @@ class connman:
                 'values': ['Ethernet', 'Interface'],
                 },
             }
-        dbusServices = CONNMAN.manager_get_services()
+        dbusServices = dbus_connman.manager_get_services()
         dbusConnmanManager = None
         rebuildList = 0
         if len(dbusServices) != len(self.listItems) or force:
@@ -800,12 +784,12 @@ class connman:
             if rebuildList == 1:
                 self.listItems[dbusServicePath] = oe.winOeMain.addConfigItem(apName, dictProperties, oe.listObject['netlist'])
 
-    @config.log_function
+    @log.log_function()
     def menu_loader(self, menuItem=None):
         if menuItem == None:
             menuItem = oe.winOeMain.getControl(oe.winOeMain.guiMenList).getSelectedItem()
-        self.technologie_properties = CONNMAN.manager_get_technologies()
-        self.clock_properties = CONNMAN.clock_get_properties()
+        self.technologie_properties = dbus_connman.manager_get_technologies()
+        self.clock_properties = dbus_connman.clock_get_properties()
         self.struct[dbus_connman.PATH_TECH_WIFI]['hidden'] = 'true'
         self.struct[dbus_connman.PATH_TECH_ETHERNET]['hidden'] = 'true'
         for (path, technologie) in self.technologie_properties:
@@ -823,13 +807,12 @@ class connman:
                 self.struct['Timeservers']['settings'][setting]['value'] = ''
         oe.winOeMain.build_menu(self.struct)
 
-    @config.log_function
+    @log.log_function()
     def open_context_menu(self, listItem):
         values = {}
         if listItem is None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         if listItem is None:
-            oe.dbg_log('connman::open_context_menu', 'exit_function (listItem=None)', oe.LOGDEBUG)
             return
         if listItem.getProperty('State') in ['ready', 'online']:
             values[1] = {
@@ -870,7 +853,7 @@ class connman:
         if result >= 0:
             getattr(self, actions[result])(listItem)
 
-    @config.log_function
+    @log.log_function()
     def set_timeservers(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
@@ -878,68 +861,61 @@ class connman:
         for setting in sorted(self.struct['Timeservers']['settings']):
             if self.struct['Timeservers']['settings'][setting]['value'] != '':
                 timeservers.append(self.struct['Timeservers']['settings'][setting]['value'])
-        CONNMAN.clock_set_timeservers(timeservers)
+        dbus_connman.clock_set_timeservers(timeservers)
 
-    @config.log_function
+    @log.log_function()
     def set_value(self, listItem=None):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
-    @config.log_function
+    @log.log_function()
     def set_technologie(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        self.technologie_properties = CONNMAN.manager_get_technologies()
         techPath = dbus_connman.PATH_TECH_WIFI
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
                     settings = self.struct[techPath]['settings']
-                    self.Technology = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, True)
                         if settings['Tethering']['value'] == '1' and dbus.String(settings['TetheringIdentifier']['value']) != '' \
                             and dbus.String(settings['TetheringPassphrase']['value']) != '':
                             oe.xbmcm.waitForAbort(5)
-                            self.Technology.SetProperty('TetheringIdentifier', dbus.String(settings['TetheringIdentifier']['value'],
-                                                        variant_level=1))
-                            self.Technology.SetProperty('TetheringPassphrase', dbus.String(settings['TetheringPassphrase']['value'],
-                                                        variant_level=1))
+                            dbus_connman.technology_wifi_set_tethering_identifier(settings['TetheringIdentifier']['value'])
+                            dbus_connman.technology_wifi_set_tethering_passphrase(settings['TetheringPassphrase']['value'])
                             if technologie['Tethering'] != True:
-                                self.Technology.SetProperty('Tethering', dbus.Boolean(True, variant_level=1))
+                                dbus_connman.technology_wifi_set_tethering(True)
                         else:
                             if technologie['Tethering'] != False:
-                                self.Technology.SetProperty('Tethering', dbus.Boolean(False, variant_level=1))
+                                dbus_connman.technology_wifi_set_tethering(False)
                     else:
-                        xbmc.log('####' + repr(technologie['Powered']))
                         if technologie['Powered'] != False:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, False)
                     break
         techPath = dbus_connman.PATH_TECH_ETHERNET
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
                     settings = self.struct[techPath]['settings']
-                    self.Technology = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, True)
                     else:
                         if technologie['Powered'] != False:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, False)
                     break
-        self.technologie_properties = None
         self.menu_loader(None)
 
-    @config.log_function
+    @log.log_function()
     def custom_regdom(self, **kwargs):
             if 'listItem' in kwargs:
                 regSelect = str((kwargs['listItem']).getProperty('value'))
                 regdom.set_regdom(regSelect)
                 self.set_value(kwargs['listItem'])
 
-    @config.log_function
+    @log.log_function()
     def configure_network(self, listItem=None):
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
@@ -947,25 +923,25 @@ class connman:
         del self.configureService
         self.menu_connections(None)
 
-    @config.log_function
+    @log.log_function()
     def connect_network(self, listItem=None):
         self.connect_attempt += 1
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
         try:
-            CONNMAN.service_connect(entry)
+            dbus_connman.service_connect(entry)
             self.menu_connections(None)
-        except dbussy.DBusError as e:
-            config.notification(repr(e))
+        except DBusError as e:
+            self.dbus_error_handler(e)
 
-    @config.log_function
+    @log.log_function()
     def connect_reply_handler(self):
         self.menu_connections(None)
 
-    @config.log_function
+    @log.log_function()
     def dbus_error_handler(self, error):
-        err_name = error.get_dbus_name()
+        err_name = error.name
         if 'InProgress' in err_name:
             if self.net_disconnected != 1:
                 self.disconnect_network()
@@ -973,9 +949,14 @@ class connman:
                 self.net_disconnected = 0
             self.connect_network()
         else:
-            err_message = error.get_dbus_message()
+            err_message = error.message
             if 'Operation aborted' in err_message or 'Input/output error' in err_message:
-                if self.connect_attempt == 1:
+                if oe.input_request:
+                    oe.input_request = False
+                    self.connect_attempt = 0
+                    self.log_error = 1
+                    self.notify_error = 0
+                elif self.connect_attempt == 1:
                     self.log_error = 0
                     self.notify_error = 0
                     oe.xbmcm.waitForAbort(5)
@@ -990,52 +971,52 @@ class connman:
                 self.log_error = 1
                 self.notify_error = 1
             if self.notify_error == 1:
-                oe.notify('Network Error', err_message)
+                config.notification(err_message, 'Network Error')
             else:
                 self.notify_error = 1
             if self.log_error == 1:
-                oe.dbg_log('connman::dbus_error_handler', 'ERROR: (' + err_message + ')', oe.LOGERROR)
+                log.log(repr(error), log.ERROR)
             else:
                 self.log_error = 1
 
-    @config.log_function
+    @log.log_function()
     def disconnect_network(self, listItem=None):
         self.connect_attempt = 0
         self.net_disconnected = 1
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         entry = listItem.getProperty('entry')
-        CONNMAN.service_disconnect(entry)
+        dbus_connman.service_disconnect(entry)
 
-    @config.log_function
+    @log.log_function()
     def delete_network(self, listItem=None):
         self.connect_attempt = 0
         if listItem == None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         service_path = listItem.getProperty('entry')
-        CONNMAN.service_remove(service_path)
+        dbus_connman.service_remove(service_path)
 
-    @config.log_function
+    @log.log_function()
     def refresh_network(self, listItem=None):
-        CONNMAN.technology_wifi_scan()
+        dbus_connman.technology_wifi_scan()
         self.menu_connections(None)
 
-    @config.log_function
+    @log.log_function()
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
-        CONNMAN.manager_register_agent()
-        self.agent = Kodi_Wifi_Agent.register_agent()
+        dbus_connman.manager_register_agent()
+        self.agent = Agent.register_agent()
         self.listener = Listener(self)
         self.listener.listen()
 
-    @config.log_function
+    @log.log_function()
     def stop_service(self):
         if hasattr(self, 'dbusConnmanManager'):
             self.dbusConnmanManager = None
             del self.dbusConnmanManager
 
-    @config.log_function
+    @log.log_function()
     def set_network_wait(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
@@ -1066,7 +1047,7 @@ class connman:
             state = 0
         oe.set_service('iptables', options, state)
 
-    @config.log_function
+    @log.log_function()
     def do_wizard(self):
         oe.winOeMain.set_wizard_title(oe._(32305))
         oe.winOeMain.set_wizard_text(oe._(32306))
@@ -1085,49 +1066,52 @@ class connman:
         self.menu_connections(None)
 
 
-class Listener(object):
+class Agent(dbus_connman.Agent):
 
-    @config.log_function
+    def request_input(self, path, fields):
+        oe.input_request = True
+        response = {}
+        input_fields = {
+            'Name': 32146,
+            'Passphrase': 32147,
+            'Username': 32148,
+            'Password': 32148,
+        }
+        for field, label in input_fields.items():
+            if field in fields:
+                xbmcKeyboard = xbmc.Keyboard('', oe._(label))
+                xbmcKeyboard.doModal()
+                if xbmcKeyboard.isConfirmed() and xbmcKeyboard.getText():
+                    response[field] = xbmcKeyboard.getText()
+                else:
+                    dbus_connman.agent_abort()
+        passphrase = response.get('Passphrase')
+        if passphrase:
+            if 'Identity' in fields:
+                response['Identity'] = passphrase
+            if 'wpspin' in fields:
+                response['wpspin'] = passphrase
+        oe.input_request = False
+        return response
+
+    def report_error(self, path, error):
+        oe.input_request = False
+        config.notification(error)
+
+
+class Listener(dbus_connman.Listener):
+
+    @log.log_function()
     def __init__(self, parent):
         self.parent = parent
 
-    def listen(self):
-        dbus_utils.BUS.listen_signal(
-            interface='net.connman.Manager',
-            fallback=True,
-            func=self.propertyChanged,
-            path='/',
-            name='PropertyChanged')
-        dbus_utils.BUS.listen_signal(
-            interface='net.connman.Service',
-            fallback=True,
-            func=self.propertyChanged,
-            path='/',
-            name='PropertyChanged')
-        dbus_utils.BUS.listen_signal(
-            interface='net.connman.Manager',
-            fallback=True,
-            func=self.servicesChanged,
-            path='/',
-            name='ServicesChanged')
-        dbus_utils.BUS.listen_signal(
-            interface='net.connman.Technology',
-            fallback=True,
-            func=self.technologyChanged,
-            path='/',
-            name='PropertyChanged')
-
-    @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-    @config.log_function
-    async def propertyChanged(self, name, value, path):
-        value = dbus_utils.convert_from_dbussy(value)
+    @log.log_function()
+    async def on_property_changed(self, name, value, path):
         if self.parent.visible:
             self.updateGui(name, value, path)
 
-    @ravel.signal(name='PropertyChanged', in_signature = 'sv', arg_keys = ('name', 'value'), path_keyword='path')
-    @config.log_function
-    async def technologyChanged(self, name, value, path):
-        value = dbus_utils.convert_from_dbussy(value)
+    @log.log_function()
+    async def on_technology_changed(self, name, value, path):
         if self.parent.visible:
             if oe.winOeMain.lastMenu == 1:
                 oe.winOeMain.lastMenu = -1
@@ -1135,15 +1119,12 @@ class Listener(object):
             else:
                 self.updateGui(name, value, path)
 
-    @ravel.signal(name='ServicesChanged', in_signature = 'a(oa{sv})ao', arg_keys = ('services', 'removed'))
-    @config.log_function
-    async def servicesChanged(self, services, removed):
-        services = dbus_utils.convert_from_dbussy(services)
-        removed = dbus_utils.convert_from_dbussy(removed)
+    @log.log_function()
+    async def on_services_changed(self, services, removed):
         if self.parent.visible:
             self.parent.menu_connections(None, services, removed, force=True)
 
-    @config.log_function
+    @log.log_function()
     def updateGui(self, name, value, path):
         try:
             if name == 'Strength':
@@ -1171,84 +1152,8 @@ class Listener(object):
         except KeyError:
             self.parent.menu_connections(None, {}, {}, force=True)
 
-    @config.log_function
+    @log.log_function()
     def forceRender(self):
             focusId = oe.winOeMain.getFocusId()
             oe.winOeMain.setFocusId(oe.listObject['netlist'])
             oe.winOeMain.setFocusId(focusId)
-
-
-class Kodi_Wifi_Agent(dbus_connman.Connman_Agent):
-
-    def busy(self):
-        oe.input_request = False
-
-    def Release(self):
-        pass
-
-    def request_input(self, path, fields):
-        oe.input_request = True
-        response = {}
-        if 'Name' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32146))
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Name'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        if 'Passphrase' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32147))
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Passphrase'] = xbmcKeyboard.getText()
-                    if 'Identity' in fields:
-                        response['Identity'] = xbmcKeyboard.getText()
-                    if 'wpspin' in fields:
-                        response['wpspin'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        if 'Username' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32148))
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Username'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        if 'Password' in fields:
-            xbmcKeyboard = xbmc.Keyboard('', oe._(32148), True)
-            xbmcKeyboard.doModal()
-            if xbmcKeyboard.isConfirmed():
-                if xbmcKeyboard.getText() != '':
-                    response['Password'] = xbmcKeyboard.getText()
-                else:
-                    self.busy()
-                    return response
-            else:
-                self.busy()
-                return response
-        self.busy()
-        return response
-
-    def RequestBrowser(self, path, url):
-        pass
-
-    def report_error(self, path, error):
-        config.notification(error)
-
-    def Cancel(self):
-        pass

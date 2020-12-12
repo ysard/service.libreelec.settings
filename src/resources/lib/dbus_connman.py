@@ -5,6 +5,7 @@ import dbussy
 import ravel
 
 BUS_NAME = 'net.connman'
+ERROR_AGENT_CANCELLED = 'net.connman.Agent.Error.Canceled'
 INTERFACE_AGENT = 'net.connman.Agent'
 INTERFACE_CLOCK = 'net.connman.Clock'
 INTERFACE_MANAGER = 'net.connman.Manager'
@@ -15,65 +16,8 @@ PATH_TECH_WIFI = '/net/connman/technology/wifi'
 PATH_AGENT = '/kodi/agent'
 
 
-class Dbus_Connman(dbus_utils.Dbus):
-
-    def __init__(self):
-        super().__init__(BUS_NAME)
-
-    def clock_get_properties(self):
-        return self.call_method('/', INTERFACE_CLOCK, 'GetProperties')
-
-    def clock_set_timeservers(self, timeservers):
-        return self.call_method('/', INTERFACE_CLOCK, 'SetProperty', 'Timeservers', (dbussy.DBUS.Signature('as'), timeservers))
-
-    def manager_get_properties(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'GetProperties')
-
-    def manager_get_services(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'GetServices')
-
-    def manager_get_technologies(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'GetTechnologies')
-
-    def manager_register_agent(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
-
-    def manager_unregister_agent(self):
-        return self.call_method('/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT)
-
-    def service_connect(self, path):
-        return self.run_method(path, INTERFACE_SERVICE, 'Connect')
-
-    def service_disconnect(self, path):
-        return self.call_method(path, INTERFACE_SERVICE, 'Disconnect')
-
-    def service_get_properties(self, path):
-        return self.call_method(path, INTERFACE_SERVICE, 'GetProperties')
-
-    def service_remove(self, path):
-        return self.call_method(path, INTERFACE_SERVICE, 'Remove')
-
-    def technology_wifi_scan(self):
-        return self.call_method(PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'Scan')
-
-    def technology_wifi_set_property(self, name, value):
-        return self.call_method(PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'SetProperty', name, value)
-
-    def technology_wifi_set_powered(self, state):
-        return self.technology_wifi_set_property('Powered', (dbussy.DBUS.Signature('b'), state))
-
-    def technology_wifi_set_tethering(self, state):
-        return self.technology_wifi_set_property('Tethering', (dbussy.DBUS.Signature('b'), state))
-
-    def technology_wifi_set_tethering_identifier(self, identifier):
-        return self.technology_wifi_set_property('TetheringIdentifier', (dbussy.DBUS.Signature('s'), identifier))
-
-    def technology_wifi_set_tethering_passphrase(self, passphrase):
-        return self.technology_wifi_set_property('TetheringPassphrase', (dbussy.DBUS.Signature('s'), passphrase))
-
-
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
-class Connman_Agent(object):
+class Agent(object):
 
     agent = None
 
@@ -89,6 +33,20 @@ class Connman_Agent(object):
         return cls.agent
 
     @ravel.method(
+        in_signature='',
+        out_signature=''
+    )
+    def Cancel(self):
+        raise NotImplementedError
+
+    @ravel.method(
+        in_signature='',
+        out_signature=''
+    )
+    def Release(self):
+        raise NotImplementedError
+
+    @ravel.method(
         in_signature='os',
         out_signature='',
         arg_keys=['path', 'error'],
@@ -99,6 +57,14 @@ class Connman_Agent(object):
 
     def report_error(self, path, error):
         pass
+
+    @ravel.method(
+        in_signature='os',
+        out_signature='',
+        arg_keys=['service', 'url'],
+    )
+    def RequestBrowser(self, path, url):
+        raise NotImplementedError
 
     @ravel.method(
         in_signature='oa{sv}',
@@ -115,3 +81,120 @@ class Connman_Agent(object):
 
     def request_input(self, request):
         pass
+
+
+class Listener(object):
+
+    def listen(self):
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self._on_property_changed,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Service',
+            fallback=True,
+            func=self._on_property_changed,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Manager',
+            fallback=True,
+            func=self._on_services_changed,
+            path='/',
+            name='ServicesChanged')
+        dbus_utils.BUS.listen_signal(
+            interface='net.connman.Technology',
+            fallback=True,
+            func=self._on_technology_changed,
+            path='/',
+            name='PropertyChanged')
+
+    @ravel.signal(name='PropertyChanged', in_signature='sv', arg_keys=('name', 'value'), path_keyword='path')
+    async def _on_property_changed(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        await self.on_property_changed(name, value, path)
+
+    @ravel.signal(name='ServicesChanged', in_signature='a(oa{sv})ao', arg_keys=('services', 'removed'))
+    async def _on_services_changed(self, services, removed):
+        services = dbus_utils.convert_from_dbussy(services)
+        removed = dbus_utils.convert_from_dbussy(removed)
+        await self.on_services_changed(services, removed)
+
+    @ravel.signal(name='PropertyChanged', in_signature='sv', arg_keys=('name', 'value'), path_keyword='path')
+    async def _on_technology_changed(self, name, value, path):
+        value = dbus_utils.convert_from_dbussy(value)
+        await self.on_technology_changed(name, value, path)
+
+
+def agent_abort():
+    raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
+
+
+def clock_get_properties():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'GetProperties')
+
+
+def clock_set_timeservers(timeservers):
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'SetProperty', 'Timeservers', (dbussy.DBUS.Signature('as'), timeservers))
+
+
+def manager_get_properties():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetProperties')
+
+
+def manager_get_services():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetServices')
+
+
+def manager_get_technologies():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetTechnologies')
+
+
+def manager_register_agent():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
+
+
+def manager_unregister_agent():
+    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT)
+
+
+def service_connect(path):
+    return dbus_utils.run_method(BUS_NAME, path, INTERFACE_SERVICE, 'Connect')
+
+
+def service_disconnect(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'Disconnect')
+
+
+def service_get_properties(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'GetProperties')
+
+
+def service_remove(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'Remove')
+
+
+def technology_set_powered(path, state):
+    return technology_set_property(path, 'Powered', (dbussy.DBUS.Signature('b'), state))
+
+
+def technology_set_property(path, name, value):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_TECHNOLOGY, 'SetProperty', name, value)
+
+
+def technology_wifi_scan():
+    return dbus_utils.call_method(BUS_NAME, PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'Scan')
+
+
+def technology_wifi_set_tethering(state):
+    return technology_set_property(PATH_TECH_WIFI, 'Tethering', (dbussy.DBUS.Signature('b'), state))
+
+
+def technology_wifi_set_tethering_identifier(identifier):
+    return technology_set_property(PATH_TECH_WIFI, 'TetheringIdentifier', (dbussy.DBUS.Signature('s'), identifier))
+
+
+def technology_wifi_set_tethering_passphrase(passphrase):
+    return technology_set_property(PATH_TECH_WIFI, 'TetheringPassphrase', (dbussy.DBUS.Signature('s'), passphrase))

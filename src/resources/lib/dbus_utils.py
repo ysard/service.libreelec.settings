@@ -11,6 +11,15 @@ BUS.attach_asyncio(LOOP)
 LOOP_THREAD = threading.Thread(target=LOOP.run_forever, daemon=True).start()
 
 
+class Bool(int):
+
+    def __new__(cls, value):
+        return int.__new__(cls, bool(value))
+
+    def __str__(self):
+        return '1' if self == True else '0'
+
+
 def convert_from_dbussy(data):
     if isinstance(data, bool):
         return Bool(data)
@@ -23,34 +32,23 @@ def convert_from_dbussy(data):
     return data
 
 
-class Bool(int):
+def call_method(bus_name, path, interface, method_name, *args, **kwargs):
+    interface = BUS[bus_name][path].get_interface(interface)
+    method = getattr(interface, method_name)
+    result = method(*args, **kwargs)
+    first = next(iter(result or []), None)
+    return convert_from_dbussy(first)
 
-    def __new__(cls, value):
-        return int.__new__(cls, bool(value))
 
-    def __str__(self):
-        return '1' if self == True else '0'
+async def call_async_method(bus_name, path, interface, method_name, *args, **kwargs):
+    interface = await BUS[bus_name][path].get_async_interface(interface)
+    method = getattr(interface, method_name)
+    result = await method(*args, **kwargs)
+    first = next(iter(result or []), None)
+    return convert_from_dbussy(first)
 
 
-class Dbus(object):
-
-    def __init__(self, bus_name):
-        self.bus_name = bus_name
-
-    async def call_async_method(self, path, interface, method_name, *args, **kwargs):
-        interface = await BUS[self.bus_name][path].get_async_interface(interface)
-        method = getattr(interface, method_name)
-        result = await method(*args, **kwargs)
-        first = next(iter(result or []), None)
-        return convert_from_dbussy(first)
-
-    def call_method(self, path, interface, method_name, *args, **kwargs):
-        interface = BUS[self.bus_name][path].get_interface(interface)
-        method = getattr(interface, method_name)
-        result = method(*args, **kwargs)
-        first = next(iter(result or []), None)
-        return convert_from_dbussy(first)
-
-    def run_method(self, path, interface, method_name, *args, **kwargs):
-        future = asyncio.run_coroutine_threadsafe(self.call_async_method(path, interface, method_name, *args, **kwargs), LOOP)
-        return future.result()
+def run_method(bus_name, path, interface, method_name, *args, **kwargs):
+    future = asyncio.run_coroutine_threadsafe(call_async_method(
+        bus_name, path, interface, method_name, *args, **kwargs), LOOP)
+    return future.result()

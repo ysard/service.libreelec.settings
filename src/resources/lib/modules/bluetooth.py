@@ -3,7 +3,8 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
-
+import log
+import modules
 import os
 import xbmc
 import xbmcgui
@@ -14,7 +15,7 @@ import threading
 import oeWindows
 
 
-class bluetooth:
+class bluetooth(modules.Module):
 
     menu = {'6': {
         'name': 32331,
@@ -28,16 +29,13 @@ class bluetooth:
     BLUETOOTH_DAEMON = None
     D_OBEXD_ROOT = None
 
+    @log.log_function()
     def __init__(self, oeMain):
-        try:
-            oeMain.dbg_log('bluetooth::__init__', 'enter_function', oeMain.LOGDEBUG)
-            self.oe = oeMain
-            self.visible = False
-            self.listItems = {}
-            self.dbusBluezAdapter = None
-            self.oe.dbg_log('bluetooth::__init__', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('bluetooth::__init__', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+        super().__init__()
+        self.oe = oeMain
+        self.visible = False
+        self.listItems = {}
+        self.dbusBluezAdapter = None
 
     def do_init(self):
         try:

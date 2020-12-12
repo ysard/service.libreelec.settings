@@ -72,11 +72,6 @@ dbusSystemBus = dbus.SystemBus()
 
 ###############################################################################
 ########################## initialize module ##################################
-## append resource subfolders to path
-
-sys.path.append(xbmcvfs.translatePath(os.path.join(__cwd__, 'resources', 'lib')))
-sys.path.append(xbmcvfs.translatePath(os.path.join(__cwd__, 'resources', 'lib', 'modules')))
-
 ## set default encoding
 
 encoding = locale.getpreferredencoding(do_setlocale=True)
