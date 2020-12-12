@@ -233,7 +233,7 @@ class services(modules.Module):
                         'order': 2,
                         'name': 32384,
                         'value': None,
-                        'action': 'init_obex',
+                        'action': 'initialize_obex',
                         'type': 'bool',
                         'parent': {
                             'entry': 'enabled',
@@ -245,7 +245,7 @@ class services(modules.Module):
                         'order': 3,
                         'name': 32385,
                         'value': None,
-                        'action': 'init_obex',
+                        'action': 'initialize_obex',
                         'type': 'folder',
                         'parent': {
                             'entry': 'obex_enabled',
@@ -453,7 +453,7 @@ class services(modules.Module):
         oe.set_service('bluez', options, state)
 
     @log.log_function()
-    def init_obex(self, **kwargs):
+    def initialize_obex(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
         options = {}
