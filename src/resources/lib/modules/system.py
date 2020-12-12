@@ -3,6 +3,8 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
+import log
+import modules
 import os
 import re
 import glob
@@ -19,7 +21,7 @@ from xml.dom import minidom
 
 xbmcDialog = xbmcgui.Dialog()
 
-class system:
+class system(modules.Module):
 
     ENABLED = False
     KERNEL_CMD = None
@@ -39,176 +41,172 @@ class system:
         'InfoText': 700,
         }}
 
+    @log.log_function()
     def __init__(self, oeMain):
-        try:
-            oeMain.dbg_log('system::__init__', 'enter_function', oeMain.LOGDEBUG)
-            self.oe = oeMain
-            self.struct = {
-                'ident': {
+        super().__init__()
+        self.oe = oeMain
+        self.keyboard_layouts = False
+        self.nox_keyboard_layouts = False
+        self.arrVariants = {}
+        self.struct = {
+            'ident': {
+                'order': 1,
+                'name': 32189,
+                'settings': {'hostname': {
                     'order': 1,
-                    'name': 32189,
-                    'settings': {'hostname': {
+                    'name': 32190,
+                    'value': '',
+                    'action': 'set_hostname',
+                    'type': 'text',
+                    'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$',
+                    'InfoText': 710,
+                    }},
+                },
+            'keyboard': {
+                'order': 2,
+                'name': 32009,
+                'settings': {
+                    'KeyboardLayout1': {
                         'order': 1,
-                        'name': 32190,
+                        'name': 32010,
+                        'value': 'us',
+                        'action': 'set_keyboard_layout',
+                        'type': 'multivalue',
+                        'values': [],
+                        'InfoText': 711,
+                        },
+                    'KeyboardVariant1': {
+                        'order': 2,
+                        'name': 32386,
                         'value': '',
-                        'action': 'set_hostname',
-                        'type': 'text',
-                        'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$',
-                        'InfoText': 710,
-                        }},
+                        'action': 'set_keyboard_layout',
+                        'type': 'multivalue',
+                        'values': [],
+                        'InfoText': 753,
+                        },
+                    'KeyboardLayout2': {
+                        'order': 3,
+                        'name': 32010,
+                        'value': 'us',
+                        'action': 'set_keyboard_layout',
+                        'type': 'multivalue',
+                        'values': [],
+                        'InfoText': 712,
+                        },
+                    'KeyboardVariant2': {
+                        'order': 4,
+                        'name': 32387,
+                        'value': '',
+                        'action': 'set_keyboard_layout',
+                        'type': 'multivalue',
+                        'values': [],
+                        'InfoText': 754,
+                        },
+                    'KeyboardType': {
+                        'order': 5,
+                        'name': 32330,
+                        'value': 'pc105',
+                        'action': 'set_keyboard_layout',
+                        'type': 'multivalue',
+                        'values': [],
+                        'InfoText': 713,
+                        },
                     },
-                'keyboard': {
-                    'order': 2,
-                    'name': 32009,
-                    'settings': {
-                        'KeyboardLayout1': {
-                            'order': 1,
-                            'name': 32010,
-                            'value': 'us',
-                            'action': 'set_keyboard_layout',
-                            'type': 'multivalue',
-                            'values': [],
-                            'InfoText': 711,
-                            },
-                        'KeyboardVariant1': {
-                            'order': 2,
-                            'name': 32386,
-                            'value': '',
-                            'action': 'set_keyboard_layout',
-                            'type': 'multivalue',
-                            'values': [],
-                            'InfoText': 753,
-                            },
-                        'KeyboardLayout2': {
-                            'order': 3,
-                            'name': 32010,
-                            'value': 'us',
-                            'action': 'set_keyboard_layout',
-                            'type': 'multivalue',
-                            'values': [],
-                            'InfoText': 712,
-                            },
-                        'KeyboardVariant2': {
-                            'order': 4,
-                            'name': 32387,
-                            'value': '',
-                            'action': 'set_keyboard_layout',
-                            'type': 'multivalue',
-                            'values': [],
-                            'InfoText': 754,
-                            },
-                        'KeyboardType': {
-                            'order': 5,
-                            'name': 32330,
-                            'value': 'pc105',
-                            'action': 'set_keyboard_layout',
-                            'type': 'multivalue',
-                            'values': [],
-                            'InfoText': 713,
+                },
+            'pinlock': {
+                'order': 3,
+                'name': 32192,
+                'settings': {
+                    'pinlock_enable': {
+                        'order': 1,
+                        'name': 32193,
+                        'value': '0',
+                        'action': 'init_pinlock',
+                        'type': 'bool',
+                        'InfoText': 747,
+                        },
+                    'pinlock_pin': {
+                        'order': 2,
+                        'name': 32194,
+                        'value': '',
+                        'action': 'set_pinlock',
+                        'type': 'button',
+                        'InfoText': 748,
+                        'parent': {
+                            'entry': 'pinlock_enable',
+                            'value': ['1'],
                             },
                         },
                     },
-                'pinlock': {
-                    'order': 3,
-                    'name': 32192,
-                    'settings': {
-                        'pinlock_enable': {
-                            'order': 1,
-                            'name': 32193,
-                            'value': '0',
-                            'action': 'init_pinlock',
-                            'type': 'bool',
-                            'InfoText': 747,
-                            },
-                        'pinlock_pin': {
-                            'order': 2,
-                            'name': 32194,
-                            'value': '',
-                            'action': 'set_pinlock',
-                            'type': 'button',
-                            'InfoText': 748,
-                            'parent': {
-                                'entry': 'pinlock_enable',
-                                'value': ['1'],
-                                },
-                            },
-                        },
-                    },
+                },
 
-                'backup': {
-                    'order': 7,
-                    'name': 32371,
-                    'settings': {
-                        'backup': {
-                            'name': 32372,
-                            'value': '0',
-                            'action': 'do_backup',
-                            'type': 'button',
-                            'InfoText': 722,
-                            'order': 1,
-                            },
-                        'restore': {
-                            'name': 32373,
-                            'value': '0',
-                            'action': 'do_restore',
-                            'type': 'button',
-                            'InfoText': 723,
-                            'order': 2,
-                            },
+            'backup': {
+                'order': 7,
+                'name': 32371,
+                'settings': {
+                    'backup': {
+                        'name': 32372,
+                        'value': '0',
+                        'action': 'do_backup',
+                        'type': 'button',
+                        'InfoText': 722,
+                        'order': 1,
+                        },
+                    'restore': {
+                        'name': 32373,
+                        'value': '0',
+                        'action': 'do_restore',
+                        'type': 'button',
+                        'InfoText': 723,
+                        'order': 2,
                         },
                     },
-                'reset': {
-                    'order': 8,
-                    'name': 32323,
-                    'settings': {
-                        'xbmc_reset': {
-                            'name': 32324,
-                            'value': '0',
-                            'action': 'reset_xbmc',
-                            'type': 'button',
-                            'InfoText': 724,
-                            'order': 1,
-                            },
-                        'oe_reset': {
-                            'name': 32325,
-                            'value': '0',
-                            'action': 'reset_oe',
-                            'type': 'button',
-                            'InfoText': 725,
-                            'order': 2,
-                            },
+                },
+            'reset': {
+                'order': 8,
+                'name': 32323,
+                'settings': {
+                    'xbmc_reset': {
+                        'name': 32324,
+                        'value': '0',
+                        'action': 'reset_xbmc',
+                        'type': 'button',
+                        'InfoText': 724,
+                        'order': 1,
+                        },
+                    'oe_reset': {
+                        'name': 32325,
+                        'value': '0',
+                        'action': 'reset_oe',
+                        'type': 'button',
+                        'InfoText': 725,
+                        'order': 2,
                         },
                     },
-                'debug': {
-                    'order': 9,
-                    'name': 32376,
-                    'settings': {
-                        'paste_system': {
-                            'name': 32377,
-                            'value': '0',
-                            'action': 'do_send_system_logs',
-                            'type': 'button',
-                            'InfoText': 718,
-                            'order': 1,
-                            },
-                        'paste_crash': {
-                            'name': 32378,
-                            'value': '0',
-                            'action': 'do_send_crash_logs',
-                            'type': 'button',
-                            'InfoText': 719,
-                            'order': 2,
-                            },
+                },
+            'debug': {
+                'order': 9,
+                'name': 32376,
+                'settings': {
+                    'paste_system': {
+                        'name': 32377,
+                        'value': '0',
+                        'action': 'do_send_system_logs',
+                        'type': 'button',
+                        'InfoText': 718,
+                        'order': 1,
+                        },
+                    'paste_crash': {
+                        'name': 32378,
+                        'value': '0',
+                        'action': 'do_send_crash_logs',
+                        'type': 'button',
+                        'InfoText': 719,
+                        'order': 2,
                         },
                     },
-                }
-
-            self.keyboard_layouts = False
-            self.nox_keyboard_layouts = False
-            self.arrVariants = {}
-            self.oe.dbg_log('system::__init__', 'exit_function', self.oe.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('system::__init__', f'ERROR: ({repr(e)})')
+                },
+            }
 
     def start_service(self):
         try:

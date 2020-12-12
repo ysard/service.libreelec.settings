@@ -3,6 +3,8 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
+import log
+import modules
 import os
 import glob
 import subprocess
@@ -14,7 +16,7 @@ __scriptid__ = 'service.libreelec.settings'
 __addon__ = xbmcaddon.Addon(id=__scriptid__)
 xbmcDialog = xbmcgui.Dialog()
 
-class services:
+class services(modules.Module):
 
     ENABLED = False
     SAMBA_NMDB = None
@@ -39,250 +41,246 @@ class services:
         'InfoText': 703,
         }}
 
+    @log.log_function()
     def __init__(self, oeMain):
-        try:
-            oeMain.dbg_log('services::__init__', 'enter_function', oeMain.LOGDEBUG)
-            self.struct = {
-                'samba': {
+        super().__init__()
+        self.oe = oeMain
+        self.struct = {
+            'samba': {
+                'order': 1,
+                'name': 32200,
+                'not_supported': [],
+                'settings': {
+                    'samba_autostart': {
+                        'order': 1,
+                        'name': 32204,
+                        'value': None,
+                        'action': 'initialize_samba',
+                        'type': 'bool',
+                        'InfoText': 738,
+                        },
+                    'samba_workgroup': {
+                        'order': 2,
+                        'name': 32215,
+                        'value': "WORKGROUP",
+                        'action': 'initialize_samba',
+                        'type': 'text',
+                        'parent': {
+                            'entry': 'samba_autostart',
+                            'value': ['1'],
+                            },
+                        'InfoText': 758,
+                        },
+                    'samba_secure': {
+                        'order': 3,
+                        'name': 32202,
+                        'value': None,
+                        'action': 'initialize_samba',
+                        'type': 'bool',
+                        'parent': {
+                            'entry': 'samba_autostart',
+                            'value': ['1'],
+                            },
+                        'InfoText': 739,
+                        },
+                    'samba_username': {
+                        'order': 4,
+                        'name': 32106,
+                        'value': None,
+                        'action': 'initialize_samba',
+                        'type': 'text',
+                        'parent': {
+                            'entry': 'samba_secure',
+                            'value': ['1'],
+                            },
+                        'InfoText': 740,
+                        },
+                    'samba_password': {
+                        'order': 5,
+                        'name': 32107,
+                        'value': None,
+                        'action': 'initialize_samba',
+                        'type': 'text',
+                        'parent': {
+                            'entry': 'samba_secure',
+                            'value': ['1'],
+                            },
+                        'InfoText': 741,
+                        },
+                    'samba_minprotocol': {
+                        'order': 6,
+                        'name': 32217,
+                        'value': 'SMB2',
+                        'action': 'initialize_samba',
+                        'type': 'multivalue',
+                        'values': [
+                            'SMB1',
+                            'SMB2',
+                            'SMB3',
+                            ],
+                        'parent': {
+                            'entry': 'samba_autostart',
+                            'value': ['1'],
+                            },
+                        'InfoText': 756,
+                        },
+                    'samba_maxprotocol': {
+                        'order': 7,
+                        'name': 32218,
+                        'value': 'SMB3',
+                        'action': 'initialize_samba',
+                        'type': 'multivalue',
+                        'values': [
+                            'SMB1',
+                            'SMB2',
+                            'SMB3',
+                            ],
+                        'parent': {
+                            'entry': 'samba_autostart',
+                            'value': ['1'],
+                            },
+                        'InfoText': 757,
+                        },
+                    'samba_autoshare': {
+                        'order': 8,
+                        'name': 32216,
+                        'value': None,
+                        'action': 'initialize_samba',
+                        'type': 'bool',
+                        'parent': {
+                            'entry': 'samba_autostart',
+                            'value': ['1'],
+                            },
+                        'InfoText': 755,
+                        },
+                    },
+                },
+            'ssh': {
+                'order': 2,
+                'name': 32201,
+                'not_supported': [],
+                'settings': {
+                    'ssh_autostart': {
+                        'order': 1,
+                        'name': 32205,
+                        'value': None,
+                        'action': 'initialize_ssh',
+                        'type': 'bool',
+                        'InfoText': 742,
+                        },
+                    'ssh_secure': {
+                        'order': 2,
+                        'name': 32203,
+                        'value': None,
+                        'action': 'initialize_ssh',
+                        'type': 'bool',
+                        'parent': {
+                            'entry': 'ssh_autostart',
+                            'value': ['1'],
+                            },
+                        'InfoText': 743,
+                        },
+                    'ssh_passwd': {
+                        'order': 3,
+                        'name': 32209,
+                        'value': None,
+                        'action': 'do_sshpasswd',
+                        'type': 'button',
+                        'parent': {
+                            'entry': 'ssh_secure',
+                            'value': ['0'],
+                            },
+                        'InfoText': 746,
+                        },
+                    },
+                },
+            'avahi': {
+                'order': 3,
+                'name': 32207,
+                'not_supported': [],
+                'settings': {'avahi_autostart': {
                     'order': 1,
-                    'name': 32200,
-                    'not_supported': [],
-                    'settings': {
-                        'samba_autostart': {
-                            'order': 1,
-                            'name': 32204,
-                            'value': None,
-                            'action': 'initialize_samba',
-                            'type': 'bool',
-                            'InfoText': 738,
-                            },
-                        'samba_workgroup': {
-                            'order': 2,
-                            'name': 32215,
-                            'value': "WORKGROUP",
-                            'action': 'initialize_samba',
-                            'type': 'text',
-                            'parent': {
-                                'entry': 'samba_autostart',
-                                'value': ['1'],
-                                },
-                            'InfoText': 758,
-                            },
-                        'samba_secure': {
-                            'order': 3,
-                            'name': 32202,
-                            'value': None,
-                            'action': 'initialize_samba',
-                            'type': 'bool',
-                            'parent': {
-                                'entry': 'samba_autostart',
-                                'value': ['1'],
-                                },
-                            'InfoText': 739,
-                            },
-                        'samba_username': {
-                            'order': 4,
-                            'name': 32106,
-                            'value': None,
-                            'action': 'initialize_samba',
-                            'type': 'text',
-                            'parent': {
-                                'entry': 'samba_secure',
-                                'value': ['1'],
-                                },
-                            'InfoText': 740,
-                            },
-                        'samba_password': {
-                            'order': 5,
-                            'name': 32107,
-                            'value': None,
-                            'action': 'initialize_samba',
-                            'type': 'text',
-                            'parent': {
-                                'entry': 'samba_secure',
-                                'value': ['1'],
-                                },
-                            'InfoText': 741,
-                            },
-                        'samba_minprotocol': {
-                            'order': 6,
-                            'name': 32217,
-                            'value': 'SMB2',
-                            'action': 'initialize_samba',
-                            'type': 'multivalue',
-                            'values': [
-                                'SMB1',
-                                'SMB2',
-                                'SMB3',
-                                ],
-                            'parent': {
-                                'entry': 'samba_autostart',
-                                'value': ['1'],
-                                },
-                            'InfoText': 756,
-                            },
-                        'samba_maxprotocol': {
-                            'order': 7,
-                            'name': 32218,
-                            'value': 'SMB3',
-                            'action': 'initialize_samba',
-                            'type': 'multivalue',
-                            'values': [
-                                'SMB1',
-                                'SMB2',
-                                'SMB3',
-                                ],
-                            'parent': {
-                                'entry': 'samba_autostart',
-                                'value': ['1'],
-                                },
-                            'InfoText': 757,
-                            },
-                        'samba_autoshare': {
-                            'order': 8,
-                            'name': 32216,
-                            'value': None,
-                            'action': 'initialize_samba',
-                            'type': 'bool',
-                            'parent': {
-                                'entry': 'samba_autostart',
-                                'value': ['1'],
-                                },
-                            'InfoText': 755,
-                            },
-                        },
-                    },
-                'ssh': {
-                    'order': 2,
-                    'name': 32201,
-                    'not_supported': [],
-                    'settings': {
-                        'ssh_autostart': {
-                            'order': 1,
-                            'name': 32205,
-                            'value': None,
-                            'action': 'initialize_ssh',
-                            'type': 'bool',
-                            'InfoText': 742,
-                            },
-                        'ssh_secure': {
-                            'order': 2,
-                            'name': 32203,
-                            'value': None,
-                            'action': 'initialize_ssh',
-                            'type': 'bool',
-                            'parent': {
-                                'entry': 'ssh_autostart',
-                                'value': ['1'],
-                                },
-                            'InfoText': 743,
-                            },
-                        'ssh_passwd': {
-                            'order': 3,
-                            'name': 32209,
-                            'value': None,
-                            'action': 'do_sshpasswd',
-                            'type': 'button',
-                            'parent': {
-                                'entry': 'ssh_secure',
-                                'value': ['0'],
-                                },
-                            'InfoText': 746,
-                            },
-                        },
-                    },
-                'avahi': {
-                    'order': 3,
-                    'name': 32207,
-                    'not_supported': [],
-                    'settings': {'avahi_autostart': {
+                    'name': 32206,
+                    'value': None,
+                    'action': 'initialize_avahi',
+                    'type': 'bool',
+                    'InfoText': 744,
+                    }},
+                },
+            'cron': {
+                'order': 4,
+                'name': 32319,
+                'not_supported': [],
+                'settings': {'cron_autostart': {
+                    'order': 1,
+                    'name': 32320,
+                    'value': None,
+                    'action': 'initialize_cron',
+                    'type': 'bool',
+                    'InfoText': 745,
+                    }},
+                },
+            'bluez': {
+                'order': 6,
+                'name': 32331,
+                'not_supported': [],
+                'settings': {
+                    'enabled': {
                         'order': 1,
-                        'name': 32206,
+                        'name': 32344,
                         'value': None,
-                        'action': 'initialize_avahi',
+                        'action': 'init_bluetooth',
                         'type': 'bool',
-                        'InfoText': 744,
-                        }},
-                    },
-                'cron': {
-                    'order': 4,
-                    'name': 32319,
-                    'not_supported': [],
-                    'settings': {'cron_autostart': {
-                        'order': 1,
-                        'name': 32320,
+                        'InfoText': 720,
+                        },
+                    'obex_enabled': {
+                        'order': 2,
+                        'name': 32384,
                         'value': None,
-                        'action': 'initialize_cron',
+                        'action': 'init_obex',
                         'type': 'bool',
-                        'InfoText': 745,
-                        }},
-                    },
-                'bluez': {
-                    'order': 6,
-                    'name': 32331,
-                    'not_supported': [],
-                    'settings': {
-                        'enabled': {
-                            'order': 1,
-                            'name': 32344,
-                            'value': None,
-                            'action': 'init_bluetooth',
-                            'type': 'bool',
-                            'InfoText': 720,
+                        'parent': {
+                            'entry': 'enabled',
+                            'value': ['1'],
                             },
-                        'obex_enabled': {
-                            'order': 2,
-                            'name': 32384,
-                            'value': None,
-                            'action': 'init_obex',
-                            'type': 'bool',
-                            'parent': {
-                                'entry': 'enabled',
-                                'value': ['1'],
-                                },
-                            'InfoText': 751,
+                        'InfoText': 751,
+                        },
+                    'obex_root': {
+                        'order': 3,
+                        'name': 32385,
+                        'value': None,
+                        'action': 'init_obex',
+                        'type': 'folder',
+                        'parent': {
+                            'entry': 'obex_enabled',
+                            'value': ['1'],
                             },
-                        'obex_root': {
-                            'order': 3,
-                            'name': 32385,
-                            'value': None,
-                            'action': 'init_obex',
-                            'type': 'folder',
-                            'parent': {
-                                'entry': 'obex_enabled',
-                                'value': ['1'],
-                                },
-                            'InfoText': 752,
+                        'InfoText': 752,
+                        },
+                    'idle_timeout': {
+                        'order': 4,
+                        'name': 32400,
+                        'value': None,
+                        'action': 'idle_timeout',
+                        'type': 'multivalue',
+                        'values': [
+                            '0',
+                            '1',
+                            '3',
+                            '5',
+                            '15',
+                            '30',
+                            '60',
+                            ],
+                        'parent': {
+                            'entry': 'enabled',
+                            'value': ['1'],
                             },
-                        'idle_timeout': {
-                            'order': 4,
-                            'name': 32400,
-                            'value': None,
-                            'action': 'idle_timeout',
-                            'type': 'multivalue',
-                            'values': [
-                                '0',
-                                '1',
-                                '3',
-                                '5',
-                                '15',
-                                '30',
-                                '60',
-                                ],
-                            'parent': {
-                                'entry': 'enabled',
-                                'value': ['1'],
-                                },
-                            'InfoText': 773,
-                            },
+                        'InfoText': 773,
                         },
                     },
-                }
-
-            self.oe = oeMain
-            oeMain.dbg_log('services::__init__', 'exit_function', oeMain.LOGDEBUG)
-        except Exception as e:
-            self.oe.dbg_log('services::__init__', f'ERROR: ({rep(e)})')
+                },
+            }
 
     def start_service(self):
         try:

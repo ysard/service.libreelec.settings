@@ -4,6 +4,7 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 import oe
 import log
+import modules
 
 
 class about:
@@ -18,6 +19,7 @@ class about:
 
     @log.log_function()
     def __init__(self, oeMain):
+        super().__init__()
         self.controls = {}
 
     @log.log_function()

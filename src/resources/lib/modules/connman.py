@@ -3,6 +3,8 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2017-present Team LibreELEC
 
+import log
+import modules
 import oe
 import os
 import xbmc
@@ -436,7 +438,7 @@ class connmanService(object):
 ## Connman main class
 ####################################################################
 
-class connman:
+class connman(modules.Module):
 
     ENABLED = False
     CONNMAN_DAEMON = None
@@ -463,6 +465,7 @@ class connman:
 
     @log.log_function()
     def __init__(self, oeMain):
+        super().__init__()
         self.listItems = {}
         self.struct = {
             dbus_connman.PATH_TECH_WIFI: {
