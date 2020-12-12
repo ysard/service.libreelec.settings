@@ -368,8 +368,8 @@ class services(modules.Module):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
         options = {}
-        state = 1
         if self.struct['samba']['settings']['samba_autostart']['value'] == '1':
+            state = 1
             if 'hidden' in self.struct['samba']['settings']['samba_username']:
                 del self.struct['samba']['settings']['samba_username']['hidden']
             if 'hidden' in self.struct['samba']['settings']['samba_password']:
@@ -399,16 +399,16 @@ class services(modules.Module):
     def initialize_ssh(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
         if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
+            state = 1
             if self.struct['ssh']['settings']['ssh_secure']['value'] == '1':
                 val = 'true'
-                options['SSH_ARGS'] = f"{self.OPT_SSH_NOPASSWD}"
+                options['SSH_ARGS'] = self.OPT_SSH_NOPASSWD
             else:
                 val = 'false'
                 options['SSH_ARGS'] = '""'
-            options['SSHD_DISABLE_PW_AUTH'] = f"{val}"
+            options['SSHD_DISABLE_PW_AUTH'] = val
         else:
             state = 0
         oe.set_service('sshd', options, state)
@@ -417,9 +417,10 @@ class services(modules.Module):
     def initialize_avahi(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
-        if self.struct['avahi']['settings']['avahi_autostart']['value'] != '1':
+        if self.struct['avahi']['settings']['avahi_autostart']['value'] == '1':
+            state = 1
+        else:
             state = 0
         oe.set_service('avahi', options, state)
 
@@ -427,9 +428,10 @@ class services(modules.Module):
     def initialize_cron(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
-        if self.struct['cron']['settings']['cron_autostart']['value'] != '1':
+        if self.struct['cron']['settings']['cron_autostart']['value'] == '1':
+            state = 1
+        else:
             state = 0
         oe.set_service('crond', options, state)
 
@@ -437,26 +439,26 @@ class services(modules.Module):
     def init_bluetooth(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
-        if self.struct['bluez']['settings']['enabled']['value'] != '1':
-            state = 0
-            self.struct['bluez']['settings']['obex_enabled']['hidden'] = True
-            self.struct['bluez']['settings']['obex_root']['hidden'] = True
-        else:
+        if self.struct['bluez']['settings']['enabled']['value'] == '1':
+            state = 1
             if 'hidden' in self.struct['bluez']['settings']['obex_enabled']:
                 del self.struct['bluez']['settings']['obex_enabled']['hidden']
             if 'hidden' in self.struct['bluez']['settings']['obex_root']:
                 del self.struct['bluez']['settings']['obex_root']['hidden']
+        else:
+            state = 0
+            self.struct['bluez']['settings']['obex_enabled']['hidden'] = True
+            self.struct['bluez']['settings']['obex_root']['hidden'] = True
         oe.set_service('bluez', options, state)
 
     @log.log_function()
     def init_obex(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
         if self.struct['bluez']['settings']['obex_enabled']['value'] == '1':
+            state = 1
             options['OBEXD_ROOT'] = f"{self.struct['bluez']['settings']['obex_root']['value']}"
         else:
             state = 0
