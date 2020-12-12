@@ -557,14 +557,14 @@ class services(modules.Module):
                 readout3 = ssh.stdout.readline()
             if "Bad password" in readout3:
                 xbmcDialog.ok(oe._(32220), oe._(32221))
-                oe.dbg_log('system::do_sshpasswd', 'exit_function password too weak', oe.LOGDEBUG)
+                log.log('system::do_sshpasswd', 'exit_function password too weak')
                 return
             elif "Retype password" in readout3:
                 xbmcDialog.ok(oe._(32222), oe._(32223))
                 SSHchange = True
             else:
                 xbmcDialog.ok(oe._(32224), oe._(32225))
-            oe.dbg_log('system::do_sshpasswd', 'exit_function', oe.LOGDEBUG)
+            log.log('system::do_sshpasswd', 'exit_function')
         else:
-            oe.dbg_log('system::do_sshpasswd', 'user_cancelled', oe.LOGDEBUG)
+            log.log('system::do_sshpasswd', 'user_cancelled')
         return SSHchange
