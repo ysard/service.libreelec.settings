@@ -7,14 +7,10 @@ import log
 import modules
 import oe
 import os
-import glob
 import subprocess
 import xbmc
 import xbmcgui
-import xbmcaddon
 
-__scriptid__ = 'service.libreelec.settings'
-__addon__ = xbmcaddon.Addon(id=__scriptid__)
 xbmcDialog = xbmcgui.Dialog()
 
 class services(modules.Module):
