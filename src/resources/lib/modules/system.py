@@ -291,7 +291,7 @@ class system(modules.Module):
                     ]['KeyboardLayout1']['value']]
             self.struct['keyboard']['settings']['KeyboardVariant2']['values'] = self.arrVariants[self.struct['keyboard']['settings'
                     ]['KeyboardLayout2']['value']]
-            log.log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']) + ','
+            log.log(str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']) + ','
                             + str(self.struct['keyboard']['settings']['KeyboardLayout2']['value']) + ' ' + '-model '
                             + str(self.struct['keyboard']['settings']['KeyboardType']['value']), log.INFO)
             if not os.path.exists(os.path.dirname(self.UDEV_KEYBOARD_INFO)):
@@ -314,10 +314,10 @@ class system(modules.Module):
                 ]
             oe.execute('setxkbmap ' + ' '.join(parameters))
         elif self.nox_keyboard_layouts == True:
-            log.log('system::set_keyboard_layout', str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']), log.INFO)
+            log.log(str(self.struct['keyboard']['settings']['KeyboardLayout1']['value']), log.INFO)
             parameter = self.struct['keyboard']['settings']['KeyboardLayout1']['value']
             command = f'loadkmap < `ls -1 {self.NOX_KEYBOARD_INFO}/*/{parameter}.bmap`'
-            log.log('system::set_keyboard_layout', command, log.INFO)
+            log.log(command, log.INFO)
             oe.execute(command)
 
     @log.log_function()
@@ -326,7 +326,7 @@ class system(modules.Module):
             self.set_value(listItem)
         if not self.struct['ident']['settings']['hostname']['value'] is None and not self.struct['ident']['settings']['hostname']['value'] \
             == '':
-            log.log('system::set_hostname', self.struct['ident']['settings']['hostname']['value'], log.INFO)
+            log.log(self.struct['ident']['settings']['hostname']['value'], log.INFO)
             hostname = open('/proc/sys/kernel/hostname', 'w')
             hostname.write(self.struct['ident']['settings']['hostname']['value'])
             hostname.close()
@@ -343,7 +343,7 @@ class system(modules.Module):
             hosts.write(f"::1\tlocalhost ip6-localhost ip6-loopback {self.struct['ident']['settings']['hostname']['value']}\n")
             hosts.close()
         else:
-            log.log('system::set_hostname', 'is empty', log.INFO)
+            log.log('Is empty', log.INFO)
 
     @log.log_function()
     def get_keyboard_layouts(self):
@@ -400,9 +400,8 @@ class system(modules.Module):
             arrLayouts.sort()
             arrTypes.sort()
         else:
-            log.log('system::get_keyboard_layouts', 'exit_function (no keyboard layouts found)')
+            log.log('No keyboard layouts found)')
             return (None, None, None)
-        log.log('system::get_keyboard_layouts', 'exit_function')
         return (
             arrLayouts,
             arrTypes,
@@ -429,6 +428,7 @@ class system(modules.Module):
             oe.xbmcm.waitForAbort(1)
             xbmc.executebuiltin('Reboot')
 
+    @log.log_function()
     def ask_sure_reset(self, part):
         xbmcDialog = xbmcgui.Dialog()
         answer = xbmcDialog.yesno(part + ' Reset', f'{oe._(32326)}\n\n{oe._(32328)}')
@@ -525,7 +525,7 @@ class system(modules.Module):
                         oe.xbmcm.waitForAbort(1)
                         xbmc.executebuiltin('Reboot')
                 else:
-                    log.log('system::do_restore', 'User Abort!')
+                    log.log('User Abort!')
                     oe.execute(f'rm -rf {self.RESTORE_DIR}')
 
     @log.log_function()
@@ -546,7 +546,7 @@ class system(modules.Module):
             done_dlg = xbmcgui.Dialog()
             link = result.find('http')
             if link != -1:
-                log.log('system::do_send_logs', result[link:], log.WARNING)
+                log.log(result[link:], log.WARNING)
                 done_dlg.ok('Paste complete', f'Log files pasted to {result[link:]}')
             else:
                 done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
