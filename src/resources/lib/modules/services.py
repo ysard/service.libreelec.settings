@@ -326,12 +326,11 @@ class services(modules.Module):
             self.struct['ssh']['settings']['ssh_secure']['value'] = oe.get_service_option('sshd', 'SSHD_DISABLE_PW_AUTH',
                     self.D_SSH_DISABLE_PW_AUTH).replace('true', '1').replace('false', '0').replace('"', '')
             # hide ssh settings if Kernel Parameter is set
-            cmd_file = open(self.KERNEL_CMD, 'r')
-            cmd_args = cmd_file.read().split(' ')
+            with open(self.KERNEL_CMD, 'r') as cmd_file:
+                cmd_args = cmd_file.read().split(' ')
             if 'ssh' in cmd_args:
                 self.struct['ssh']['settings']['ssh_autostart']['value'] = '1'
                 self.struct['ssh']['settings']['ssh_autostart']['hidden'] = 'true'
-            cmd_file.close()
         else:
             self.struct['ssh']['hidden'] = 'true'
         # AVAHI
@@ -503,12 +502,11 @@ class services(modules.Module):
             self.struct['ssh']['settings']['ssh_autostart']['value'] = '0'
         else:
             self.struct['ssh']['settings']['ssh_autostart']['value'] = '1'
-        # ssh button does nothing if Kernel Parameter is set
-        cmd_file = open(self.KERNEL_CMD, 'r')
-        cmd_args = cmd_file.read().split(' ')
+        # ssh button does nothing if "ssh" set on kernel commandline
+        with open(self.KERNEL_CMD, 'r') as cmd_file:
+            cmd_args = cmd_file.read().split(' ')
         if 'ssh' in cmd_args:
             oe.notify('ssh', 'ssh enabled as boot parameter. can not disable')
-        cmd_file.close()
         self.initialize_ssh()
         self.load_values()
         if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
