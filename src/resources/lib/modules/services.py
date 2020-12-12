@@ -5,6 +5,7 @@
 
 import log
 import modules
+import oe
 import os
 import glob
 import subprocess
@@ -44,7 +45,6 @@ class services(modules.Module):
     @log.log_function()
     def __init__(self, oeMain):
         super().__init__()
-        self.oe = oeMain
         self.struct = {
             'samba': {
                 'order': 1,
@@ -284,69 +284,69 @@ class services(modules.Module):
 
     def start_service(self):
         try:
-            self.oe.dbg_log('services::start_service', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::start_service', 'enter_function', oe.LOGDEBUG)
             self.load_values()
             self.initialize_samba(service=1)
             self.initialize_ssh(service=1)
             self.initialize_avahi(service=1)
             self.initialize_cron(service=1)
             self.init_bluetooth(service=1)
-            self.oe.dbg_log('services::start_service', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::start_service', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::start_service', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::start_service', f'ERROR: ({repr(e)})')
 
     def stop_service(self):
         try:
-            self.oe.dbg_log('services::stop_service', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.dbg_log('services::stop_service', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::stop_service', 'enter_function', oe.LOGDEBUG)
+            oe.dbg_log('services::stop_service', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::stop_service', 'ERROR: (' + repr(e) + ')')
+            oe.dbg_log('services::stop_service', 'ERROR: (' + repr(e) + ')')
 
     def do_init(self):
         try:
-            self.oe.dbg_log('services::do_init', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::do_init', 'exit_function', oe.LOGDEBUG)
             self.load_values()
-            self.oe.dbg_log('services::do_init', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::do_init', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::do_init', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::do_init', f'ERROR: ({repr(e)})')
 
     def set_value(self, listItem):
         try:
-            self.oe.dbg_log('services::set_value', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::set_value', 'enter_function', oe.LOGDEBUG)
             self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
-            self.oe.dbg_log('services::set_value', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::set_value', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::set_value', 'ERROR: (' + repr(e) + ')')
+            oe.dbg_log('services::set_value', 'ERROR: (' + repr(e) + ')')
 
     def load_menu(self, focusItem):
         try:
-            self.oe.dbg_log('services::load_menu', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.winOeMain.build_menu(self.struct)
-            self.oe.dbg_log('services::load_menu', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::load_menu', 'enter_function', oe.LOGDEBUG)
+            oe.winOeMain.build_menu(self.struct)
+            oe.dbg_log('services::load_menu', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::load_menu', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::load_menu', f'ERROR: ({repr(e)})')
 
     def load_values(self):
         try:
-            self.oe.dbg_log('services::load_values', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::load_values', 'enter_function', oe.LOGDEBUG)
 
             # SAMBA
 
             if os.path.isfile(self.SAMBA_NMDB) and os.path.isfile(self.SAMBA_SMDB):
-                self.struct['samba']['settings']['samba_autostart']['value'] = self.oe.get_service_state('samba')
-                self.struct['samba']['settings']['samba_workgroup']['value'] = self.oe.get_service_option('samba', 'SAMBA_WORKGROUP',
+                self.struct['samba']['settings']['samba_autostart']['value'] = oe.get_service_state('samba')
+                self.struct['samba']['settings']['samba_workgroup']['value'] = oe.get_service_option('samba', 'SAMBA_WORKGROUP',
                         self.D_SAMBA_WORKGROUP).replace('"', '')
-                self.struct['samba']['settings']['samba_secure']['value'] = self.oe.get_service_option('samba', 'SAMBA_SECURE',
+                self.struct['samba']['settings']['samba_secure']['value'] = oe.get_service_option('samba', 'SAMBA_SECURE',
                         self.D_SAMBA_SECURE).replace('true', '1').replace('false', '0').replace('"', '')
-                self.struct['samba']['settings']['samba_username']['value'] = self.oe.get_service_option('samba', 'SAMBA_USERNAME',
+                self.struct['samba']['settings']['samba_username']['value'] = oe.get_service_option('samba', 'SAMBA_USERNAME',
                         self.D_SAMBA_USERNAME).replace('"', '')
-                self.struct['samba']['settings']['samba_password']['value'] = self.oe.get_service_option('samba', 'SAMBA_PASSWORD',
+                self.struct['samba']['settings']['samba_password']['value'] = oe.get_service_option('samba', 'SAMBA_PASSWORD',
                         self.D_SAMBA_PASSWORD).replace('"', '')
-                self.struct['samba']['settings']['samba_minprotocol']['value'] = self.oe.get_service_option('samba', 'SAMBA_MINPROTOCOL',
+                self.struct['samba']['settings']['samba_minprotocol']['value'] = oe.get_service_option('samba', 'SAMBA_MINPROTOCOL',
                         self.D_SAMBA_MINPROTOCOL).replace('"', '')
-                self.struct['samba']['settings']['samba_maxprotocol']['value'] = self.oe.get_service_option('samba', 'SAMBA_MAXPROTOCOL',
+                self.struct['samba']['settings']['samba_maxprotocol']['value'] = oe.get_service_option('samba', 'SAMBA_MAXPROTOCOL',
                         self.D_SAMBA_MAXPROTOCOL).replace('"', '')
-                self.struct['samba']['settings']['samba_autoshare']['value'] = self.oe.get_service_option('samba', 'SAMBA_AUTOSHARE',
+                self.struct['samba']['settings']['samba_autoshare']['value'] = oe.get_service_option('samba', 'SAMBA_AUTOSHARE',
                         self.D_SAMBA_AUTOSHARE).replace('true', '1').replace('false', '0').replace('"', '')
             else:
                 self.struct['samba']['hidden'] = 'true'
@@ -354,8 +354,8 @@ class services(modules.Module):
             # SSH
 
             if os.path.isfile(self.SSH_DAEMON):
-                self.struct['ssh']['settings']['ssh_autostart']['value'] = self.oe.get_service_state('sshd')
-                self.struct['ssh']['settings']['ssh_secure']['value'] = self.oe.get_service_option('sshd', 'SSHD_DISABLE_PW_AUTH',
+                self.struct['ssh']['settings']['ssh_autostart']['value'] = oe.get_service_state('sshd')
+                self.struct['ssh']['settings']['ssh_secure']['value'] = oe.get_service_option('sshd', 'SSHD_DISABLE_PW_AUTH',
                         self.D_SSH_DISABLE_PW_AUTH).replace('true', '1').replace('false', '0').replace('"', '')
 
                 # hide ssh settings if Kernel Parameter is set
@@ -372,44 +372,44 @@ class services(modules.Module):
             # AVAHI
 
             if os.path.isfile(self.AVAHI_DAEMON):
-                self.struct['avahi']['settings']['avahi_autostart']['value'] = self.oe.get_service_state('avahi')
+                self.struct['avahi']['settings']['avahi_autostart']['value'] = oe.get_service_state('avahi')
             else:
                 self.struct['avahi']['hidden'] = 'true'
 
             # CRON
 
             if os.path.isfile(self.CRON_DAEMON):
-                self.struct['cron']['settings']['cron_autostart']['value'] = self.oe.get_service_state('crond')
+                self.struct['cron']['settings']['cron_autostart']['value'] = oe.get_service_state('crond')
             else:
                 self.struct['cron']['hidden'] = 'true'
 
             # BLUEZ / OBEX
 
-            if 'bluetooth' in self.oe.dictModules:
-                if os.path.isfile(self.oe.dictModules['bluetooth'].BLUETOOTH_DAEMON):
-                    self.struct['bluez']['settings']['enabled']['value'] = self.oe.get_service_state('bluez')
-                    if os.path.isfile(self.oe.dictModules['bluetooth'].OBEX_DAEMON):
-                        self.struct['bluez']['settings']['obex_enabled']['value'] = self.oe.get_service_state('obexd')
-                        self.struct['bluez']['settings']['obex_root']['value'] = self.oe.get_service_option('obexd', 'OBEXD_ROOT',
-                                self.oe.dictModules['bluetooth'].D_OBEXD_ROOT).replace('"', '')
+            if 'bluetooth' in oe.dictModules:
+                if os.path.isfile(oe.dictModules['bluetooth'].BLUETOOTH_DAEMON):
+                    self.struct['bluez']['settings']['enabled']['value'] = oe.get_service_state('bluez')
+                    if os.path.isfile(oe.dictModules['bluetooth'].OBEX_DAEMON):
+                        self.struct['bluez']['settings']['obex_enabled']['value'] = oe.get_service_state('obexd')
+                        self.struct['bluez']['settings']['obex_root']['value'] = oe.get_service_option('obexd', 'OBEXD_ROOT',
+                                oe.dictModules['bluetooth'].D_OBEXD_ROOT).replace('"', '')
                     else:
                         self.struct['bluez']['settings']['obex_enabled']['hidden'] = True
                         self.struct['bluez']['settings']['obex_root']['hidden'] = True
 
-                    value = self.oe.read_setting('bluetooth', 'idle_timeout')
+                    value = oe.read_setting('bluetooth', 'idle_timeout')
                     if not value:
                         value = '0'
-                    self.struct['bluez']['settings']['idle_timeout']['value'] = self.oe.read_setting('bluetooth', 'idle_timeout')
+                    self.struct['bluez']['settings']['idle_timeout']['value'] = oe.read_setting('bluetooth', 'idle_timeout')
                 else:
                     self.struct['bluez']['hidden'] = 'true'
 
-            self.oe.dbg_log('services::load_values', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::load_values', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::load_values', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::load_values', f'ERROR: ({repr(e)})')
 
     def initialize_samba(self, **kwargs):
         try:
-            self.oe.dbg_log('services::initialize_samba', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::initialize_samba', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             options = {}
@@ -438,14 +438,14 @@ class services(modules.Module):
                 state = 0
                 self.struct['samba']['settings']['samba_username']['hidden'] = True
                 self.struct['samba']['settings']['samba_password']['hidden'] = True
-            self.oe.set_service('samba', options, state)
-            self.oe.dbg_log('services::initialize_samba', 'exit_function', self.oe.LOGDEBUG)
+            oe.set_service('samba', options, state)
+            oe.dbg_log('services::initialize_samba', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::initialize_samba', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
+            oe.dbg_log('services::initialize_samba', f'ERROR: ({repr(e)})', oe.LOGERROR)
 
     def initialize_ssh(self, **kwargs):
         try:
-            self.oe.dbg_log('services::initialize_ssh', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::initialize_ssh', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -460,42 +460,42 @@ class services(modules.Module):
                 options['SSHD_DISABLE_PW_AUTH'] = f"{val}"
             else:
                 state = 0
-            self.oe.set_service('sshd', options, state)
-            self.oe.dbg_log('services::initialize_ssh', 'exit_function', self.oe.LOGDEBUG)
+            oe.set_service('sshd', options, state)
+            oe.dbg_log('services::initialize_ssh', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::initialize_ssh', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
+            oe.dbg_log('services::initialize_ssh', f'ERROR: ({repr(e)})', oe.LOGERROR)
 
     def initialize_avahi(self, **kwargs):
         try:
-            self.oe.dbg_log('services::initialize_avahi', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::initialize_avahi', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
             options = {}
             if self.struct['avahi']['settings']['avahi_autostart']['value'] != '1':
                 state = 0
-            self.oe.set_service('avahi', options, state)
-            self.oe.dbg_log('services::initialize_avahi', 'exit_function', self.oe.LOGDEBUG)
+            oe.set_service('avahi', options, state)
+            oe.dbg_log('services::initialize_avahi', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::initialize_avahi', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
+            oe.dbg_log('services::initialize_avahi', f'ERROR: ({repr(e)})', oe.LOGERROR)
 
     def initialize_cron(self, **kwargs):
         try:
-            self.oe.dbg_log('services::initialize_cron', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::initialize_cron', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
             options = {}
             if self.struct['cron']['settings']['cron_autostart']['value'] != '1':
                 state = 0
-            self.oe.set_service('crond', options, state)
-            self.oe.dbg_log('services::initialize_cron', 'exit_function', self.oe.LOGDEBUG)
+            oe.set_service('crond', options, state)
+            oe.dbg_log('services::initialize_cron', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::initialize_cron', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
+            oe.dbg_log('services::initialize_cron', f'ERROR: ({repr(e)})', oe.LOGERROR)
 
     def init_bluetooth(self, **kwargs):
         try:
-            self.oe.dbg_log('services::init_bluetooth', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::init_bluetooth', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -509,14 +509,14 @@ class services(modules.Module):
                     del self.struct['bluez']['settings']['obex_enabled']['hidden']
                 if 'hidden' in self.struct['bluez']['settings']['obex_root']:
                     del self.struct['bluez']['settings']['obex_root']['hidden']
-            self.oe.set_service('bluez', options, state)
-            self.oe.dbg_log('services::init_bluetooth', 'exit_function', self.oe.LOGDEBUG)
+            oe.set_service('bluez', options, state)
+            oe.dbg_log('services::init_bluetooth', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::init_bluetooth', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('services::init_bluetooth', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
 
     def init_obex(self, **kwargs):
         try:
-            self.oe.dbg_log('services::init_obex', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::init_obex', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
             state = 1
@@ -525,66 +525,66 @@ class services(modules.Module):
                 options['OBEXD_ROOT'] = f"{self.struct['bluez']['settings']['obex_root']['value']}"
             else:
                 state = 0
-            self.oe.set_service('obexd', options, state)
-            self.oe.dbg_log('services::init_obex', 'exit_function', self.oe.LOGDEBUG)
+            oe.set_service('obexd', options, state)
+            oe.dbg_log('services::init_obex', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::init_obex', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('services::init_obex', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
 
     def idle_timeout(self, **kwargs):
         try:
-            self.oe.dbg_log('services::idle_timeout', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::idle_timeout', 'enter_function', oe.LOGDEBUG)
             if 'listItem' in kwargs:
                 self.set_value(kwargs['listItem'])
-            self.oe.write_setting('bluetooth', 'idle_timeout', self.struct['bluez']['settings']['idle_timeout']['value'])
-            self.oe.dbg_log('services::idle_timeout', 'exit_function', self.oe.LOGDEBUG)
+            oe.write_setting('bluetooth', 'idle_timeout', self.struct['bluez']['settings']['idle_timeout']['value'])
+            oe.dbg_log('services::idle_timeout', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::idle_timeout', 'ERROR: (' + repr(e) + ')', self.oe.LOGERROR)
+            oe.dbg_log('services::idle_timeout', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
 
     def exit(self):
         try:
-            self.oe.dbg_log('services::exit', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.dbg_log('services::exit', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::exit', 'enter_function', oe.LOGDEBUG)
+            oe.dbg_log('services::exit', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::exit', f'ERROR: ({repr(e)})', self.oe.LOGERROR)
+            oe.dbg_log('services::exit', f'ERROR: ({repr(e)})', oe.LOGERROR)
 
     def do_wizard(self):
         try:
-            self.oe.dbg_log('services::do_wizard', 'enter_function', self.oe.LOGDEBUG)
-            self.oe.winOeMain.set_wizard_title(self.oe._(32311))
+            oe.dbg_log('services::do_wizard', 'enter_function', oe.LOGDEBUG)
+            oe.winOeMain.set_wizard_title(oe._(32311))
 
             # Enable samba
             self.struct['samba']['settings']['samba_autostart']['value'] = '1'
             self.initialize_samba()
 
             if hasattr(self, 'samba'):
-                self.oe.winOeMain.set_wizard_text(self.oe._(32313) + '[CR][CR]' + self.oe._(32312))
+                oe.winOeMain.set_wizard_text(oe._(32313) + '[CR][CR]' + oe._(32312))
             else:
-                self.oe.winOeMain.set_wizard_text(self.oe._(32312))
-            self.oe.winOeMain.set_wizard_button_title(self.oe._(32316))
+                oe.winOeMain.set_wizard_text(oe._(32312))
+            oe.winOeMain.set_wizard_button_title(oe._(32316))
             self.set_wizard_buttons()
-            self.oe.dbg_log('services::do_wizard', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::do_wizard', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::do_wizard', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::do_wizard', f'ERROR: ({repr(e)})')
 
     def set_wizard_buttons(self):
         try:
-            self.oe.dbg_log('services::set_wizard_buttons', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::set_wizard_buttons', 'enter_function', oe.LOGDEBUG)
             if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
-                self.oe.winOeMain.set_wizard_radiobutton_1(self.oe._(32201), self, 'wizard_set_ssh', True)
+                oe.winOeMain.set_wizard_radiobutton_1(oe._(32201), self, 'wizard_set_ssh', True)
             else:
-                self.oe.winOeMain.set_wizard_radiobutton_1(self.oe._(32201), self, 'wizard_set_ssh')
+                oe.winOeMain.set_wizard_radiobutton_1(oe._(32201), self, 'wizard_set_ssh')
             if not 'hidden' in self.struct['samba']:
                 if self.struct['samba']['settings']['samba_autostart']['value'] == '1':
-                    self.oe.winOeMain.set_wizard_radiobutton_2(self.oe._(32200), self, 'wizard_set_samba', True)
+                    oe.winOeMain.set_wizard_radiobutton_2(oe._(32200), self, 'wizard_set_samba', True)
                 else:
-                    self.oe.winOeMain.set_wizard_radiobutton_2(self.oe._(32200), self, 'wizard_set_samba')
-            self.oe.dbg_log('services::set_wizard_buttons', 'exit_function', self.oe.LOGDEBUG)
+                    oe.winOeMain.set_wizard_radiobutton_2(oe._(32200), self, 'wizard_set_samba')
+            oe.dbg_log('services::set_wizard_buttons', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::set_wizard_buttons', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::set_wizard_buttons', f'ERROR: ({repr(e)})')
 
     def wizard_set_ssh(self):
         try:
-            self.oe.dbg_log('services::wizard_set_ssh', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::wizard_set_ssh', 'enter_function', oe.LOGDEBUG)
             if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
                 self.struct['ssh']['settings']['ssh_autostart']['value'] = '0'
             else:
@@ -595,20 +595,20 @@ class services(modules.Module):
             cmd_file = open(self.KERNEL_CMD, 'r')
             cmd_args = cmd_file.read().split(' ')
             if 'ssh' in cmd_args:
-                self.oe.notify('ssh', 'ssh enabled as boot parameter. can not disable')
+                oe.notify('ssh', 'ssh enabled as boot parameter. can not disable')
             cmd_file.close()
             self.initialize_ssh()
             self.load_values()
             if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
                 self.wizard_sshpasswd()
             self.set_wizard_buttons()
-            self.oe.dbg_log('services::wizard_set_ssh', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::wizard_set_ssh', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::wizard_set_ssh', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::wizard_set_ssh', f'ERROR: ({repr(e)})')
 
     def wizard_set_samba(self):
         try:
-            self.oe.dbg_log('services::wizard_set_samba', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::wizard_set_samba', 'enter_function', oe.LOGDEBUG)
             if self.struct['samba']['settings']['samba_autostart']['value'] == '1':
                 self.struct['samba']['settings']['samba_autostart']['value'] = '0'
             else:
@@ -616,14 +616,14 @@ class services(modules.Module):
             self.initialize_samba()
             self.load_values()
             self.set_wizard_buttons()
-            self.oe.dbg_log('services::wizard_set_samba', 'exit_function', self.oe.LOGDEBUG)
+            oe.dbg_log('services::wizard_set_samba', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
-            self.oe.dbg_log('services::wizard_set_samba', f'ERROR: ({repr(e)})')
+            oe.dbg_log('services::wizard_set_samba', f'ERROR: ({repr(e)})')
 
     def wizard_sshpasswd(self):
         SSHresult = False
         while SSHresult == False:
-            changeSSH = xbmcDialog.yesno(self.oe._(32209), self.oe._(32210), yeslabel=self.oe._(32213), nolabel=self.oe._(32214))
+            changeSSH = xbmcDialog.yesno(oe._(32209), oe._(32210), yeslabel=oe._(32213), nolabel=oe._(32214))
             if changeSSH:
                 SSHresult = True
             else:
@@ -634,12 +634,12 @@ class services(modules.Module):
 
     def do_sshpasswd(self, **kwargs):
         try:
-            self.oe.dbg_log('system::do_sshpasswd', 'enter_function', self.oe.LOGDEBUG)
+            oe.dbg_log('system::do_sshpasswd', 'enter_function', oe.LOGDEBUG)
             SSHchange = False
-            newpwd = xbmcDialog.input(self.oe._(746))
+            newpwd = xbmcDialog.input(oe._(746))
             if newpwd:
                 if newpwd == "libreelec":
-                    self.oe.execute('cp -fp /usr/cache/shadow /storage/.cache/shadow')
+                    oe.execute('cp -fp /usr/cache/shadow /storage/.cache/shadow')
                     readout3 = "Retype password"
                 else:
                     ssh = subprocess.Popen(["passwd"], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=0)
@@ -649,17 +649,17 @@ class services(modules.Module):
                     ssh.stdin.write(f'{newpwd}\n')
                     readout3 = ssh.stdout.readline()
                 if "Bad password" in readout3:
-                    xbmcDialog.ok(self.oe._(32220), self.oe._(32221))
-                    self.oe.dbg_log('system::do_sshpasswd', 'exit_function password too weak', self.oe.LOGDEBUG)
+                    xbmcDialog.ok(oe._(32220), oe._(32221))
+                    oe.dbg_log('system::do_sshpasswd', 'exit_function password too weak', oe.LOGDEBUG)
                     return
                 elif "Retype password" in readout3:
-                    xbmcDialog.ok(self.oe._(32222), self.oe._(32223))
+                    xbmcDialog.ok(oe._(32222), oe._(32223))
                     SSHchange = True
                 else:
-                    xbmcDialog.ok(self.oe._(32224), self.oe._(32225))
-                self.oe.dbg_log('system::do_sshpasswd', 'exit_function', self.oe.LOGDEBUG)
+                    xbmcDialog.ok(oe._(32224), oe._(32225))
+                oe.dbg_log('system::do_sshpasswd', 'exit_function', oe.LOGDEBUG)
             else:
-                self.oe.dbg_log('system::do_sshpasswd', 'user_cancelled', self.oe.LOGDEBUG)
+                oe.dbg_log('system::do_sshpasswd', 'user_cancelled', oe.LOGDEBUG)
             return SSHchange
         except Exception as e:
-            self.oe.dbg_log('system::do_sshpasswd', 'ERROR: (' + repr(e) + ')')
+            oe.dbg_log('system::do_sshpasswd', 'ERROR: (' + repr(e) + ')')
