@@ -872,46 +872,40 @@ class connman(modules.Module):
     def set_technologie(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        self.technologie_properties = dbus_connman.manager_get_technologies()
         techPath = dbus_connman.PATH_TECH_WIFI
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
                     settings = self.struct[techPath]['settings']
-                    self.Technology = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, True)
                         if settings['Tethering']['value'] == '1' and dbus.String(settings['TetheringIdentifier']['value']) != '' \
                             and dbus.String(settings['TetheringPassphrase']['value']) != '':
                             oe.xbmcm.waitForAbort(5)
-                            self.Technology.SetProperty('TetheringIdentifier', dbus.String(settings['TetheringIdentifier']['value'],
-                                                        variant_level=1))
-                            self.Technology.SetProperty('TetheringPassphrase', dbus.String(settings['TetheringPassphrase']['value'],
-                                                        variant_level=1))
+                            dbus_connman.technology_wifi_set_tethering_identifier(settings['TetheringIdentifier']['value'])
+                            dbus_connman.technology_wifi_set_tethering_passphrase(settings['TetheringPassphrase']['value'])
                             if technologie['Tethering'] != True:
-                                self.Technology.SetProperty('Tethering', dbus.Boolean(True, variant_level=1))
+                                dbus_connman.technology_wifi_set_tethering(True)
                         else:
                             if technologie['Tethering'] != False:
-                                self.Technology.SetProperty('Tethering', dbus.Boolean(False, variant_level=1))
+                                dbus_connman.technology_wifi_set_tethering(False)
                     else:
                         if technologie['Powered'] != False:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, False)
                     break
         techPath = dbus_connman.PATH_TECH_ETHERNET
         for (path, technologie) in self.technologie_properties:
             if path == techPath:
                 for setting in self.struct[techPath]['settings']:
                     settings = self.struct[techPath]['settings']
-                    self.Technology = dbus.Interface(oe.dbusSystemBus.get_object('net.connman', techPath), 'net.connman.Technology')
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(True, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, True)
                     else:
                         if technologie['Powered'] != False:
-                            self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
+                            dbus_connman.technology_set_powered(techPath, False)
                     break
-        self.technologie_properties = None
         self.menu_loader(None)
 
     @log.log_function()

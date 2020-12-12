@@ -131,6 +131,7 @@ class Listener(object):
 def agent_abort():
     raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
 
+
 def clock_get_properties():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'GetProperties')
 
@@ -175,25 +176,25 @@ def service_remove(path):
     return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'Remove')
 
 
+def technology_set_powered(path, state):
+    return technology_set_property(path, 'Powered', (dbussy.DBUS.Signature('b'), state))
+
+
+def technology_set_property(path, name, value):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_TECHNOLOGY, 'SetProperty', name, value)
+
+
 def technology_wifi_scan():
     return dbus_utils.call_method(BUS_NAME, PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'Scan')
 
 
-def technology_wifi_set_property(name, value):
-    return dbus_utils.call_method(BUS_NAME, PATH_TECH_WIFI, INTERFACE_TECHNOLOGY, 'SetProperty', name, value)
-
-
-def technology_wifi_set_powered(state):
-    return self.technology_wifi_set_property('Powered', (dbussy.DBUS.Signature('b'), state))
-
-
 def technology_wifi_set_tethering(state):
-    return self.technology_wifi_set_property('Tethering', (dbussy.DBUS.Signature('b'), state))
+    return technology_set_property(PATH_TECH_WIFI, 'Tethering', (dbussy.DBUS.Signature('b'), state))
 
 
 def technology_wifi_set_tethering_identifier(identifier):
-    return self.technology_wifi_set_property('TetheringIdentifier', (dbussy.DBUS.Signature('s'), identifier))
+    return technology_set_property(PATH_TECH_WIFI, 'TetheringIdentifier', (dbussy.DBUS.Signature('s'), identifier))
 
 
 def technology_wifi_set_tethering_passphrase(passphrase):
-    return self.technology_wifi_set_property('TetheringPassphrase', (dbussy.DBUS.Signature('s'), passphrase))
+    return technology_set_property(PATH_TECH_WIFI, 'TetheringPassphrase', (dbussy.DBUS.Signature('s'), passphrase))
