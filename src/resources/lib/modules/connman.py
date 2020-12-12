@@ -333,7 +333,6 @@ class connmanService(object):
             ok_window = xbmcgui.Dialog()
             answer = ok_window.ok('Not allowed', 'IPv4 method is set to DHCP.\n\nChanging this option is not allowed')
             return
-        oe.dbg_log('connmanService::set_value_checkdhcp', 'enter_function', oe.LOGDEBUG)
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['value'] = listItem.getProperty('value')
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
@@ -373,9 +372,9 @@ class connmanService(object):
                         value.append(getattr(dbus, setting['dbus'])(setting['value'], variant_level=1))
         return (category + postfix, value)
 
+    @log.log_function()
     def save_network(self):
         try:
-            oe.dbg_log('connmanService::save_network', 'enter_function', oe.LOGDEBUG)
             if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
                 for setting in self.struct['Nameservers']['settings']:
                     self.struct['Nameservers']['settings'][setting]['changed'] = True
@@ -397,40 +396,28 @@ class connmanService(object):
                 (category, value) = self.dbus_config(category)
                 if value != None:
                     self.service.SetProperty(dbus.String(category), value)
-            oe.dbg_log('connmanService::save_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::save_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
+    @log.log_function()
     def delete_network(self):
         try:
-            oe.dbg_log('connmanService::delete_network', 'enter_function', oe.LOGDEBUG)
             oe.dictModules['connman'].delete_network(None)
-            oe.dbg_log('connmanService::delete_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::delete_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
+    @log.log_function()
     def connect_network(self):
         try:
-            oe.dbg_log('connmanService::connect_network', 'enter_function', oe.LOGDEBUG)
             oe.dictModules['connman'].connect_network(None)
-            oe.dbg_log('connmanService::connect_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::connect_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
+    @log.log_function()
     def disconnect_network(self):
         try:
-            oe.dbg_log('connmanService::disconnect_network', 'enter_function', oe.LOGDEBUG)
             oe.dictModules['connman'].disconnect_network(None)
-            oe.dbg_log('connmanService::disconnect_network', 'exit_function', oe.LOGDEBUG)
-            return 'close'
-        except Exception as e:
-            oe.dbg_log('connmanService::disconnect_network', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        finally:
             return 'close'
 
 
@@ -649,7 +636,6 @@ class connman(modules.Module):
     def exit(self):
         self.visible = False
         self.clear_list()
-        oe.dbg_log('connman::exit', 'exit_function', oe.LOGDEBUG)
 
     @log.log_function()
     def load_values(self):
@@ -827,7 +813,6 @@ class connman(modules.Module):
         if listItem is None:
             listItem = oe.winOeMain.getControl(oe.listObject['netlist']).getSelectedItem()
         if listItem is None:
-            oe.dbg_log('connman::open_context_menu', 'exit_function (listItem=None)', oe.LOGDEBUG)
             return
         if listItem.getProperty('State') in ['ready', 'online']:
             values[1] = {
@@ -910,7 +895,6 @@ class connman(modules.Module):
                             if technologie['Tethering'] != False:
                                 self.Technology.SetProperty('Tethering', dbus.Boolean(False, variant_level=1))
                     else:
-                        log.log('####' + repr(technologie['Powered']))
                         if technologie['Powered'] != False:
                             self.Technology.SetProperty('Powered', dbus.Boolean(False, variant_level=1))
                     break
