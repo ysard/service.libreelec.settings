@@ -382,13 +382,13 @@ class services(modules.Module):
                 val_autoshare = 'true'
             else:
                 val_autoshare = 'false'
-            options['SAMBA_WORKGROUP'] = f"{self.struct['samba']['settings']['samba_workgroup']['value']}"
-            options['SAMBA_SECURE'] = f"{val_secure}"
-            options['SAMBA_AUTOSHARE'] = f"{val_autoshare}"
-            options['SAMBA_MINPROTOCOL'] = f"{self.struct['samba']['settings']['samba_minprotocol']['value']}"
-            options['SAMBA_MAXPROTOCOL'] = f"{self.struct['samba']['settings']['samba_maxprotocol']['value']}"
-            options['SAMBA_USERNAME'] = f"{self.struct['samba']['settings']['samba_username']['value']}"
-            options['SAMBA_PASSWORD'] = f"{self.struct['samba']['settings']['samba_password']['value']}"
+            options['SAMBA_WORKGROUP'] = self.struct['samba']['settings']['samba_workgroup']['value']
+            options['SAMBA_SECURE'] = val_secure
+            options['SAMBA_AUTOSHARE'] = val_autoshare
+            options['SAMBA_MINPROTOCOL'] = self.struct['samba']['settings']['samba_minprotocol']['value']
+            options['SAMBA_MAXPROTOCOL'] = self.struct['samba']['settings']['samba_maxprotocol']['value']
+            options['SAMBA_USERNAME'] = self.struct['samba']['settings']['samba_username']['value']
+            options['SAMBA_PASSWORD'] = self.struct['samba']['settings']['samba_password']['value']
         else:
             state = 0
             self.struct['samba']['settings']['samba_username']['hidden'] = True
@@ -459,7 +459,7 @@ class services(modules.Module):
         options = {}
         if self.struct['bluez']['settings']['obex_enabled']['value'] == '1':
             state = 1
-            options['OBEXD_ROOT'] = f"{self.struct['bluez']['settings']['obex_root']['value']}"
+            options['OBEXD_ROOT'] = self.struct['bluez']['settings']['obex_root']['value']
         else:
             state = 0
         oe.set_service('obexd', options, state)
@@ -479,7 +479,7 @@ class services(modules.Module):
         self.initialize_samba()
 
         if hasattr(self, 'samba'):
-            oe.winOeMain.set_wizard_text(oe._(32313) + '[CR][CR]' + oe._(32312))
+            oe.winOeMain.set_wizard_text(f'{oe._(32313)}[CR][CR]{oe._(32312)}')
         else:
             oe.winOeMain.set_wizard_text(oe._(32312))
         oe.winOeMain.set_wizard_button_title(oe._(32316))
