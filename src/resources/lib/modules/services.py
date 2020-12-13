@@ -7,14 +7,10 @@ import log
 import modules
 import oe
 import os
-import glob
 import subprocess
 import xbmc
 import xbmcgui
-import xbmcaddon
 
-__scriptid__ = 'service.libreelec.settings'
-__addon__ = xbmcaddon.Addon(id=__scriptid__)
 xbmcDialog = xbmcgui.Dialog()
 
 class services(modules.Module):
@@ -229,7 +225,7 @@ class services(modules.Module):
                         'order': 1,
                         'name': 32344,
                         'value': None,
-                        'action': 'init_bluetooth',
+                        'action': 'initialize_bluetooth',
                         'type': 'bool',
                         'InfoText': 720,
                         },
@@ -237,7 +233,7 @@ class services(modules.Module):
                         'order': 2,
                         'name': 32384,
                         'value': None,
-                        'action': 'init_obex',
+                        'action': 'initialize_obex',
                         'type': 'bool',
                         'parent': {
                             'entry': 'enabled',
@@ -249,7 +245,7 @@ class services(modules.Module):
                         'order': 3,
                         'name': 32385,
                         'value': None,
-                        'action': 'init_obex',
+                        'action': 'initialize_obex',
                         'type': 'folder',
                         'parent': {
                             'entry': 'obex_enabled',
@@ -289,7 +285,7 @@ class services(modules.Module):
         self.initialize_ssh(service=1)
         self.initialize_avahi(service=1)
         self.initialize_cron(service=1)
-        self.init_bluetooth(service=1)
+        self.initialize_bluetooth(service=1)
 
     @log.log_function()
     def do_init(self):
@@ -330,12 +326,11 @@ class services(modules.Module):
             self.struct['ssh']['settings']['ssh_secure']['value'] = oe.get_service_option('sshd', 'SSHD_DISABLE_PW_AUTH',
                     self.D_SSH_DISABLE_PW_AUTH).replace('true', '1').replace('false', '0').replace('"', '')
             # hide ssh settings if Kernel Parameter is set
-            cmd_file = open(self.KERNEL_CMD, 'r')
-            cmd_args = cmd_file.read().split(' ')
+            with open(self.KERNEL_CMD, 'r') as cmd_file:
+                cmd_args = cmd_file.read().split(' ')
             if 'ssh' in cmd_args:
                 self.struct['ssh']['settings']['ssh_autostart']['value'] = '1'
                 self.struct['ssh']['settings']['ssh_autostart']['hidden'] = 'true'
-            cmd_file.close()
         else:
             self.struct['ssh']['hidden'] = 'true'
         # AVAHI
@@ -372,8 +367,8 @@ class services(modules.Module):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
         options = {}
-        state = 1
         if self.struct['samba']['settings']['samba_autostart']['value'] == '1':
+            state = 1
             if 'hidden' in self.struct['samba']['settings']['samba_username']:
                 del self.struct['samba']['settings']['samba_username']['hidden']
             if 'hidden' in self.struct['samba']['settings']['samba_password']:
@@ -386,13 +381,13 @@ class services(modules.Module):
                 val_autoshare = 'true'
             else:
                 val_autoshare = 'false'
-            options['SAMBA_WORKGROUP'] = f"{self.struct['samba']['settings']['samba_workgroup']['value']}"
-            options['SAMBA_SECURE'] = f"{val_secure}"
-            options['SAMBA_AUTOSHARE'] = f"{val_autoshare}"
-            options['SAMBA_MINPROTOCOL'] = f"{self.struct['samba']['settings']['samba_minprotocol']['value']}"
-            options['SAMBA_MAXPROTOCOL'] = f"{self.struct['samba']['settings']['samba_maxprotocol']['value']}"
-            options['SAMBA_USERNAME'] = f"{self.struct['samba']['settings']['samba_username']['value']}"
-            options['SAMBA_PASSWORD'] = f"{self.struct['samba']['settings']['samba_password']['value']}"
+            options['SAMBA_WORKGROUP'] = self.struct['samba']['settings']['samba_workgroup']['value']
+            options['SAMBA_SECURE'] = val_secure
+            options['SAMBA_AUTOSHARE'] = val_autoshare
+            options['SAMBA_MINPROTOCOL'] = self.struct['samba']['settings']['samba_minprotocol']['value']
+            options['SAMBA_MAXPROTOCOL'] = self.struct['samba']['settings']['samba_maxprotocol']['value']
+            options['SAMBA_USERNAME'] = self.struct['samba']['settings']['samba_username']['value']
+            options['SAMBA_PASSWORD'] = self.struct['samba']['settings']['samba_password']['value']
         else:
             state = 0
             self.struct['samba']['settings']['samba_username']['hidden'] = True
@@ -403,16 +398,16 @@ class services(modules.Module):
     def initialize_ssh(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
         if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
+            state = 1
             if self.struct['ssh']['settings']['ssh_secure']['value'] == '1':
                 val = 'true'
-                options['SSH_ARGS'] = f"{self.OPT_SSH_NOPASSWD}"
+                options['SSH_ARGS'] = self.OPT_SSH_NOPASSWD
             else:
                 val = 'false'
                 options['SSH_ARGS'] = '""'
-            options['SSHD_DISABLE_PW_AUTH'] = f"{val}"
+            options['SSHD_DISABLE_PW_AUTH'] = val
         else:
             state = 0
         oe.set_service('sshd', options, state)
@@ -421,9 +416,10 @@ class services(modules.Module):
     def initialize_avahi(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
-        if self.struct['avahi']['settings']['avahi_autostart']['value'] != '1':
+        if self.struct['avahi']['settings']['avahi_autostart']['value'] == '1':
+            state = 1
+        else:
             state = 0
         oe.set_service('avahi', options, state)
 
@@ -431,37 +427,38 @@ class services(modules.Module):
     def initialize_cron(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
-        if self.struct['cron']['settings']['cron_autostart']['value'] != '1':
+        if self.struct['cron']['settings']['cron_autostart']['value'] == '1':
+            state = 1
+        else:
             state = 0
         oe.set_service('crond', options, state)
 
     @log.log_function()
-    def init_bluetooth(self, **kwargs):
+    def initialize_bluetooth(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
-        if self.struct['bluez']['settings']['enabled']['value'] != '1':
-            state = 0
-            self.struct['bluez']['settings']['obex_enabled']['hidden'] = True
-            self.struct['bluez']['settings']['obex_root']['hidden'] = True
-        else:
+        if self.struct['bluez']['settings']['enabled']['value'] == '1':
+            state = 1
             if 'hidden' in self.struct['bluez']['settings']['obex_enabled']:
                 del self.struct['bluez']['settings']['obex_enabled']['hidden']
             if 'hidden' in self.struct['bluez']['settings']['obex_root']:
                 del self.struct['bluez']['settings']['obex_root']['hidden']
+        else:
+            state = 0
+            self.struct['bluez']['settings']['obex_enabled']['hidden'] = True
+            self.struct['bluez']['settings']['obex_root']['hidden'] = True
         oe.set_service('bluez', options, state)
 
     @log.log_function()
-    def init_obex(self, **kwargs):
+    def initialize_obex(self, **kwargs):
         if 'listItem' in kwargs:
             self.set_value(kwargs['listItem'])
-        state = 1
         options = {}
         if self.struct['bluez']['settings']['obex_enabled']['value'] == '1':
-            options['OBEXD_ROOT'] = f"{self.struct['bluez']['settings']['obex_root']['value']}"
+            state = 1
+            options['OBEXD_ROOT'] = self.struct['bluez']['settings']['obex_root']['value']
         else:
             state = 0
         oe.set_service('obexd', options, state)
@@ -481,7 +478,7 @@ class services(modules.Module):
         self.initialize_samba()
 
         if hasattr(self, 'samba'):
-            oe.winOeMain.set_wizard_text(oe._(32313) + '[CR][CR]' + oe._(32312))
+            oe.winOeMain.set_wizard_text(f'{oe._(32313)}[CR][CR]{oe._(32312)}')
         else:
             oe.winOeMain.set_wizard_text(oe._(32312))
         oe.winOeMain.set_wizard_button_title(oe._(32316))
@@ -505,12 +502,11 @@ class services(modules.Module):
             self.struct['ssh']['settings']['ssh_autostart']['value'] = '0'
         else:
             self.struct['ssh']['settings']['ssh_autostart']['value'] = '1'
-        # ssh button does nothing if Kernel Parameter is set
-        cmd_file = open(self.KERNEL_CMD, 'r')
-        cmd_args = cmd_file.read().split(' ')
+        # ssh button does nothing if "ssh" set on kernel commandline
+        with open(self.KERNEL_CMD, 'r') as cmd_file:
+            cmd_args = cmd_file.read().split(' ')
         if 'ssh' in cmd_args:
             oe.notify('ssh', 'ssh enabled as boot parameter. can not disable')
-        cmd_file.close()
         self.initialize_ssh()
         self.load_values()
         if self.struct['ssh']['settings']['ssh_autostart']['value'] == '1':
