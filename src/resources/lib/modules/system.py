@@ -9,15 +9,10 @@ import oe
 import os
 import re
 import glob
-import time
-import json
 import xbmc
 import xbmcgui
 import tarfile
 import oeWindows
-import threading
-import subprocess
-import shutil
 from xml.dom import minidom
 
 xbmcDialog = xbmcgui.Dialog()
