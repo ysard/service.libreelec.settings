@@ -9,15 +9,10 @@ import oe
 import os
 import re
 import glob
-import time
-import json
 import xbmc
 import xbmcgui
 import tarfile
 import oeWindows
-import threading
-import subprocess
-import shutil
 from xml.dom import minidom
 
 xbmcDialog = xbmcgui.Dialog()
@@ -430,8 +425,7 @@ class system(modules.Module):
 
     @log.log_function()
     def ask_sure_reset(self, part):
-        xbmcDialog = xbmcgui.Dialog()
-        answer = xbmcDialog.yesno(part + ' Reset', f'{oe._(32326)}\n\n{oe._(32328)}')
+        answer = xbmcDialog.yesno(f'{part} Reset', f'{oe._(32326)}\n\n{oe._(32328)}')
         if answer == 1:
             if oe.reboot_counter(30, oe._(32323)) == 1:
                 return 1
@@ -448,7 +442,6 @@ class system(modules.Module):
                     self.get_folder_size(directory)
             except:
                 pass
-            xbmcDialog = xbmcgui.Dialog()
             bckDir = xbmcDialog.browse( 0,
                                         oe._(32371),
                                         'files',
@@ -464,7 +457,6 @@ class system(modules.Module):
                     free_space = folder_stat.f_frsize * folder_stat.f_bavail
                     if self.total_backup_size > free_space:
                         txt = oe.split_dialog_text(oe._(32379))
-                        xbmcDialog = xbmcgui.Dialog()
                         answer = xbmcDialog.ok('Backup', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
                         return 0
                 except:
@@ -486,7 +478,6 @@ class system(modules.Module):
     @log.log_function()
     def do_restore(self, listItem=None):
             copy_success = 0
-            xbmcDialog = xbmcgui.Dialog()
             restore_file_path = xbmcDialog.browse( 1,
                                                    oe._(32373),
                                                    'files',
@@ -513,11 +504,9 @@ class system(modules.Module):
                     oe.execute(f'rm -rf {self.RESTORE_DIR}')
             else:
                 txt = oe.split_dialog_text(oe._(32379))
-                xbmcDialog = xbmcgui.Dialog()
                 answer = xbmcDialog.ok('Restore', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
             if copy_success == 1:
                 txt = oe.split_dialog_text(oe._(32380))
-                xbmcDialog = xbmcgui.Dialog()
                 answer = xbmcDialog.yesno('Restore', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
                 if answer == 1:
                     if oe.reboot_counter(10, oe._(32371)) == 1:
@@ -543,13 +532,12 @@ class system(modules.Module):
         result = oe.execute(log_cmd, get_result=1)
         if not paste_dlg.iscanceled():
             paste_dlg.close()
-            done_dlg = xbmcgui.Dialog()
             link = result.find('http')
             if link != -1:
                 log.log(result[link:], log.WARNING)
-                done_dlg.ok('Paste complete', f'Log files pasted to {result[link:]}')
+                xbmcDialog.ok('Paste complete', f'Log files pasted to {result[link:]}')
             else:
-                done_dlg.ok('Failed paste', 'Failed to paste log files, try again')
+                xbmcDialog.ok('Failed paste', 'Failed to paste log files, try again')
 
     @log.log_function()
     def tar_add_folder(self, tar, folder):
