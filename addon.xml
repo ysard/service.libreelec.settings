@@ -84,8 +84,11 @@
     <description lang="zh">使用此插件管理你的 @DISTRONAME@ 系统的底层操作系统。它使你可以在无需深入了解的情况下管理整个系统。[CR][CR]在这里，你可以修改网络设置、键盘布局、语言以及启用/禁用 Samba 和 SSH 等远程访问功能。</description>
     <platform>all</platform>
     <assets>
-    <icon>resources/skins/Default/media/icon.png</icon>
-    <fanart>resources/skins/Default/media/fanart.png</fanart>
+      <icon>resources/skins/Default/media/icon.png</icon>
+      <fanart>resources/skins/Default/media/fanart.png</fanart>
     </assets>
+    <news>
+      https://github.com/thoradia/service.libreelec.settings/commits
+    </news>
   </extension>
 </addon>

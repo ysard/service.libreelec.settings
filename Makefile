@@ -1,15 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2009-2013 Stephan Raue (stephan@openelec.tv)
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
+# Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
-ADDON_NAME=service.libreelec.settings
-ADDON_VERSION=9.8.0
-DISTRONAME:=LibreELEC
+ADDON_NAME := service.libreelec.settings
+ADDON_VERSION := 0.0.0
+DISTRONAME := LibreELEC
+ROOT_PASSWORD := libreelec
 
-SHELL=/bin/bash
-BUILDDIR=build
-DATADIR=/usr/share/kodi
-ADDONDIR=$(DATADIR)/addons
+SHELL := /bin/bash
+BUILDDIR := build
+DATADIR := /usr/share/kodi
+ADDONDIR := $(DATADIR)/addons
 
 ################################################################################
 
@@ -27,33 +29,16 @@ clean:
 uninstall:
 	rm -rf $(DESTDIR)$(ADDONDIR)/$(ADDON_NAME)
 
-$(BUILDDIR)/$(ADDON_NAME): $(BUILDDIR)/$(ADDON_NAME)/resources
+$(BUILDDIR)/$(ADDON_NAME):
 	mkdir -p $(BUILDDIR)/$(ADDON_NAME)
-	cp -R src/*.py $(BUILDDIR)/$(ADDON_NAME)
+	cp -R resources $(BUILDDIR)/$(ADDON_NAME)
 	cp COPYING $(BUILDDIR)/$(ADDON_NAME)
 	cp addon.xml $(BUILDDIR)/$(ADDON_NAME)
+	cp *.py $(BUILDDIR)/$(ADDON_NAME)
 	sed -e "s,@ADDONNAME@,$(ADDON_NAME),g" \
 	    -e "s,@ADDONVERSION@,$(ADDON_VERSION),g" \
 	    -e "s,@DISTRONAME@,$(DISTRONAME),g" \
 	    -i $(BUILDDIR)/$(ADDON_NAME)/addon.xml
-	cp changelog.txt $(BUILDDIR)/$(ADDON_NAME)
-
-$(BUILDDIR)/$(ADDON_NAME)/resources: $(BUILDDIR)/$(ADDON_NAME)/resources/skins \
-                                     $(BUILDDIR)/$(ADDON_NAME)/resources/language
-	mkdir -p $(BUILDDIR)/$(ADDON_NAME)/resources
-	cp -R src/resources/* $(BUILDDIR)/$(ADDON_NAME)/resources
-
-$(BUILDDIR)/$(ADDON_NAME)/resources/skins: $(BUILDDIR)/$(ADDON_NAME)/resources/skins/Default/media
-	mkdir -p $(BUILDDIR)/$(ADDON_NAME)/resources/skins/Default
-	cp -R skins/Default/* $(BUILDDIR)/$(ADDON_NAME)/resources/skins/Default
-
-$(BUILDDIR)/$(ADDON_NAME)/resources/skins/Default/media:
-	mkdir -p $(BUILDDIR)/$(ADDON_NAME)/resources/skins/Default/media
-	cp textures/$(DISTRONAME)/*.{png,jpg} $(BUILDDIR)/$(ADDON_NAME)/resources/skins/Default/media
-
-$(BUILDDIR)/$(ADDON_NAME)/resources/language:
-	mkdir -p $(BUILDDIR)/$(ADDON_NAME)/resources/language
-	cp -R language/* $(BUILDDIR)/$(ADDON_NAME)/resources/language
 	sed -e "s,@DISTRONAME@,$(DISTRONAME),g" \
 	    -e "s,@ROOT_PASSWORD@,$(ROOT_PASSWORD),g" \
 	    -i $(BUILDDIR)/$(ADDON_NAME)/resources/language/*/*.po
