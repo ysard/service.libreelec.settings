@@ -1,1 +1,0 @@
-changelog: https://github.com/LibreELEC/service.libreelec.settings
