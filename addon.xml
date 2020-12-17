@@ -88,7 +88,7 @@
       <fanart>resources/skins/Default/media/fanart.png</fanart>
     </assets>
     <news>
-      https://github.com/thoradia/service.libreelec.settings/commits
+      https://github.com/LibreELEC/service.libreelec.settings/commits
     </news>
   </extension>
 </addon>
