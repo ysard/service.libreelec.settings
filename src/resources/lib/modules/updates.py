@@ -252,29 +252,21 @@ class updates:
 
         return gpu_driver if gpu_driver else "unknown"
 
-    def get_hardware_flags_rpi(self):
-        revision = self.oe.execute('grep "^Revision" /proc/cpuinfo | awk \'{ print $3 }\'',get_result=1).replace('\n','')
-        self.oe.dbg_log('updates::get_hardware_flags_rpi', 'Revision code: %s' % revision, 0)
-
-        return '{:08x}'.format(int(revision, 16))
-
-    def get_hardware_flags_dtname(self):
-        if os.path.exists('/usr/bin/dtname'):
-            dtname = self.oe.execute('/usr/bin/dtname', get_result=1).rstrip('\x00')
+    def get_hardware_flags_dtflag(self):
+        if os.path.exists('/usr/bin/dtflag'):
+            dtflag = self.oe.execute('/usr/bin/dtflag', get_result=1).rstrip('\x00\n')
         else:
-            dtname = "unknown"
+            dtflag = "unknown"
 
-        self.oe.dbg_log('system::get_hardware_flags_dtname', 'ARM board: %s' % dtname, 0)
+        self.oe.dbg_log('system::get_hardware_flags_dtflag', 'ARM board: %s' % dtflag, 0)
 
-        return dtname
+        return dtflag
 
     def get_hardware_flags(self):
         if self.oe.PROJECT == "Generic":
             return self.get_hardware_flags_x86_64()
-        elif self.oe.PROJECT == "RPi":
-            return self.get_hardware_flags_rpi()
-        elif self.oe.PROJECT in ['Allwinner', 'Amlogic', 'Rockchip']:
-            return self.get_hardware_flags_dtname()
+        elif self.oe.ARCHITECTURE.split('.')[1] in ['aarch64', 'arm' ]:
+            return self.get_hardware_flags_dtflag()
         else:
             self.oe.dbg_log('updates::get_hardware_flags', 'Project is %s, no hardware flag available' % self.oe.PROJECT, 0)
             return ""
