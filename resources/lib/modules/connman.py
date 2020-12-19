@@ -878,8 +878,9 @@ class connman(modules.Module):
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
                             dbus_connman.technology_set_powered(techPath, True)
-                        if settings['Tethering']['value'] == '1' and dbus.String(settings['TetheringIdentifier']['value']) != '' \
-                            and dbus.String(settings['TetheringPassphrase']['value']) != '':
+                        if (settings['Tethering']['value'] == '1' and
+                            settings['TetheringIdentifier']['value'] != '' and
+                            settings['TetheringPassphrase']['value'] != ''):
                             oe.xbmcm.waitForAbort(5)
                             dbus_connman.technology_wifi_set_tethering_identifier(settings['TetheringIdentifier']['value'])
                             dbus_connman.technology_wifi_set_tethering_passphrase(settings['TetheringPassphrase']['value'])
