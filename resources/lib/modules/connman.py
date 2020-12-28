@@ -8,7 +8,6 @@ import modules
 import oe
 import os
 import xbmc
-import dbus
 import xbmcgui
 import oeWindows
 import random
@@ -50,7 +49,6 @@ class connmanService(object):
                 'name': 32109,
                 'value': '',
                 'type': 'bool',
-                'dbus': 'Boolean',
                 'action': 'set_value',
             }},
         },
@@ -64,7 +62,6 @@ class connmanService(object):
                     'name': 32113,
                     'value': '',
                     'type': 'multivalue',
-                    'dbus': 'String',
                     'values': [
                         'dhcp',
                         'manual',
@@ -77,7 +74,6 @@ class connmanService(object):
                     'name': 32114,
                     'value': '',
                     'type': 'ip',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -90,7 +86,6 @@ class connmanService(object):
                     'name': 32115,
                     'value': '',
                     'type': 'ip',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -103,7 +98,6 @@ class connmanService(object):
                     'name': 32116,
                     'value': '',
                     'type': 'ip',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -123,7 +117,6 @@ class connmanService(object):
                     'name': 32113,
                     'value': '',
                     'type': 'multivalue',
-                    'dbus': 'String',
                     'values': [
                         'auto',
                         'manual',
@@ -137,7 +130,6 @@ class connmanService(object):
                     'name': 32114,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -149,7 +141,6 @@ class connmanService(object):
                     'name': 32117,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'Byte',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -161,7 +152,6 @@ class connmanService(object):
                     'name': 32116,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -173,7 +163,6 @@ class connmanService(object):
                     'name': 32118,
                     'value': '',
                     'type': 'multivalue',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Method',
                         'value': ['manual'],
@@ -197,7 +186,6 @@ class connmanService(object):
                     'name': 32120,
                     'value': '',
                     'type': 'ip',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
                 '1': {
@@ -205,7 +193,6 @@ class connmanService(object):
                     'name': 32121,
                     'value': '',
                     'type': 'ip',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
                 '2': {
@@ -213,7 +200,6 @@ class connmanService(object):
                     'name': 32122,
                     'value': '',
                     'type': 'ip',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
             },
@@ -228,7 +214,6 @@ class connmanService(object):
                     'name': 32124,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
                 '1': {
@@ -236,7 +221,6 @@ class connmanService(object):
                     'name': 32125,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
                 '2': {
@@ -244,7 +228,6 @@ class connmanService(object):
                     'name': 32126,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
             },
@@ -259,7 +242,6 @@ class connmanService(object):
                     'name': 32128,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
                 '1': {
@@ -267,7 +249,6 @@ class connmanService(object):
                     'name': 32129,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
                 '2': {
@@ -275,7 +256,6 @@ class connmanService(object):
                     'name': 32130,
                     'value': '',
                     'type': 'text',
-                    'dbus': 'String',
                     'action': 'set_value_checkdhcp',
                 },
             },
@@ -341,60 +321,25 @@ class connmanService(object):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
     @log.log_function()
-    def dbus_config(self, category):
-        value = None
-        postfix = ''
-        if self.struct[category]['type'] == 'Dictionary':
-            value = {}
-            postfix = '.Configuration'
-        elif self.struct[category]['type'] == 'Array':
-            value = dbus.Array([], signature=dbus.Signature('s'), variant_level=1)
-            postfix = '.Configuration'
-        for entry in sorted(self.struct[category]['settings'], key=lambda x: self.struct[category]['settings'][x]['order']):
-            setting = self.struct[category]['settings'][entry]
-            if (setting['value'] != '' or (hasattr(setting, 'changed') and not hasattr(setting, 'notempty'))) \
-               and (not 'parent' in setting or ('parent' in setting and self.struct[category]['settings'][setting['parent']['entry']]['value'] \
-                                                in setting['parent']['value'])):
-                if setting['dbus'] == 'Array':
-                    value = dbus.Array(dbus.String(setting['value'], variant_level=1).split(','), signature=dbus.Signature('s'),
-                                       variant_level=1)
-                else:
-                    if self.struct[category]['type'] == 'Boolean':
-                        if setting['value'] == '1' or setting['value'] == dbus.Boolean(True, variant_level=1):
-                            setting['value'] = True
-                        else:
-                            setting['value'] = False
-                        value = getattr(dbus, setting['dbus'])(setting['value'], variant_level=1)
-                    elif self.struct[category]['type'] == 'Dictionary':
-                        value[entry] = getattr(dbus, setting['dbus'])(setting['value'], variant_level=1)
-                    elif self.struct[category]['type'] == 'Array':
-                        value.append(getattr(dbus, setting['dbus'])(setting['value'], variant_level=1))
-        return (category + postfix, value)
-
-    @log.log_function()
     def save_network(self):
         try:
-            if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
-                for setting in self.struct['Nameservers']['settings']:
-                    self.struct['Nameservers']['settings'][setting]['changed'] = True
-                    self.struct['Nameservers']['settings'][setting]['value'] = ''
-                for setting in self.struct['Timeservers']['settings']:
-                    self.struct['Timeservers']['settings'][setting]['changed'] = True
-                    self.struct['Timeservers']['settings'][setting]['value'] = ''
-                for setting in self.struct['Domains']['settings']:
-                    self.struct['Domains']['settings'][setting]['changed'] = True
-                    self.struct['Domains']['settings'][setting]['value'] = ''
-            for category in [
-                'AutoConnect',
-                'IPv4',
-                'IPv6',
-                'Nameservers',
-                'Timeservers',
-                'Domains',
-                ]:
-                (category, value) = self.dbus_config(category)
-                if value != None:
-                    self.service.SetProperty(dbus.String(category), value)
+            value = self.struct['AutoConnect']['settings']['AutoConnect']['value']
+            dbus_connman.service_set_autoconnect(self.servicePath, value)
+            root = self.struct['Domains']['settings']
+            value = [root[key]['value'] for key in root.keys()]
+            dbus_connman.service_set_domains_configuration(self.servicePath, value)
+            root = self.struct['IPv4']['settings']
+            value = {key:root[key]['value'] for key in root.keys()}
+            dbus_connman.service_set_ipv4_configuration(self.servicePath, value)
+            root = self.struct['IPv6']['settings']
+            value = {key:root[key]['value'] for key in root.keys()}
+            dbus_connman.service_set_ipv6_configuration(self.servicePath, value)
+            root = self.struct['Nameservers']['settings']
+            value = [root[key]['value'] for key in root.keys()]
+            dbus_connman.service_set_nameservers_configuration(self.servicePath, value)
+            root = self.struct['Timeservers']['settings']
+            value = [root[key]['value'] for key in root.keys()]
+            dbus_connman.service_set_timeservers_configuration(self.servicePath, value)
         finally:
             return 'close'
 
@@ -453,7 +398,6 @@ class connman(modules.Module):
             'hidden': 'true',
             'order': 1,
             'name': 32102,
-            'dbus': 'Dictionary',
             'settings': {
                 'Powered': {
                     'order': 1,
@@ -461,7 +405,6 @@ class connman(modules.Module):
                     'value': '',
                     'action': 'set_technologie',
                     'type': 'bool',
-                    'dbus': 'Boolean',
                     'InfoText': 726,
                 },
                 'Tethering': {
@@ -470,7 +413,6 @@ class connman(modules.Module):
                     'value': '',
                     'action': 'set_technologie',
                     'type': 'bool',
-                    'dbus': 'Boolean',
                     'parent': {
                         'entry': 'Powered',
                         'value': ['1'],
@@ -483,7 +425,6 @@ class connman(modules.Module):
                     'value': 'LibreELEC-AP',
                     'action': 'set_technologie',
                     'type': 'text',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Tethering',
                         'value': ['1'],
@@ -497,7 +438,6 @@ class connman(modules.Module):
                     'value': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(10)),
                     'action': 'set_technologie',
                     'type': 'text',
-                    'dbus': 'String',
                     'parent': {
                         'entry': 'Tethering',
                         'value': ['1'],
@@ -525,14 +465,12 @@ class connman(modules.Module):
             'hidden': 'true',
             'order': 2,
             'name': 32103,
-            'dbus': 'Dictionary',
             'settings': {'Powered': {
                 'order': 1,
                 'name': 32105,
                 'value': '',
                 'action': 'set_technologie',
                 'type': 'bool',
-                'dbus': 'Boolean',
                 'InfoText': 730,
             }, },
             'order': 1,
@@ -540,7 +478,6 @@ class connman(modules.Module):
         'Timeservers': {
             'order': 4,
             'name': 32123,
-            'dbus': 'Array',
             'settings': {
                 '0': {
                     'order': 1,
@@ -548,7 +485,6 @@ class connman(modules.Module):
                     'value': '',
                     'action': 'set_timeservers',
                     'type': 'text',
-                    'dbus': 'String',
                     'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
                     'InfoText': 732,
                 },
@@ -558,7 +494,6 @@ class connman(modules.Module):
                     'value': '',
                     'action': 'set_timeservers',
                     'type': 'text',
-                    'dbus': 'String',
                     'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
                     'InfoText': 733,
                 },
@@ -568,7 +503,6 @@ class connman(modules.Module):
                     'value': '',
                     'action': 'set_timeservers',
                     'type': 'text',
-                    'dbus': 'String',
                     'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
                     'InfoText': 734,
                 },

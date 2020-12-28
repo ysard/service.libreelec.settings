@@ -2,6 +2,7 @@
 # Copyright (C) 2020-present Team LibreELEC
 import dbus_utils
 import dbussy
+import log
 import ravel
 
 BUS_NAME = 'net.connman'
@@ -174,6 +175,40 @@ def service_get_properties(path):
 
 def service_remove(path):
     return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'Remove')
+
+
+def service_set_autoconnect(path, autoconnect):
+    autoconnect = True if autoconnect == True else False
+    return service_set_property(path, 'AutoConnect', (dbussy.DBUS.Signature('b'), autoconnect))
+
+
+def service_set_domains_configuration(path, domains):
+    return service_set_property(path, 'Domains.Configuration',  (dbussy.DBUS.Signature('as'), domains))
+
+
+def service_set_ipv4_configuration(path, ipv4):
+    return service_set_property(path, 'IPv4.Configuration', (dbussy.DBUS.Signature('a{sv}'), {key: (dbussy.DBUS.Signature('s'), value) for key, value in ipv4.items()}))
+
+
+def service_set_ipv6_configuration(path, ipv6):
+    return service_set_property(path, 'IPv6.Configuration',  (dbussy.DBUS.Signature('a{sv}'),
+                                                              {key:
+                                                               (dbussy.DBUS.Signature('y'), int(value) if value else 0) if key == 'PrefixLength' else
+                                                               (dbussy.DBUS.Signature('s'), value) for key, value in ipv6.items()
+                                                               }))
+
+
+@log.log_function(log.INFO)
+def service_set_property(path, name, value):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'SetProperty', name, value)
+
+
+def service_set_nameservers_configuration(path, nameservers):
+    return service_set_property(path, 'Nameservers.Configuration',  (dbussy.DBUS.Signature('as'), nameservers))
+
+
+def service_set_timeservers_configuration(path, timeservers):
+    return service_set_property(path, 'Timeservers.Configuration',  (dbussy.DBUS.Signature('as'), timeservers))
 
 
 def technology_set_powered(path, state):
