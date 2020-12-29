@@ -19,7 +19,6 @@ import tarfile
 import traceback
 import subprocess
 import dbus
-import dbus.mainloop.glib
 import defaults
 import shutil
 import hashlib, binascii
@@ -62,11 +61,6 @@ CANCEL = (
     92,
     61448,
     )
-
-try:
-    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-except:
-    pass
 
 dbusSystemBus = dbus.SystemBus()
 
