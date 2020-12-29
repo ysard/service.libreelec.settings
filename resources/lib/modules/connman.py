@@ -323,23 +323,24 @@ class connmanService(object):
     @log.log_function()
     def save_network(self):
         try:
-            value = self.struct['AutoConnect']['settings']['AutoConnect']['value']
-            dbus_connman.service_set_autoconnect(self.servicePath, value)
-            root = self.struct['Domains']['settings']
-            value = [root[key]['value'] for key in root.keys()]
-            dbus_connman.service_set_domains_configuration(self.servicePath, value)
-            root = self.struct['IPv4']['settings']
-            value = {key:root[key]['value'] for key in root.keys()}
-            dbus_connman.service_set_ipv4_configuration(self.servicePath, value)
-            root = self.struct['IPv6']['settings']
-            value = {key:root[key]['value'] for key in root.keys()}
-            dbus_connman.service_set_ipv6_configuration(self.servicePath, value)
-            root = self.struct['Nameservers']['settings']
-            value = [root[key]['value'] for key in root.keys()]
-            dbus_connman.service_set_nameservers_configuration(self.servicePath, value)
-            root = self.struct['Timeservers']['settings']
-            value = [root[key]['value'] for key in root.keys()]
-            dbus_connman.service_set_timeservers_configuration(self.servicePath, value)
+            def get_array(root):
+                return [root[key]['value'] for key in root.keys() if root[key]['value'] != '']
+
+            def get_dict(root):
+                return {key:root[key]['value'] for key in root.keys() if root[key]['value'] != ''}
+
+            dbus_connman.service_set_autoconnect(self.servicePath,
+                self.struct['AutoConnect']['settings']['AutoConnect']['value'])
+            dbus_connman.service_set_domains_configuration(self.servicePath,
+                get_array(self.struct['Domains']['settings']))
+            dbus_connman.service_set_ipv4_configuration(self.servicePath,
+                get_dict(self.struct['IPv4']['settings']))
+            dbus_connman.service_set_ipv6_configuration(self.servicePath,
+                get_dict(self.struct['IPv6']['settings']))
+            dbus_connman.service_set_nameservers_configuration(self.servicePath,
+                get_array(self.struct['Nameservers']['settings']))
+            dbus_connman.service_set_timeservers_configuration(self.servicePath,
+                get_array(self.struct['Timeservers']['settings']))
         finally:
             return 'close'
 

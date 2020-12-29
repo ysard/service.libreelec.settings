@@ -191,11 +191,7 @@ def service_set_ipv4_configuration(path, ipv4):
 
 
 def service_set_ipv6_configuration(path, ipv6):
-    return service_set_property(path, 'IPv6.Configuration',  (dbussy.DBUS.Signature('a{sv}'),
-                                                              {key:
-                                                               (dbussy.DBUS.Signature('y'), int(value) if value else 0) if key == 'PrefixLength' else
-                                                               (dbussy.DBUS.Signature('s'), value) for key, value in ipv6.items()
-                                                               }))
+    return service_set_property(path, 'IPv6.Configuration', (dbussy.DBUS.Signature('a{sv}'), {key: (dbussy.DBUS.Signature('y'), int(value)) if key == 'PrefixLength' else (dbussy.DBUS.Signature('s'), value) for key, value in ipv6.items()}))
 
 
 @log.log_function(log.INFO)
