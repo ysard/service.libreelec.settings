@@ -208,7 +208,7 @@ class bluetooth(modules.Module):
         path = listItem.getProperty('entry')
         dbus_bluez.adapter_remove_device(self.dbusBluezAdapter, path)
         self.disable_device_standby(listItem)
-        self.menu_connections(None)
+        self.menu_connections()
 
     # ###################################################################
     # # Bluetooth Error Handler
@@ -840,7 +840,7 @@ class discoveryThread(threading.Thread):
             current_time = time.time()
             if current_time > self.last_run + 5:
                 if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth' or not hasattr(oe.dictModules['bluetooth'], 'discovery_thread'):
-                    oe.dictModules['bluetooth'].menu_connections(None)
+                    oe.dictModules['bluetooth'].menu_connections()
                 self.last_run = current_time
             if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth':
                 self.stop()
