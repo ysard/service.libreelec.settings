@@ -657,9 +657,6 @@ class Rejected(dbus.DBusException):
 
 class bluetoothAgent(dbus.service.Object):
 
-    def busy(self):
-        oe.input_request = False
-
     @dbus.service.method('org.bluez.Agent1', in_signature='', out_signature='')
     def Release(self):
         try:
@@ -674,11 +671,9 @@ class bluetoothAgent(dbus.service.Object):
             oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'enter_function', oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::AuthorizeService::device=', repr(device), oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::AuthorizeService::uuid=', repr(uuid), oe.LOGDEBUG)
-            oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
             answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
             oe.dbg_log('bluetooth::btAgent::AuthorizeService::answer=', repr(answer), oe.LOGDEBUG)
-            self.busy()
             oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'exit_function', oe.LOGDEBUG)
             if answer == 1:
                 oe.dictModules['bluetooth'].trust_device(device)
@@ -692,11 +687,9 @@ class bluetoothAgent(dbus.service.Object):
         try:
             oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'enter_function', oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::RequestPinCode::device=', repr(device), oe.LOGDEBUG)
-            oe.input_request = True
             xbmcKeyboard = xbmc.Keyboard('', 'Enter PIN code')
             xbmcKeyboard.doModal()
             pincode = xbmcKeyboard.getText()
-            self.busy()
             oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'return->' + pincode, oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'exit_function', oe.LOGDEBUG)
             return dbus.String(pincode)
@@ -708,11 +701,9 @@ class bluetoothAgent(dbus.service.Object):
         try:
             oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'enter_function', oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::RequestPasskey::device=', repr(device), oe.LOGDEBUG)
-            oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
             passkey = int(xbmcDialog.numeric(0, 'Enter passkey (number in 0-999999)', '0'))
             oe.dbg_log('bluetooth::btAgent::RequestPasskey::passkey=', repr(passkey), oe.LOGDEBUG)
-            self.busy()
             oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'exit_function', oe.LOGDEBUG)
             return dbus.UInt32(passkey)
         except Exception as e:
@@ -754,11 +745,9 @@ class bluetoothAgent(dbus.service.Object):
             oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'enter_function', oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::RequestConfirmation::device=', repr(device), oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::RequestConfirmation::passkey=', repr(passkey), oe.LOGDEBUG)
-            oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
             answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
             oe.dbg_log('bluetooth::btAgent::RequestConfirmation::answer=', repr(answer), oe.LOGDEBUG)
-            self.busy()
             oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'exit_function', oe.LOGDEBUG)
             if answer == 1:
                 oe.dictModules['bluetooth'].trust_device(device)
@@ -772,11 +761,9 @@ class bluetoothAgent(dbus.service.Object):
         try:
             oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'enter_function', oe.LOGDEBUG)
             oe.dbg_log('bluetooth::btAgent::RequestAuthorization::device=', repr(device), oe.LOGDEBUG)
-            oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
             answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
             oe.dbg_log('bluetooth::btAgent::RequestAuthorization::answer=', repr(answer), oe.LOGDEBUG)
-            self.busy()
             oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'exit_function', oe.LOGDEBUG)
             if answer == 1:
                 oe.dictModules['bluetooth'].trust_device(device)
@@ -802,9 +789,6 @@ class bluetoothAgent(dbus.service.Object):
 
 class obexAgent(dbus.service.Object):
 
-    def busy(self):
-        oe.input_request = False
-
     @dbus.service.method('org.bluez.obex.Agent1', in_signature='', out_signature='')
     def Release(self):
         try:
@@ -820,11 +804,9 @@ class obexAgent(dbus.service.Object):
             oe.dbg_log('bluetooth::obexAgent::AuthorizePush::path=', repr(path), oe.LOGDEBUG)
             transfer = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', path), 'org.freedesktop.DBus.Properties')
             properties = transfer.GetAll('org.bluez.obex.Transfer1')
-            oe.input_request = True
             xbmcDialog = xbmcgui.Dialog()
             answer = xbmcDialog.yesno('Bluetooth', f"{oe._(32381)}\n\n{properties['Name']}")
             oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), oe.LOGDEBUG)
-            self.busy()
             if answer != 1:
                 properties = None
                 transfer = None
