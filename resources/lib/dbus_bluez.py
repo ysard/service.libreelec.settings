@@ -3,6 +3,7 @@ import dbussy
 
 BUS_NAME = 'org.bluez'
 INTERFACE_ADAPTER = 'org.bluez.Adapter1'
+INTERFACE_DEVICE = 'org.bluez.Device1'
 
 
 def get_managed_objects():
@@ -41,6 +42,14 @@ def adapter_stop_discovery(path):
     return dbus_utils.call_method(BUS_NAME, path, INTERFACE_ADAPTER, 'StopDiscovery')
 
 
+def device_get_property(path, name):
+    return dbus_utils.call_method(BUS_NAME, path, dbussy.DBUS.INTERFACE_PROPERTIES, 'Get', INTERFACE_DEVICE, name)
+
+
+def device_get_connected(path):
+    return device_get_property(path, 'Connected')
+
+
 def system_has_bluez():
     return BUS_NAME in dbus_utils.list_names()
 
@@ -51,6 +60,15 @@ def find_adapter():
         for path, interfaces in objects.items():
             if interfaces.get(INTERFACE_ADAPTER):
                 return path
+
+
+def find_devices():
+    devices = {}
+    objects = get_managed_objects()
+    for path, interfaces in objects.items():
+        if interfaces.get(INTERFACE_DEVICE):
+            devices[path] = interfaces[INTERFACE_DEVICE]
+    return devices
 
 
 if __name__ == '__main__':

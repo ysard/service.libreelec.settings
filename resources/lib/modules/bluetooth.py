@@ -179,13 +179,6 @@ class bluetooth(modules.Module):
         prop = None
 
     @log.log_function()
-    def is_device_connected(self, path):
-        props = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.freedesktop.DBus.Properties')
-        res = props.Get('org.bluez.Device1', 'Connected')
-        props = None
-        return res
-
-    @log.log_function()
     def connect_device(self, path):
         device = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Device1')
         device.Connect(reply_handler=self.connect_reply_handler, error_handler=self.dbus_error_handler)
@@ -450,7 +443,7 @@ class bluetooth(modules.Module):
             devices = oe.read_setting('bluetooth', 'standby')
             if devices:
                 for device in devices.split(','):
-                    if self.is_device_connected(device):
+                    if dbus_bluez.device_get_connected(device):
                         self.disconnect_device_by_path(device)
 
     # ###################################################################
