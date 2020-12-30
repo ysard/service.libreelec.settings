@@ -206,7 +206,7 @@ class bluetooth(modules.Module):
             return
         oe.dbg_log('bluetooth::remove_device->entry::', listItem.getProperty('entry'), oe.LOGDEBUG)
         path = listItem.getProperty('entry')
-        dbus_bluez.adapter_reomve_device(self.dbusBluezAdapter, path)
+        dbus_bluez.adapter_remove_device(self.dbusBluezAdapter, path)
         self.disable_device_standby(listItem)
         self.menu_connections(None)
 

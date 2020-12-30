@@ -18,7 +18,7 @@ def adapter_get_powered(path):
     return adapter_get_property(path, 'Powered')
 
 
-def adapter_reomve_device(path, device):
+def adapter_remove_device(path, device):
     return dbus_utils.call_method(BUS_NAME, path, INTERFACE_ADAPTER, 'RemoveDevice', device)
 
 
