@@ -195,14 +195,6 @@ class bluetooth(modules.Module):
         device = None
 
     @log.log_function()
-    def disconnect_device_by(self, listItem=None):
-        if listItem is None:
-            listItem = oe.winOeMain.getControl(oe.listObject['btlist']).getSelectedItem()
-        if listItem is None:
-            return
-        self.disconnect_device_by_path(listItem.getProperty('entry'))
-
-    @log.log_function()
     def disconnect_reply_handler(self):
         self.menu_connections()
 
