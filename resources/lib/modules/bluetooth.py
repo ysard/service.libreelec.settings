@@ -10,6 +10,7 @@ import os
 import xbmc
 import xbmcgui
 import time
+import dbus_bluez
 import dbus
 import dbus.service
 import threading
@@ -37,6 +38,7 @@ class bluetooth(modules.Module):
         self.visible = False
         self.listItems = {}
         self.dbusBluezAdapter = None
+        self.discovering = False
 
     @log.log_function()
     def do_init(self):
@@ -44,8 +46,7 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_service(self):
-        if 'org.bluez' in LEGACY_SYSTEM_BUS.list_names():
-            self.init_adapter()
+        self.find_adapter()
 
     @log.log_function()
     def stop_service(self):
@@ -74,48 +75,26 @@ class bluetooth(modules.Module):
     # ###################################################################
 
     @log.log_function()
+    def find_adapter(self):
+        self.dbusBluezAdapter = dbus_bluez.find_adapter()
+        if self.dbusBluezAdapter:
+            self.init_adapter()
+
+    @log.log_function()
     def init_adapter(self):
-        dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/'), 'org.freedesktop.DBus.ObjectManager')
-        dbusManagedObjects = dbusBluezManager.GetManagedObjects()
-        for (path, ifaces) in dbusManagedObjects.items():
-            self.dbusBluezAdapter = ifaces.get('org.bluez.Adapter1')
-            if self.dbusBluezAdapter != None:
-                self.dbusBluezAdapter = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Adapter1')
-                break
-        dbusManagedObjects = None
-        dbusBluezManager = None
-        if self.dbusBluezAdapter != None:
-            self.adapter_powered(self.dbusBluezAdapter, 1)
+        dbus_bluez.adapter_set_alias(self.dbusBluezAdapter, 'LibreELEC')
+        dbus_bluez.adapter_set_powered(self.dbusBluezAdapter, True)
 
     @log.log_function()
-    def adapter_powered(self, adapter, state=1):
-        if int(self.adapter_info(self.dbusBluezAdapter, 'Powered')) != state:
-            oe.dbg_log('bluetooth::adapter_powered', 'set state (' + str(state) + ')', oe.LOGDEBUG)
-            adapter_interface = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', adapter.object_path),
-                                               'org.freedesktop.DBus.Properties')
-            adapter_interface.Set('org.bluez.Adapter1', 'Alias', dbus.String(os.environ.get('HOSTNAME', 'libreelec')))
-            adapter_interface.Set('org.bluez.Adapter1', 'Powered', dbus.Boolean(state))
-            adapter_interface = None
-
-    @log.log_function()
-    def adapter_info(self, adapter, name):
-        adapter_interface = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', adapter.object_path),
-                                           'org.freedesktop.DBus.Properties')
-        res = adapter_interface.Get('org.bluez.Adapter1', name)
-        adapter_interface = None
-        oe.dbg_log('bluetooth::adapter_info', 'exit_function', oe.LOGDEBUG)
-        return res
-
-    @log.log_function()
-    def start_discovery(self, listItem=None):
-        self.dbusBluezAdapter.StartDiscovery()
+    def start_discovery(self):
         self.discovering = True
+        dbus_bluez.adapter_start_discovery(self.dbusBluezAdapter)
 
     @log.log_function()
-    def stop_discovery(self, listItem=None):
-        if hasattr(self, 'discovering'):
-            del self.discovering
-            self.dbusBluezAdapter.StopDiscovery()
+    def stop_discovery(self):
+        if self.discovering:
+            dbus_bluez.adapter_stop_discovery(self.dbusBluezAdapter)
+            self.discovering = False
 
     # ###################################################################
     # # Bluetooth Device
@@ -242,7 +221,7 @@ class bluetooth(modules.Module):
             return
         oe.dbg_log('bluetooth::remove_device->entry::', listItem.getProperty('entry'), oe.LOGDEBUG)
         path = listItem.getProperty('entry')
-        self.dbusBluezAdapter.RemoveDevice(path)
+        dbus_bluez.adapter_reomve_device(self.dbusBluezAdapter, path)
         self.disable_device_standby(listItem)
         self.menu_connections(None)
 
@@ -276,19 +255,19 @@ class bluetooth(modules.Module):
             return 0
         if not oe.winOeMain.visible:
             return 0
-        if not 'org.bluez' in LEGACY_SYSTEM_BUS.list_names():
+        if not dbus_bluez.system_has_bluez():
             oe.winOeMain.getControl(1301).setLabel(oe._(32346))
             self.clear_list()
             oe.winOeMain.getControl(int(oe.listObject['btlist'])).reset()
             oe.dbg_log('bluetooth::menu_connections', 'exit_function (BT Disabled)', oe.LOGDEBUG)
             return
-        if self.dbusBluezAdapter == None:
+        if self.dbusBluezAdapter is None:
             oe.winOeMain.getControl(1301).setLabel(oe._(32338))
             self.clear_list()
             oe.winOeMain.getControl(int(oe.listObject['btlist'])).reset()
             oe.dbg_log('bluetooth::menu_connections', 'exit_function (No Adapter)', oe.LOGDEBUG)
             return
-        if int(self.adapter_info(self.dbusBluezAdapter, 'Powered')) != 1:
+        if not dbus_bluez.adapter_get_powered(self.dbusBluezAdapter):
             oe.winOeMain.getControl(1301).setLabel(oe._(32338))
             self.clear_list()
             oe.winOeMain.getControl(int(oe.listObject['btlist'])).reset()
@@ -467,14 +446,12 @@ class bluetooth(modules.Module):
             del self.pinkey_window
 
     def standby_devices(self):
-        if self.dbusBluezAdapter != None:
+        if self.dbusBluezAdapter:
             devices = oe.read_setting('bluetooth', 'standby')
-            if not devices == None:
-                oe.input_request = True
+            if devices:
                 for device in devices.split(','):
                     if self.is_device_connected(device):
                         self.disconnect_device_by_path(device)
-                oe.input_request = False
 
     # ###################################################################
     # # Bluetooth monitor and agent subclass
@@ -592,7 +569,7 @@ class bluetooth(modules.Module):
         def InterfacesAdded(self, path, interfaces):
             if 'org.bluez.Adapter1' in interfaces:
                 self.parent.dbusBluezAdapter = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Adapter1')
-                self.parent.adapter_powered(self.parent.dbusBluezAdapter, 1)
+                self.parent.init_adapter(self.parent.dbusBluezAdapter, 1)
             if hasattr(self.parent, 'pinkey_window'):
                 if path == self.parent.pinkey_window.device:
                     self.parent.close_pinkey_window()
