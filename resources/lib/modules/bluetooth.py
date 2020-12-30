@@ -568,8 +568,8 @@ class bluetooth(modules.Module):
         @log.log_function()
         def InterfacesAdded(self, path, interfaces):
             if 'org.bluez.Adapter1' in interfaces:
-                self.parent.dbusBluezAdapter = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Adapter1')
-                self.parent.init_adapter(self.parent.dbusBluezAdapter, 1)
+                self.parent.dbusBluezAdapter = path
+                self.parent.init_adapter()
             if hasattr(self.parent, 'pinkey_window'):
                 if path == self.parent.pinkey_window.device:
                     self.parent.close_pinkey_window()
