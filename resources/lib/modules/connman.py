@@ -8,7 +8,6 @@ import modules
 import oe
 import os
 import xbmc
-import dbus
 import xbmcgui
 import oeWindows
 import random
@@ -26,265 +25,245 @@ from dbussy import DBusError
 class connmanService(object):
 
     menu = {}
+    datamap = {
+        0: {'AutoConnect': 'AutoConnect'},
+        1: {'IPv4': 'IPv4'},
+        2: {'IPv4.Configuration': 'IPv4'},
+        3: {'IPv6': 'IPv6'},
+        4: {'IPv6.Configuration': 'IPv6'},
+        5: {'Nameservers': 'Nameservers'},
+        6: {'Nameservers.Configuration': 'Nameservers'},
+        7: {'Domains': 'Domains'},
+        8: {'Domains.Configuration': 'Domains'},
+        9: {'Timeservers': 'Timeservers'},
+        10: {'Timeservers.Configuration': 'Timeservers'},
+    }
+    struct = {
+        'AutoConnect': {
+            'order': 1,
+            'name': 32110,
+            'type': 'Boolean',
+            'menuLoader': 'menu_network_configuration',
+            'settings': {'AutoConnect': {
+                'order': 1,
+                'name': 32109,
+                'value': '',
+                'type': 'bool',
+                'action': 'set_value',
+            }},
+        },
+        'IPv4': {
+            'order': 2,
+            'name': 32111,
+            'type': 'Dictionary',
+            'settings': {
+                'Method': {
+                    'order': 1,
+                    'name': 32113,
+                    'value': '',
+                    'type': 'multivalue',
+                    'values': [
+                        'dhcp',
+                        'manual',
+                        'off',
+                    ],
+                    'action': 'set_value',
+                },
+                'Address': {
+                    'order': 2,
+                    'name': 32114,
+                    'value': '',
+                    'type': 'ip',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'action': 'set_value',
+                    'notempty': True,
+                },
+                'Netmask': {
+                    'order': 3,
+                    'name': 32115,
+                    'value': '',
+                    'type': 'ip',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'action': 'set_value',
+                    'notempty': True,
+                },
+                'Gateway': {
+                    'order': 4,
+                    'name': 32116,
+                    'value': '',
+                    'type': 'ip',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'action': 'set_value',
+                    'notempty': True,
+                },
+            },
+        },
+        'IPv6': {
+            'order': 3,
+            'name': 32112,
+            'type': 'Dictionary',
+            'settings': {
+                'Method': {
+                    'order': 1,
+                    'name': 32113,
+                    'value': '',
+                    'type': 'multivalue',
+                    'values': [
+                        'auto',
+                        'manual',
+                        '6to4',
+                        'off',
+                    ],
+                    'action': 'set_value',
+                },
+                'Address': {
+                    'order': 2,
+                    'name': 32114,
+                    'value': '',
+                    'type': 'text',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'action': 'set_value',
+                },
+                'PrefixLength': {
+                    'order': 4,
+                    'name': 32117,
+                    'value': '',
+                    'type': 'text',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'action': 'set_value',
+                },
+                'Gateway': {
+                    'order': 3,
+                    'name': 32116,
+                    'value': '',
+                    'type': 'text',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'action': 'set_value',
+                },
+                'Privacy': {
+                    'order': 5,
+                    'name': 32118,
+                    'value': '',
+                    'type': 'multivalue',
+                    'parent': {
+                        'entry': 'Method',
+                        'value': ['manual'],
+                    },
+                    'values': [
+                        'disabled',
+                        'enabled',
+                        'prefered',
+                    ],
+                    'action': 'set_value',
+                },
+            },
+        },
+        'Nameservers': {
+            'order': 4,
+            'name': 32119,
+            'type': 'Array',
+            'settings': {
+                '0': {
+                    'order': 1,
+                    'name': 32120,
+                    'value': '',
+                    'type': 'ip',
+                    'action': 'set_value_checkdhcp',
+                },
+                '1': {
+                    'order': 2,
+                    'name': 32121,
+                    'value': '',
+                    'type': 'ip',
+                    'action': 'set_value_checkdhcp',
+                },
+                '2': {
+                    'order': 3,
+                    'name': 32122,
+                    'value': '',
+                    'type': 'ip',
+                    'action': 'set_value_checkdhcp',
+                },
+            },
+        },
+        'Timeservers': {
+            'order': 6,
+            'name': 32123,
+            'type': 'Array',
+            'settings': {
+                '0': {
+                    'order': 1,
+                    'name': 32124,
+                    'value': '',
+                    'type': 'text',
+                    'action': 'set_value_checkdhcp',
+                },
+                '1': {
+                    'order': 2,
+                    'name': 32125,
+                    'value': '',
+                    'type': 'text',
+                    'action': 'set_value_checkdhcp',
+                },
+                '2': {
+                    'order': 3,
+                    'name': 32126,
+                    'value': '',
+                    'type': 'text',
+                    'action': 'set_value_checkdhcp',
+                },
+            },
+        },
+        'Domains': {
+            'order': 5,
+            'name': 32127,
+            'type': 'Array',
+            'settings': {
+                '0': {
+                    'order': 1,
+                    'name': 32128,
+                    'value': '',
+                    'type': 'text',
+                    'action': 'set_value_checkdhcp',
+                },
+                '1': {
+                    'order': 2,
+                    'name': 32129,
+                    'value': '',
+                    'type': 'text',
+                    'action': 'set_value_checkdhcp',
+                },
+                '2': {
+                    'order': 3,
+                    'name': 32130,
+                    'value': '',
+                    'type': 'text',
+                    'action': 'set_value_checkdhcp',
+                },
+            },
+        },
+    }
 
     @log.log_function()
     def __init__(self, servicePath, oeMain):
-        self.struct = {
-            'AutoConnect': {
-                'order': 1,
-                'name': 32110,
-                'type': 'Boolean',
-                'menuLoader': 'menu_network_configuration',
-                'settings': {'AutoConnect': {
-                    'order': 1,
-                    'name': 32109,
-                    'value': '',
-                    'type': 'bool',
-                    'dbus': 'Boolean',
-                    'action': 'set_value',
-                    }},
-                },
-            'IPv4': {
-                'order': 2,
-                'name': 32111,
-                'type': 'Dictionary',
-                'settings': {
-                    'Method': {
-                        'order': 1,
-                        'name': 32113,
-                        'value': '',
-                        'type': 'multivalue',
-                        'dbus': 'String',
-                        'values': [
-                            'dhcp',
-                            'manual',
-                            'off',
-                            ],
-                        'action': 'set_value',
-                        },
-                    'Address': {
-                        'order': 2,
-                        'name': 32114,
-                        'value': '',
-                        'type': 'ip',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'action': 'set_value',
-                        'notempty': True,
-                        },
-                    'Netmask': {
-                        'order': 3,
-                        'name': 32115,
-                        'value': '',
-                        'type': 'ip',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'action': 'set_value',
-                        'notempty': True,
-                        },
-                    'Gateway': {
-                        'order': 4,
-                        'name': 32116,
-                        'value': '',
-                        'type': 'ip',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'action': 'set_value',
-                        'notempty': True,
-                        },
-                    },
-                },
-            'IPv6': {
-                'order': 3,
-                'name': 32112,
-                'type': 'Dictionary',
-                'settings': {
-                    'Method': {
-                        'order': 1,
-                        'name': 32113,
-                        'value': '',
-                        'type': 'multivalue',
-                        'dbus': 'String',
-                        'values': [
-                            'auto',
-                            'manual',
-                            '6to4',
-                            'off',
-                            ],
-                        'action': 'set_value',
-                        },
-                    'Address': {
-                        'order': 2,
-                        'name': 32114,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'action': 'set_value',
-                        },
-                    'PrefixLength': {
-                        'order': 4,
-                        'name': 32117,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'Byte',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'action': 'set_value',
-                        },
-                    'Gateway': {
-                        'order': 3,
-                        'name': 32116,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'action': 'set_value',
-                        },
-                    'Privacy': {
-                        'order': 5,
-                        'name': 32118,
-                        'value': '',
-                        'type': 'multivalue',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Method',
-                            'value': ['manual'],
-                            },
-                        'values': [
-                            'disabled',
-                            'enabled',
-                            'prefered',
-                            ],
-                        'action': 'set_value',
-                        },
-                    },
-                },
-            'Nameservers': {
-                'order': 4,
-                'name': 32119,
-                'type': 'Array',
-                'settings': {
-                    '0': {
-                        'order': 1,
-                        'name': 32120,
-                        'value': '',
-                        'type': 'ip',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    '1': {
-                        'order': 2,
-                        'name': 32121,
-                        'value': '',
-                        'type': 'ip',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    '2': {
-                        'order': 3,
-                        'name': 32122,
-                        'value': '',
-                        'type': 'ip',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    },
-                },
-            'Timeservers': {
-                'order': 6,
-                'name': 32123,
-                'type': 'Array',
-                'settings': {
-                    '0': {
-                        'order': 1,
-                        'name': 32124,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    '1': {
-                        'order': 2,
-                        'name': 32125,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    '2': {
-                        'order': 3,
-                        'name': 32126,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    },
-                },
-            'Domains': {
-                'order': 5,
-                'name': 32127,
-                'type': 'Array',
-                'settings': {
-                    '0': {
-                        'order': 1,
-                        'name': 32128,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    '1': {
-                        'order': 2,
-                        'name': 32129,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    '2': {
-                        'order': 3,
-                        'name': 32130,
-                        'value': '',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'action': 'set_value_checkdhcp',
-                        },
-                    },
-                },
-            }
-
-        self.datamap = {
-            0: {'AutoConnect': 'AutoConnect'},
-            1: {'IPv4': 'IPv4'},
-            2: {'IPv4.Configuration': 'IPv4'},
-            3: {'IPv6': 'IPv6'},
-            4: {'IPv6.Configuration': 'IPv6'},
-            5: {'Nameservers': 'Nameservers'},
-            6: {'Nameservers.Configuration': 'Nameservers'},
-            7: {'Domains': 'Domains'},
-            8: {'Domains.Configuration': 'Domains'},
-            9: {'Timeservers': 'Timeservers'},
-            10: {'Timeservers.Configuration': 'Timeservers'},
-            }
         self.winOeCon = oeWindows.mainWindow('service-LibreELEC-Settings-mainWindow.xml', oe.__cwd__, 'Default', oeMain=oe, isChild=True)
         self.servicePath = servicePath
         oe.dictModules['connmanNetworkConfig'] = self
@@ -342,60 +321,26 @@ class connmanService(object):
         self.struct[listItem.getProperty('category')]['settings'][listItem.getProperty('entry')]['changed'] = True
 
     @log.log_function()
-    def dbus_config(self, category):
-        value = None
-        postfix = ''
-        if self.struct[category]['type'] == 'Dictionary':
-            value = {}
-            postfix = '.Configuration'
-        elif self.struct[category]['type'] == 'Array':
-            value = dbus.Array([], signature=dbus.Signature('s'), variant_level=1)
-            postfix = '.Configuration'
-        for entry in sorted(self.struct[category]['settings'], key=lambda x: self.struct[category]['settings'][x]['order']):
-            setting = self.struct[category]['settings'][entry]
-            if (setting['value'] != '' or (hasattr(setting, 'changed') and not hasattr(setting, 'notempty'))) \
-               and (not 'parent' in setting or ('parent' in setting and self.struct[category]['settings'][setting['parent']['entry']]['value'] \
-                                                in setting['parent']['value'])):
-                if setting['dbus'] == 'Array':
-                    value = dbus.Array(dbus.String(setting['value'], variant_level=1).split(','), signature=dbus.Signature('s'),
-                                       variant_level=1)
-                else:
-                    if self.struct[category]['type'] == 'Boolean':
-                        if setting['value'] == '1' or setting['value'] == dbus.Boolean(True, variant_level=1):
-                            setting['value'] = True
-                        else:
-                            setting['value'] = False
-                        value = getattr(dbus, setting['dbus'])(setting['value'], variant_level=1)
-                    elif self.struct[category]['type'] == 'Dictionary':
-                        value[entry] = getattr(dbus, setting['dbus'])(setting['value'], variant_level=1)
-                    elif self.struct[category]['type'] == 'Array':
-                        value.append(getattr(dbus, setting['dbus'])(setting['value'], variant_level=1))
-        return (category + postfix, value)
-
-    @log.log_function()
     def save_network(self):
         try:
-            if self.struct['IPv4']['settings']['Method']['value'] == 'dhcp':
-                for setting in self.struct['Nameservers']['settings']:
-                    self.struct['Nameservers']['settings'][setting]['changed'] = True
-                    self.struct['Nameservers']['settings'][setting]['value'] = ''
-                for setting in self.struct['Timeservers']['settings']:
-                    self.struct['Timeservers']['settings'][setting]['changed'] = True
-                    self.struct['Timeservers']['settings'][setting]['value'] = ''
-                for setting in self.struct['Domains']['settings']:
-                    self.struct['Domains']['settings'][setting]['changed'] = True
-                    self.struct['Domains']['settings'][setting]['value'] = ''
-            for category in [
-                'AutoConnect',
-                'IPv4',
-                'IPv6',
-                'Nameservers',
-                'Timeservers',
-                'Domains',
-                ]:
-                (category, value) = self.dbus_config(category)
-                if value != None:
-                    self.service.SetProperty(dbus.String(category), value)
+            def get_array(root):
+                return [root[key]['value'] for key in root.keys() if root[key]['value'] != '']
+
+            def get_dict(root):
+                return {key:root[key]['value'] for key in root.keys() if root[key]['value'] != ''}
+
+            dbus_connman.service_set_autoconnect(self.servicePath,
+                self.struct['AutoConnect']['settings']['AutoConnect']['value'])
+            dbus_connman.service_set_domains_configuration(self.servicePath,
+                get_array(self.struct['Domains']['settings']))
+            dbus_connman.service_set_ipv4_configuration(self.servicePath,
+                get_dict(self.struct['IPv4']['settings']))
+            dbus_connman.service_set_ipv6_configuration(self.servicePath,
+                get_dict(self.struct['IPv6']['settings']))
+            dbus_connman.service_set_nameservers_configuration(self.servicePath,
+                get_array(self.struct['Nameservers']['settings']))
+            dbus_connman.service_set_timeservers_configuration(self.servicePath,
+                get_array(self.struct['Timeservers']['settings']))
         finally:
             return 'close'
 
@@ -441,183 +386,171 @@ class connman(modules.Module):
             'menuLoader': 'menu_loader',
             'listTyp': 'list',
             'InfoText': 701,
-            },
+        },
         '4': {
             'name': 32100,
             'menuLoader': 'menu_connections',
             'listTyp': 'netlist',
             'InfoText': 702,
-            },
-        }
-
-    @log.log_function()
-    def __init__(self, oeMain):
-        super().__init__()
-        self.listItems = {}
-        self.struct = {
-            dbus_connman.PATH_TECH_WIFI: {
-                'hidden': 'true',
-                'order': 1,
-                'name': 32102,
-                'dbus': 'Dictionary',
-                'settings': {
-                    'Powered': {
-                        'order': 1,
-                        'name': 32105,
-                        'value': '',
-                        'action': 'set_technologie',
-                        'type': 'bool',
-                        'dbus': 'Boolean',
-                        'InfoText': 726,
-                        },
-                    'Tethering': {
-                        'order': 2,
-                        'name': 32108,
-                        'value': '',
-                        'action': 'set_technologie',
-                        'type': 'bool',
-                        'dbus': 'Boolean',
-                        'parent': {
-                            'entry': 'Powered',
-                            'value': ['1'],
-                            },
-                        'InfoText': 727,
-                        },
-                    'TetheringIdentifier': {
-                        'order': 3,
-                        'name': 32198,
-                        'value': 'LibreELEC-AP',
-                        'action': 'set_technologie',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Tethering',
-                            'value': ['1'],
-                            },
-                        'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$',
-                        'InfoText': 728,
-                        },
-                    'TetheringPassphrase': {
-                        'order': 4,
-                        'name': 32107,
-                        'value': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(10)),
-                        'action': 'set_technologie',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'parent': {
-                            'entry': 'Tethering',
-                            'value': ['1'],
-                            },
-                        'validate': '^[\\x00-\\x7F]{8,64}$',
-                        'InfoText': 729,
-                        },
-                    'regdom': {
-                        'order': 5,
-                        'name': 32240,
-                        'value': '',
-                        'action': 'custom_regdom',
-                        'type': 'multivalue',
-                        'values': [],
-                        'parent': {
-                            'entry': 'Powered',
-                            'value': ['1'],
-                            },
-                        'InfoText': 749,
-                        },
-                    },
-                'order': 0,
-                },
-            dbus_connman.PATH_TECH_ETHERNET: {
-                'hidden': 'true',
-                'order': 2,
-                'name': 32103,
-                'dbus': 'Dictionary',
-                'settings': {'Powered': {
+        },
+    }
+    struct = {
+        dbus_connman.PATH_TECH_WIFI: {
+            'hidden': 'true',
+            'order': 1,
+            'name': 32102,
+            'settings': {
+                'Powered': {
                     'order': 1,
                     'name': 32105,
                     'value': '',
                     'action': 'set_technologie',
                     'type': 'bool',
-                    'dbus': 'Boolean',
-                    'InfoText': 730,
-                    },},
+                    'InfoText': 726,
+                },
+                'Tethering': {
+                    'order': 2,
+                    'name': 32108,
+                    'value': '',
+                    'action': 'set_technologie',
+                    'type': 'bool',
+                    'parent': {
+                        'entry': 'Powered',
+                        'value': ['1'],
+                    },
+                    'InfoText': 727,
+                },
+                'TetheringIdentifier': {
+                    'order': 3,
+                    'name': 32198,
+                    'value': 'LibreELEC-AP',
+                    'action': 'set_technologie',
+                    'type': 'text',
+                    'parent': {
+                        'entry': 'Tethering',
+                        'value': ['1'],
+                    },
+                    'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$',
+                    'InfoText': 728,
+                },
+                'TetheringPassphrase': {
+                    'order': 4,
+                    'name': 32107,
+                    'value': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(10)),
+                    'action': 'set_technologie',
+                    'type': 'text',
+                    'parent': {
+                        'entry': 'Tethering',
+                        'value': ['1'],
+                    },
+                    'validate': '^[\\x00-\\x7F]{8,64}$',
+                    'InfoText': 729,
+                },
+                'regdom': {
+                    'order': 5,
+                    'name': 32240,
+                    'value': '',
+                    'action': 'custom_regdom',
+                    'type': 'multivalue',
+                    'values': [],
+                    'parent': {
+                        'entry': 'Powered',
+                        'value': ['1'],
+                    },
+                    'InfoText': 749,
+                },
+            },
+            'order': 0,
+        },
+        dbus_connman.PATH_TECH_ETHERNET: {
+            'hidden': 'true',
+            'order': 2,
+            'name': 32103,
+            'settings': {'Powered': {
                 'order': 1,
+                'name': 32105,
+                'value': '',
+                'action': 'set_technologie',
+                'type': 'bool',
+                'InfoText': 730,
+            }, },
+            'order': 1,
+        },
+        'Timeservers': {
+            'order': 4,
+            'name': 32123,
+            'settings': {
+                '0': {
+                    'order': 1,
+                    'name': 32124,
+                    'value': '',
+                    'action': 'set_timeservers',
+                    'type': 'text',
+                    'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
+                    'InfoText': 732,
                 },
-            'Timeservers': {
-                'order': 4,
-                'name': 32123,
-                'dbus': 'Array',
-                'settings': {
-                    '0': {
-                        'order': 1,
-                        'name': 32124,
-                        'value': '',
-                        'action': 'set_timeservers',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
-                        'InfoText': 732,
-                        },
-                    '1': {
-                        'order': 2,
-                        'name': 32125,
-                        'value': '',
-                        'action': 'set_timeservers',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
-                        'InfoText': 733,
-                        },
-                    '2': {
-                        'order': 3,
-                        'name': 32126,
-                        'value': '',
-                        'action': 'set_timeservers',
-                        'type': 'text',
-                        'dbus': 'String',
-                        'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
-                        'InfoText': 734,
-                        },
+                '1': {
+                    'order': 2,
+                    'name': 32125,
+                    'value': '',
+                    'action': 'set_timeservers',
+                    'type': 'text',
+                    'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
+                    'InfoText': 733,
+                },
+                '2': {
+                    'order': 3,
+                    'name': 32126,
+                    'value': '',
+                    'action': 'set_timeservers',
+                    'type': 'text',
+                    'validate': '^([a-zA-Z0-9](?:[a-zA-Z0-9-\.]*[a-zA-Z0-9]))$|^$',
+                    'InfoText': 734,
+                },
+            },
+            'order': 2,
+        },
+        'advanced': {
+            'order': 6,
+            'name': 32368,
+            'settings': {
+                'wait_for_network': {
+                    'order': 1,
+                    'name': 32369,
+                    'value': '0',
+                    'action': 'set_network_wait',
+                    'type': 'bool',
+                    'InfoText': 736,
+                },
+                'wait_for_network_time': {
+                    'order': 2,
+                    'name': 32370,
+                    'value': '10',
+                    'action': 'set_network_wait',
+                    'type': 'num',
+                    'parent': {
+                        'entry': 'wait_for_network',
+                        'value': ['1'],
                     },
-                'order': 2,
+                    'InfoText': 737,
                 },
-            'advanced': {
-                'order': 6,
-                'name': 32368,
-                'settings': {
-                    'wait_for_network': {
-                        'order': 1,
-                        'name': 32369,
-                        'value': '0',
-                        'action': 'set_network_wait',
-                        'type': 'bool',
-                        'InfoText': 736,
-                        },
-                    'wait_for_network_time': {
-                        'order': 2,
-                        'name': 32370,
-                        'value': '10',
-                        'action': 'set_network_wait',
-                        'type': 'num',
-                        'parent': {
-                            'entry': 'wait_for_network',
-                            'value': ['1'],
-                            },
-                        'InfoText': 737,
-                        },
-                    'netfilter': {
-                        'order': 3,
-                        'name': 32395,
-                        'type': 'multivalue',
-                        'values': [],
-                        'action': 'init_netfilter',
-                        'InfoText': 771,
-                        },
-                    },
-                'order': 4,
+                'netfilter': {
+                    'order': 3,
+                    'name': 32395,
+                    'type': 'multivalue',
+                    'values': [],
+                    'action': 'init_netfilter',
+                    'InfoText': 771,
                 },
-            }
+            },
+            'order': 4,
+        },
+    }
 
+    @log.log_function()
+    def __init__(self, oeMain):
+        super().__init__()
+        self.listItems = {}
         self.busy = 0
         self.visible = False
 
@@ -880,8 +813,9 @@ class connman(modules.Module):
                     if settings['Powered']['value'] == '1':
                         if technologie['Powered'] != True:
                             dbus_connman.technology_set_powered(techPath, True)
-                        if settings['Tethering']['value'] == '1' and dbus.String(settings['TetheringIdentifier']['value']) != '' \
-                            and dbus.String(settings['TetheringPassphrase']['value']) != '':
+                        if (settings['Tethering']['value'] == '1' and
+                            settings['TetheringIdentifier']['value'] != '' and
+                            settings['TetheringPassphrase']['value'] != ''):
                             oe.xbmcm.waitForAbort(5)
                             dbus_connman.technology_wifi_set_tethering_identifier(settings['TetheringIdentifier']['value'])
                             dbus_connman.technology_wifi_set_tethering_passphrase(settings['TetheringPassphrase']['value'])
