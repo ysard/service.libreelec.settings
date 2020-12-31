@@ -13,5 +13,7 @@ XDG_CONFIG_HOME = os.environ.get(
 XDG_RUNTIME_DIR = os.environ.get('XDG_RUNTIME_DIR' '/run')
 
 HOSTNAME = os.path.join(XDG_CACHE_HOME, 'hostname')
+HOSTS_CONF = os.path.join(XDG_CONFIG_HOME, 'hosts.conf')
+
 REGDOMAIN_CONF = os.path.join(XDG_CACHE_HOME, 'regdomain.conf')
 SETREGDOMAIN = '/usr/lib/iw/setregdomain'

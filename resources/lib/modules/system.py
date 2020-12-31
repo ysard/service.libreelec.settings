@@ -3,6 +3,7 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
+import hostname
 import log
 import modules
 import oe
@@ -254,11 +255,7 @@ class system(modules.Module):
             self.struct['keyboard']['settings']['KeyboardVariant2']['hidden'] = 'true'
             self.nox_keyboard_layouts = True
         # Hostname
-        value = oe.read_setting('system', 'hostname')
-        if not value is None:
-            self.struct['ident']['settings']['hostname']['value'] = value
-        else:
-            self.struct['ident']['settings']['hostname']['value'] = oe.DISTRIBUTION
+        self.struct['ident']['settings']['hostname']['value'] = hostname.get_hostname()
         # PIN Lock
         self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if oe.PIN.isEnabled() else '0'
 
@@ -317,28 +314,11 @@ class system(modules.Module):
 
     @log.log_function()
     def set_hostname(self, listItem=None):
-        if not listItem == None:
+        if listItem is not None:
             self.set_value(listItem)
-        if not self.struct['ident']['settings']['hostname']['value'] is None and not self.struct['ident']['settings']['hostname']['value'] \
-            == '':
-            log.log(self.struct['ident']['settings']['hostname']['value'], log.INFO)
-            hostname = open('/proc/sys/kernel/hostname', 'w')
-            hostname.write(self.struct['ident']['settings']['hostname']['value'])
-            hostname.close()
-            hostname = open(f'{oe.CONFIG_CACHE}/hostname', 'w')
-            hostname.write(self.struct['ident']['settings']['hostname']['value'])
-            hostname.close()
-            hosts = open('/etc/hosts', 'w')
-            user_hosts_file = f"{os.environ['HOME']}/.config/hosts.conf"
-            if os.path.isfile(user_hosts_file):
-                user_hosts = open(user_hosts_file, 'r')
-                hosts.write(user_hosts.read())
-                user_hosts.close()
-            hosts.write(f"127.0.0.1\tlocalhost {self.struct['ident']['settings']['hostname']['value']}\n")
-            hosts.write(f"::1\tlocalhost ip6-localhost ip6-loopback {self.struct['ident']['settings']['hostname']['value']}\n")
-            hosts.close()
-        else:
-            log.log('Is empty', log.INFO)
+        value = self.struct['ident']['settings']['hostname']['value']
+        if value is not None and value != '':
+            hostname.set_hostname(value)
 
     @log.log_function()
     def get_keyboard_layouts(self):
@@ -636,4 +616,3 @@ class system(modules.Module):
             self.struct['ident']['settings']['hostname']['value'] = xbmcKeyboard.getText()
             self.set_hostname()
             oe.winOeMain.getControl(1401).setLabel(self.struct['ident']['settings']['hostname']['value'])
-            oe.write_setting('system', 'hostname', self.struct['ident']['settings']['hostname']['value'])
