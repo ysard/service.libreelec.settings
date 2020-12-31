@@ -52,7 +52,6 @@ class Agent(object):
         in_signature='os',
         out_signature='',
         arg_keys=['path', 'error'],
-        result_keyword='result'
     )
     async def ReportError(self, path, error):
         self.report_error(path, error)
