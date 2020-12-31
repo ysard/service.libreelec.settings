@@ -15,6 +15,7 @@ import dbus
 import dbus.service
 import threading
 import oeWindows
+from dbussy import DBusError
 
 LEGACY_SYSTEM_BUS = dbus.SystemBus()
 
@@ -159,44 +160,44 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def pair_device(self, path):
-        device = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Device1')
-        device.Pair(reply_handler=self.pair_reply_handler, error_handler=self.dbus_error_handler)
-        device = None
-
-    @log.log_function()
-    def pair_reply_handler(self):
-        listItem = oe.winOeMain.getControl(oe.listObject['btlist']).getSelectedItem()
-        if listItem is None:
-            return
-        self.trust_device(listItem.getProperty('entry'))
-        self.connect_device(listItem.getProperty('entry'))
-        self.menu_connections()
+        try:
+            dbus_bluez.device_pair(path)
+            listItem = oe.winOeMain.getControl(oe.listObject['btlist']).getSelectedItem()
+            if listItem is None:
+                return
+            self.trust_device(listItem.getProperty('entry'))
+            self.connect_device(listItem.getProperty('entry'))
+            self.menu_connections()
+        except DBusError as e:
+            self.dbus_error_handler(e)
 
     @log.log_function()
     def trust_device(self, path):
-        prop = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.freedesktop.DBus.Properties')
-        prop.Set('org.bluez.Device1', 'Trusted', dbus.Boolean(1))
-        prop = None
+        dbus_bluez.device_set_trusted(path, True)
 
     @log.log_function()
     def connect_device(self, path):
-        device = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Device1')
-        device.Connect(reply_handler=self.connect_reply_handler, error_handler=self.dbus_error_handler)
-        device = None
+        try:
+            dbus_bluez.device_connect(path)
+            self.menu_connections()
+        except DBusError as e:
+            self.dbus_error_handler(e)
 
     @log.log_function()
-    def connect_reply_handler(self):
-        self.menu_connections()
+    def disconnect_device(self, listItem=None):
+        if listItem is None:
+            listItem = self.oe.winOeMain.getControl(self.oe.listObject['btlist']).getSelectedItem()
+        if listItem is None:
+            return
+        self.disconnect_device_by_path(listItem.getProperty('entry'))
 
     @log.log_function()
     def disconnect_device_by_path(self, path):
-        device = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', path), 'org.bluez.Device1')
-        device.Disconnect(reply_handler=self.disconnect_reply_handler, error_handler=self.dbus_error_handler)
-        device = None
-
-    @log.log_function()
-    def disconnect_reply_handler(self):
-        self.menu_connections()
+        try:
+            dbus_bluez.device_disconnect(path)
+            self.menu_connections()
+        except DBusError as e:
+            self.dbus_error_handler(e)
 
     @log.log_function()
     def remove_device(self, listItem=None):
@@ -216,13 +217,10 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def dbus_error_handler(self, error):
-        oe.dbg_log('bluetooth::dbus_error_handler::error', repr(error), oe.LOGDEBUG)
-        err_message = error.get_dbus_message()
-        oe.dbg_log('bluetooth::dbus_error_handler::err_message', repr(err_message), oe.LOGDEBUG)
-        oe.notify('Bluetooth error', err_message.split('.')[0], 'bt')
+        oe.dbg_log('bluetooth::dbus_error_handler::err_message', repr(error.message), oe.LOGDEBUG)
+        oe.notify('Bluetooth error', error.message.split('.')[0], 'bt')
         if hasattr(self, 'pinkey_window'):
             self.close_pinkey_window()
-        oe.dbg_log('bluetooth::dbus_error_handler', 'ERROR: (' + err_message + ')', oe.LOGERROR)
 
     # ###################################################################
     # # Bluetooth GUI
@@ -822,12 +820,11 @@ class obexAgent(dbus.service.Object):
 
 class discoveryThread(threading.Thread):
 
-    @log.log_function()
     def __init__(self, oeMain):
+        threading.Thread.__init__(self)
         self.last_run = 0
         self.stopped = False
         self.main_menu = oe.winOeMain.getControl(oe.winOeMain.guiMenList)
-        threading.Thread.__init__(self)
 
     @log.log_function()
     def stop(self):

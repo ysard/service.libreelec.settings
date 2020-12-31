@@ -50,6 +50,26 @@ def device_get_connected(path):
     return device_get_property(path, 'Connected')
 
 
+def device_connect(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_DEVICE, 'Connect')
+
+
+def device_disconnect(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_DEVICE, 'Disconnect')
+
+
+def device_pair(path):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_DEVICE, 'Pair')
+
+
+def device_set_property(path, name, value):
+    return dbus_utils.call_method(BUS_NAME, path, dbussy.DBUS.INTERFACE_PROPERTIES, 'Set', INTERFACE_DEVICE, name, value)
+
+
+def device_set_trusted(path, trusted):
+    return device_set_property(path, 'Trusted', (dbussy.DBUS.Signature('b'), trusted))
+
+
 def system_has_bluez():
     return BUS_NAME in dbus_utils.list_names()
 
