@@ -3,18 +3,19 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
+import dbus
+import dbus.service
+import dbus_bluez
+import hostname
 import log
 import modules
 import oe
+import oeWindows
 import os
+import threading
+import time
 import xbmc
 import xbmcgui
-import time
-import dbus_bluez
-import dbus
-import dbus.service
-import threading
-import oeWindows
 from dbussy import DBusError
 
 LEGACY_SYSTEM_BUS = dbus.SystemBus()
@@ -83,7 +84,7 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def init_adapter(self):
-        dbus_bluez.adapter_set_alias(self.dbusBluezAdapter, 'LibreELEC')
+        dbus_bluez.adapter_set_alias(self.dbusBluezAdapter, hostname.get_hostname())
         dbus_bluez.adapter_set_powered(self.dbusBluezAdapter, True)
 
     @log.log_function()

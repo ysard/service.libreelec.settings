@@ -1,13 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2020-present Team LibreELEC
+
 import config
 import os
 import subprocess
 
-REGDOM_CONF = os.path.join(config.CONFIG_CACHE, 'regdomain.conf')
-REGDOM_DEFAULT = 'NOT SET (DEFAULT)'
-REGDOM_LIST = [
-    REGDOM_DEFAULT,
+REGDOMAIN_DEFAULT = 'NOT SET (DEFAULT)'
+REGDOMAIN_LIST = [REGDOMAIN_DEFAULT] + [
     "GLOBAL (00)",
     "Afghanistan (AF)",
     "Albania (AL)",
@@ -178,21 +177,22 @@ REGDOM_LIST = [
     "Zimbabwe (ZW)"
 ]
 
-def get_regdom():
-    if not os.path.isfile(REGDOM_CONF):
-        return REGDOM_DEFAULT
-    conf = open(REGDOM_CONF).readline().rstrip()
-    code = conf[-2:]
-    regdom = next((l for l in REGDOM_LIST if code in l), REGDOM_DEFAULT)
-    return regdom
 
-def set_regdom(regdom):
-    if regdom == REGDOM_DEFAULT:
-        code = '00'
-        if os.path.isfile(REGDOM_CONF):
-            os.remove(REGDOM_CONF)
+def get_regdomain():
+    if not os.path.isfile(config.REGDOMAIN_CONF):
+        return REGDOMAIN_DEFAULT
+    code = open(config.REGDOMAIN_CONF).readline().rstrip()[-2:]
+    regdomain = next((l for l in REGDOMAIN_LIST if code in l),
+                     REGDOMAIN_DEFAULT)
+    return regdomain
+
+
+def set_regdomain(regdomain):
+    if regdomain == REGDOMAIN_DEFAULT:
+        if os.path.isfile(config.REGDOMAIN_CONF):
+            os.remove(config.REGDOMAIN_CONF)
     else:
-        code = regdom[-3:-1]
-        with open(REGDOM_CONF, 'w') as file:
+        code = regdomain[-3:-1]
+        with open(config.REGDOMAIN_CONF, 'w') as file:
             file.write(f'REGDOMAIN={code}\n')
-    subprocess.check_output(f'iw reg set {code}'.split())
+    subprocess.check_output(config.SETREGDOMAIN)

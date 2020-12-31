@@ -12,8 +12,8 @@ import xbmcgui
 import oeWindows
 import random
 import string
-import config
-import regdom
+import ui_tools
+import regdomain
 import dbus_connman
 import log
 from dbussy import DBusError
@@ -607,8 +607,8 @@ class connman(modules.Module):
             nf_option_str = oe._(32397)
         self.struct['advanced']['settings']['netfilter']['value'] = nf_option_str
         # regdom
-        self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['values'] = regdom.REGDOM_LIST
-        regValue = regdom.get_regdom()
+        self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['values'] = regdomain.REGDOMAIN_LIST
+        regValue = regdomain.get_regdomain()
         self.struct[dbus_connman.PATH_TECH_WIFI]['settings']['regdom']['value'] = str(regValue)
 
     @log.log_function()
@@ -846,7 +846,7 @@ class connman(modules.Module):
     def custom_regdom(self, **kwargs):
             if 'listItem' in kwargs:
                 regSelect = str((kwargs['listItem']).getProperty('value'))
-                regdom.set_regdom(regSelect)
+                regdomain.set_regdomain(regSelect)
                 self.set_value(kwargs['listItem'])
 
     @log.log_function()
@@ -905,7 +905,7 @@ class connman(modules.Module):
                 self.log_error = 1
                 self.notify_error = 1
             if self.notify_error == 1:
-                config.notification(err_message, 'Network Error')
+                ui_tools.notification(err_message, 'Network Error')
             else:
                 self.notify_error = 1
             if self.log_error == 1:
@@ -1030,7 +1030,7 @@ class Agent(dbus_connman.Agent):
 
     def report_error(self, path, error):
         oe.input_request = False
-        config.notification(error)
+        ui_tools.notification(error)
 
 
 class Listener(dbus_connman.Listener):
