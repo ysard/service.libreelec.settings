@@ -20,6 +20,10 @@ class Bool(int):
         return '1' if self == True else '0'
 
 
+def list_names():
+    return BUS[dbussy.DBUS.SERVICE_DBUS]['/'].get_interface(dbussy.DBUS.INTERFACE_DBUS).ListNames()[0]
+
+
 def convert_from_dbussy(data):
     if isinstance(data, bool):
         return Bool(data)

@@ -18,8 +18,6 @@ import time
 import tarfile
 import traceback
 import subprocess
-import dbus
-import dbus.mainloop.glib
 import defaults
 import shutil
 import hashlib, binascii
@@ -62,13 +60,6 @@ CANCEL = (
     92,
     61448,
     )
-
-try:
-    dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-except:
-    pass
-
-dbusSystemBus = dbus.SystemBus()
 
 ###############################################################################
 ########################## initialize module ##################################
@@ -838,13 +829,10 @@ def reboot_counter(seconds=10, title=' '):
 
 
 def exit():
-    global WinOeSelect, winOeMain, __addon__, __cwd__, __oe__, _, dbusSystemBus, dictModules
-    dbusSystemBus.close()
-    dbusSystemBus = None
+    global WinOeSelect, winOeMain, __addon__, __cwd__, __oe__, _, dictModules
 
     # del winOeMain
 
-    del dbusSystemBus
     del dictModules
     del __addon__
     del __oe__

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2020-present Team LibreELEC
+
 import dbus_utils
 import dbussy
 import log
@@ -51,7 +52,6 @@ class Agent(object):
         in_signature='os',
         out_signature='',
         arg_keys=['path', 'error'],
-        result_keyword='result'
     )
     async def ReportError(self, path, error):
         self.report_error(path, error)
@@ -194,13 +194,12 @@ def service_set_ipv6_configuration(path, ipv6):
     return service_set_property(path, 'IPv6.Configuration', (dbussy.DBUS.Signature('a{sv}'), {key: (dbussy.DBUS.Signature('y'), int(value)) if key == 'PrefixLength' else (dbussy.DBUS.Signature('s'), value) for key, value in ipv6.items()}))
 
 
-@log.log_function(log.INFO)
-def service_set_property(path, name, value):
-    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'SetProperty', name, value)
-
-
 def service_set_nameservers_configuration(path, nameservers):
     return service_set_property(path, 'Nameservers.Configuration',  (dbussy.DBUS.Signature('as'), nameservers))
+
+
+def service_set_property(path, name, value):
+    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_SERVICE, 'SetProperty', name, value)
 
 
 def service_set_timeservers_configuration(path, timeservers):
