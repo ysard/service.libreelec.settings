@@ -35,7 +35,135 @@ class updates(modules.Module):
         'menuLoader': 'load_menu',
         'listTyp': 'list',
         'InfoText': 707,
-        }}
+    }}
+    struct = {
+        'update': {
+            'order': 1,
+            'name': 32013,
+            'settings': {
+                'AutoUpdate': {
+                    'name': 32014,
+                    'value': 'auto',
+                    'action': 'set_auto_update',
+                    'type': 'multivalue',
+                    'values': ['auto', 'manual'],
+                    'InfoText': 714,
+                    'order': 1,
+                },
+                'SubmitStats': {
+                    'name': 32021,
+                    'value': '1',
+                    'action': 'set_value',
+                    'type': 'bool',
+                    'InfoText': 772,
+                    'order': 2,
+                },
+                'UpdateNotify': {
+                    'name': 32365,
+                    'value': '1',
+                    'action': 'set_value',
+                    'type': 'bool',
+                    'InfoText': 715,
+                    'order': 3,
+                },
+                'ShowCustomChannels': {
+                    'name': 32016,
+                    'value': '0',
+                    'action': 'set_custom_channel',
+                    'type': 'bool',
+                    'parent': {
+                            'entry': 'AutoUpdate',
+                        'value': ['manual'],
+                    },
+                    'InfoText': 761,
+                    'order': 4,
+                },
+                'CustomChannel1': {
+                    'name': 32017,
+                    'value': '',
+                    'action': 'set_custom_channel',
+                    'type': 'text',
+                    'parent': {
+                            'entry': 'ShowCustomChannels',
+                        'value': ['1'],
+                    },
+                    'InfoText': 762,
+                    'order': 5,
+                },
+                'CustomChannel2': {
+                    'name': 32018,
+                    'value': '',
+                    'action': 'set_custom_channel',
+                    'type': 'text',
+                    'parent': {
+                            'entry': 'ShowCustomChannels',
+                        'value': ['1'],
+                    },
+                    'InfoText': 762,
+                    'order': 6,
+                },
+                'CustomChannel3': {
+                    'name': 32019,
+                    'value': '',
+                    'action': 'set_custom_channel',
+                    'type': 'text',
+                    'parent': {
+                            'entry': 'ShowCustomChannels',
+                        'value': ['1'],
+                    },
+                    'InfoText': 762,
+                    'order': 7,
+                },
+                'Channel': {
+                    'name': 32015,
+                    'value': '',
+                    'action': 'set_channel',
+                    'type': 'multivalue',
+                    'parent': {
+                            'entry': 'AutoUpdate',
+                        'value': ['manual'],
+                    },
+                    'values': [],
+                    'InfoText': 760,
+                    'order': 8,
+                },
+                'Build': {
+                    'name': 32020,
+                    'value': '',
+                    'action': 'do_manual_update',
+                    'type': 'button',
+                    'parent': {
+                            'entry': 'AutoUpdate',
+                        'value': ['manual'],
+                    },
+                    'InfoText': 770,
+                    'order': 9,
+                },
+            },
+        },
+        'rpieeprom': {
+            'order': 2,
+            'name': 32022,
+            'settings': {
+                'bootloader': {
+                    'name': 'dummy',
+                    'value': '',
+                    'action': 'set_rpi_bootloader',
+                    'type': 'bool',
+                    'InfoText': 32025,
+                    'order': 1,
+                },
+                'vl805': {
+                    'name': 32026,
+                    'value': '',
+                    'action': 'set_rpi_vl805',
+                    'type': 'bool',
+                    'InfoText': 32027,
+                    'order': 2,
+                },
+            },
+        },
+    }
 
     @log.log_function()
     def __init__(self, oeMain):
@@ -44,134 +172,6 @@ class updates(modules.Module):
         self.nox_keyboard_layouts = False
         self.last_update_check = 0
         self.arrVariants = {}
-        self.struct = {
-            'update': {
-                'order': 1,
-                'name': 32013,
-                'settings': {
-                    'AutoUpdate': {
-                        'name': 32014,
-                        'value': 'auto',
-                        'action': 'set_auto_update',
-                        'type': 'multivalue',
-                        'values': ['auto', 'manual'],
-                        'InfoText': 714,
-                        'order': 1,
-                        },
-                    'SubmitStats': {
-                        'name': 32021,
-                        'value': '1',
-                        'action': 'set_value',
-                        'type': 'bool',
-                        'InfoText': 772,
-                        'order': 2,
-                        },
-                    'UpdateNotify': {
-                        'name': 32365,
-                        'value': '1',
-                        'action': 'set_value',
-                        'type': 'bool',
-                        'InfoText': 715,
-                        'order': 3,
-                        },
-                    'ShowCustomChannels': {
-                        'name': 32016,
-                        'value': '0',
-                        'action': 'set_custom_channel',
-                        'type': 'bool',
-                        'parent': {
-                            'entry': 'AutoUpdate',
-                            'value': ['manual'],
-                            },
-                        'InfoText': 761,
-                        'order': 4,
-                        },
-                    'CustomChannel1': {
-                        'name': 32017,
-                        'value': '',
-                        'action': 'set_custom_channel',
-                        'type': 'text',
-                        'parent': {
-                            'entry': 'ShowCustomChannels',
-                            'value': ['1'],
-                            },
-                        'InfoText': 762,
-                        'order': 5,
-                        },
-                    'CustomChannel2': {
-                        'name': 32018,
-                        'value': '',
-                        'action': 'set_custom_channel',
-                        'type': 'text',
-                        'parent': {
-                            'entry': 'ShowCustomChannels',
-                            'value': ['1'],
-                            },
-                        'InfoText': 762,
-                        'order': 6,
-                        },
-                    'CustomChannel3': {
-                        'name': 32019,
-                        'value': '',
-                        'action': 'set_custom_channel',
-                        'type': 'text',
-                        'parent': {
-                            'entry': 'ShowCustomChannels',
-                            'value': ['1'],
-                            },
-                        'InfoText': 762,
-                        'order': 7,
-                        },
-                    'Channel': {
-                        'name': 32015,
-                        'value': '',
-                        'action': 'set_channel',
-                        'type': 'multivalue',
-                        'parent': {
-                            'entry': 'AutoUpdate',
-                            'value': ['manual'],
-                            },
-                        'values': [],
-                        'InfoText': 760,
-                        'order': 8,
-                        },
-                    'Build': {
-                        'name': 32020,
-                        'value': '',
-                        'action': 'do_manual_update',
-                        'type': 'button',
-                        'parent': {
-                            'entry': 'AutoUpdate',
-                            'value': ['manual'],
-                            },
-                        'InfoText': 770,
-                        'order': 9,
-                        },
-                    },
-                },
-            'rpieeprom': {
-                'order': 2,
-                'name': 32022,
-                'settings': {
-                    'bootloader': {
-                        'name': 'dummy',
-                        'value': '',
-                        'action': 'set_rpi_bootloader',
-                        'type': 'bool',
-                        'InfoText': 32025,
-                        'order': 1,
-                        },
-                    'vl805': {
-                        'name': 32026,
-                        'value': '',
-                        'action': 'set_rpi_vl805',
-                        'type': 'bool',
-                        'InfoText': 32027,
-                        'order': 2,
-                        },
-                    },
-                },
-            }
 
     @log.log_function()
     def start_service(self):
