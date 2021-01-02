@@ -4,6 +4,7 @@
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
 import syspath
+import dbus_utils
 import oe
 import os
 import log
@@ -75,6 +76,7 @@ class Monitor(xbmc.Monitor):
 
     @log.log_function()
     def run(self):
+        dbus_utils.LOOP_THREAD.start()
         oe.load_modules()
         oe.start_service()
         service_thread = Service_Thread()
@@ -101,6 +103,7 @@ class Monitor(xbmc.Monitor):
                 oe.winOeMain.close()
         oe.stop_service()
         service_thread.stop()
+        dbus_utils.LOOP_THREAD.stop()
 
 
 if __name__ == '__main__':
