@@ -104,15 +104,7 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def get_devices(self):
-        devices = {}
-        dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/'), 'org.freedesktop.DBus.ObjectManager')
-        managedObjects = dbusBluezManager.GetManagedObjects()
-        for (path, interfaces) in managedObjects.items():
-            if 'org.bluez.Device1' in interfaces:
-                devices[path] = interfaces['org.bluez.Device1']
-        managedObjects = None
-        dbusBluezManager = None
-        return devices
+        return dbus_bluez.find_devices()
 
     @log.log_function()
     def init_device(self, listItem=None):
