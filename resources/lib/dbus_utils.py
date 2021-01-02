@@ -5,10 +5,31 @@ import dbussy
 import ravel
 import threading
 
+
+class LoopThread(threading.Thread):
+
+    def __init__(self, loop):
+        super().__init__()
+        self.loop = loop
+        self.is_stopped = False
+
+    async def wait(self):
+        while not self.is_stopped:
+            await asyncio.sleep(1)
+
+    def run(self):
+        self.loop.run_until_complete(self.wait())
+        self.loop.close()
+
+    def stop(self):
+        self.is_stopped = True
+        self.join()
+
+
 LOOP = asyncio.get_event_loop()
 BUS = ravel.system_bus()
 BUS.attach_asyncio(LOOP)
-LOOP_THREAD = threading.Thread(target=LOOP.run_forever, daemon=True).start()
+LOOP_THREAD = LoopThread(LOOP)
 
 
 class Bool(int):
