@@ -88,25 +88,25 @@ class Listener(object):
 
     def listen(self):
         dbus_utils.BUS.listen_signal(
-            interface='net.connman.Manager',
+            interface=INTERFACE_MANAGER,
             fallback=True,
             func=self._on_property_changed,
             path='/',
             name='PropertyChanged')
         dbus_utils.BUS.listen_signal(
-            interface='net.connman.Service',
-            fallback=True,
-            func=self._on_property_changed,
-            path='/',
-            name='PropertyChanged')
-        dbus_utils.BUS.listen_signal(
-            interface='net.connman.Manager',
+            interface=INTERFACE_MANAGER,
             fallback=True,
             func=self._on_services_changed,
             path='/',
             name='ServicesChanged')
         dbus_utils.BUS.listen_signal(
-            interface='net.connman.Technology',
+            interface=INTERFACE_SERVICE,
+            fallback=True,
+            func=self._on_property_changed,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface=INTERFACE_TECHNOLOGY,
             fallback=True,
             func=self._on_technology_changed,
             path='/',
