@@ -92,11 +92,3 @@ def find_devices():
         if interfaces.get(INTERFACE_DEVICE):
             devices[path] = interfaces[INTERFACE_DEVICE]
     return devices
-
-
-if __name__ == '__main__':
-    import pprint
-    path = find_adapter()
-    pprint.pprint(path)
-    property = adapter_get_property(path, 'Alias')
-    pprint.pprint(property)
