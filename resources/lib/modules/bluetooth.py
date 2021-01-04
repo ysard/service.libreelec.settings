@@ -48,6 +48,7 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_service(self):
+        self.agent = Agent.register_agent()
         self.find_adapter()
 
     @log.log_function()
@@ -626,137 +627,67 @@ class bluetooth(modules.Module):
 ## Bluetooth Agent class
 ####################################################################
 
-class Rejected(dbus.DBusException):
+class Agent(dbus_bluez.Agent):
 
-    _dbus_error_name = 'org.bluez.Error.Rejected'
+    @log.log_function(log.INFO)
+    def authorize_service(self, device, uuid):
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
+        if answer == 1:
+            oe.dictModules['bluetooth'].trust_device(device)
+        else:
+            self.reject('Connection rejected!')
 
+    @log.log_function(log.INFO)
+    def request_pincode(self, device):
+        xbmcKeyboard = xbmc.Keyboard('', 'Enter PIN code')
+        xbmcKeyboard.doModal()
+        pincode = xbmcKeyboard.getText()
+        return pincode
 
-class bluetoothAgent(dbus.service.Object):
+    @log.log_function(log.INFO)
+    def request_passkey(self, device):
+        xbmcDialog = xbmcgui.Dialog()
+        passkey = int(xbmcDialog.numeric(0, 'Enter passkey (number in 0-999999)', '0'))
+        return passkey
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='', out_signature='')
-    def Release(self):
-        try:
-            oe.dbg_log('bluetooth::btAgent::Release', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::Release', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::Release', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='os', out_signature='')
-    def AuthorizeService(self, device, uuid):
-        try:
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService::uuid=', repr(uuid), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService::answer=', repr(answer), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'exit_function', oe.LOGDEBUG)
-            if answer == 1:
-                oe.dictModules['bluetooth'].trust_device(device)
-                return
-            raise Rejected('Connection rejected!')
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='s')
-    def RequestPinCode(self, device):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode::device=', repr(device), oe.LOGDEBUG)
-            xbmcKeyboard = xbmc.Keyboard('', 'Enter PIN code')
-            xbmcKeyboard.doModal()
-            pincode = xbmcKeyboard.getText()
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'return->' + pincode, oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'exit_function', oe.LOGDEBUG)
-            return dbus.String(pincode)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='u')
-    def RequestPasskey(self, device):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey::device=', repr(device), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            passkey = int(xbmcDialog.numeric(0, 'Enter passkey (number in 0-999999)', '0'))
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey::passkey=', repr(passkey), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'exit_function', oe.LOGDEBUG)
-            return dbus.UInt32(passkey)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='ouq', out_signature='')
-    def DisplayPasskey(self, device, passkey, entered):
-        try:
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey::passkey=', repr(passkey), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey::entered=', repr(entered), oe.LOGDEBUG)
-            if not hasattr(self.parent, 'pinkey_window'):
-                self.parent.open_pinkey_window()
-                self.parent.pinkey_window.device = device
-                self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='os', out_signature='')
-    def DisplayPinCode(self, device, pincode):
-        try:
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode::pincode=', repr(pincode), oe.LOGDEBUG)
-            if hasattr(self.parent, 'pinkey_window'):
-                self.parent.close_pinkey_window()
-            self.parent.open_pinkey_window(runtime=30)
+    @log.log_function(log.INFO)
+    def display_passkey(self, device, passkey, entered):
+        if not hasattr(self.parent, 'pinkey_window'):
+            self.parent.open_pinkey_window()
             self.parent.pinkey_window.device = device
-            self.parent.pinkey_window.set_label1(f'PIN code: {pincode}')
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+            self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='ou', out_signature='')
-    def RequestConfirmation(self, device, passkey):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation::passkey=', repr(passkey), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation::answer=', repr(answer), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'exit_function', oe.LOGDEBUG)
-            if answer == 1:
-                oe.dictModules['bluetooth'].trust_device(device)
-                return
-            raise Rejected("Passkey doesn't match")
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+    @log.log_function(log.INFO)
+    def display_pincode(self, device, pincode):
+        if hasattr(self.parent, 'pinkey_window'):
+            self.parent.close_pinkey_window()
+        self.parent.open_pinkey_window(runtime=30)
+        self.parent.pinkey_window.device = device
+        self.parent.pinkey_window.set_label1(f'PIN code: {pincode}')
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='')
+    @log.log_function(log.INFO)
+    def request_confirmation(self, device, passkey):
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
+        if answer == 1:
+            oe.dictModules['bluetooth'].trust_device(device)
+        else:
+            self.reject('Passkey does not match')
+
+    @log.log_function(log.INFO)
     def RequestAuthorization(self, device):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization::device=', repr(device), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization::answer=', repr(answer), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'exit_function', oe.LOGDEBUG)
-            if answer == 1:
-                oe.dictModules['bluetooth'].trust_device(device)
-                return
-            raise Rejected('Pairing rejected')
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
+        if answer == 1:
+            oe.dictModules['bluetooth'].trust_device(device)
+        else:
+            self.reject('Pairing rejected')
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='', out_signature='')
+    @log.log_function(log.INFO)
     def Cancel(self):
-        try:
-            oe.dbg_log('bluetooth::btAgent::Cancel', 'enter_function', oe.LOGDEBUG)
-            if hasattr(self.parent, 'pinkey_window'):
-                self.parent.close_pinkey_window()
-            oe.dbg_log('bluetooth::btAgent::Cancel', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::Cancel', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        if hasattr(self.parent, 'pinkey_window'):
+            self.parent.close_pinkey_window()
 
 
 ####################################################################
