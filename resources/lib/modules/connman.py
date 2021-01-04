@@ -939,7 +939,6 @@ class connman(modules.Module):
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
-        dbus_connman.manager_register_agent()
         self.agent = Agent.register_agent()
         self.listener = Listener(self)
         self.listener.listen()

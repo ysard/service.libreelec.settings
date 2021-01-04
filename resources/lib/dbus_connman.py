@@ -15,7 +15,7 @@ INTERFACE_SERVICE = 'net.connman.Service'
 INTERFACE_TECHNOLOGY = 'net.connman.Technology'
 PATH_TECH_ETHERNET = '/net/connman/technology/ethernet'
 PATH_TECH_WIFI = '/net/connman/technology/wifi'
-PATH_AGENT = '/kodi/agent'
+PATH_AGENT = '/kodi/agent/connman'
 
 
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
@@ -27,6 +27,7 @@ class Agent(object):
     def register_agent(cls):
         if cls.agent is not None:
             raise RuntimeError('An agent is already registered')
+        manager_register_agent()
         cls.agent = cls()
         dbus_utils.BUS.request_name(
             BUS_NAME, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
@@ -51,18 +52,15 @@ class Agent(object):
     @ravel.method(
         in_signature='os',
         out_signature='',
-        arg_keys=['path', 'error'],
+        arg_keys=['path', 'error']
     )
     async def ReportError(self, path, error):
         self.report_error(path, error)
 
-    def report_error(self, path, error):
-        pass
-
     @ravel.method(
         in_signature='os',
         out_signature='',
-        arg_keys=['service', 'url'],
+        arg_keys=['service', 'url']
     )
     def RequestBrowser(self, path, url):
         raise NotImplementedError
@@ -71,7 +69,7 @@ class Agent(object):
         in_signature='oa{sv}',
         out_signature='a{sv}',
         args_keyword='request',
-        result_keyword='reply',
+        result_keyword='reply'
     )
     async def RequestInput(self, request, reply):
         request = dbus_utils.convert_from_dbussy(request)
@@ -79,9 +77,6 @@ class Agent(object):
         input = {k: (dbussy.DBUS.Signature('s'), v)
                  for (k, v) in input.items()}
         reply[0] = input
-
-    def request_input(self, request):
-        pass
 
 
 class Listener(object):
@@ -155,10 +150,6 @@ def manager_get_technologies():
 
 def manager_register_agent():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
-
-
-def manager_unregister_agent():
-    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT)
 
 
 def service_connect(path):
