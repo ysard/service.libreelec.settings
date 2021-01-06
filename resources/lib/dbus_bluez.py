@@ -21,11 +21,11 @@ class Agent(object):
     agent = None
 
     @classmethod
-    def register_agent(cls):
+    def register_agent(cls, *args, **kwargs):
         if cls.agent is not None:
             raise RuntimeError('An agent is already registered')
         manager_register_agent()
-        cls.agent = cls()
+        cls.agent = cls(*args, **kwargs)
         dbus_utils.BUS.request_name(
             BUS_NAME, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
         dbus_utils.BUS.register(
@@ -94,7 +94,7 @@ class Agent(object):
     )
     def RequestPasskey(self, device):
         passkey = self.request_passkey(device)
-        reply[0] = (dbus.Signature('u'), pincode)
+        reply[0] = (dbus.Signature('u'), passkey)
 
     @ravel.method(
         in_signature='o',

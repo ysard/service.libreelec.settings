@@ -6,6 +6,7 @@
 import dbus
 import dbus.service
 import dbus_bluez
+import dbus_obex
 import hostname
 import log
 import modules
@@ -48,7 +49,8 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_service(self):
-        self.agent = Agent.register_agent()
+        self.bluez_agent = Bluez_Agent.register_agent(self)
+        #self.obex_agent = Obex_Agent.register_agent(self)
         self.find_adapter()
 
     @log.log_function()
@@ -489,58 +491,11 @@ class bluetooth(modules.Module):
                 self.remove_agent()
 
         @log.log_function()
-        def initialize_agent(self):
-            self.btAgent = bluetoothAgent(LEGACY_SYSTEM_BUS, self.btAgentPath)
-            self.btAgent.oe = oe
-            self.btAgent.parent = self.parent
-            dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/org/bluez'), 'org.bluez.AgentManager1')
-            dbusBluezManager.RegisterAgent(self.btAgentPath, 'KeyboardDisplay')
-            dbusBluezManager.RequestDefaultAgent(self.btAgentPath)
-            dbusBluezManager = None
-
-        @log.log_function()
-        def remove_agent(self):
-            if hasattr(self, 'btAgent'):
-                self.btAgent.remove_from_connection(LEGACY_SYSTEM_BUS, self.btAgentPath)
-                try:
-                    dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/org/bluez'), 'org.bluez.AgentManager1')
-                    dbusBluezManager.UnregisterAgent(self.btAgentPath)
-                    dbusBluezManager = None
-                except:
-                    dbusBluezManager = None
-                    pass
-                del self.btAgent
-
-        @log.log_function()
         def bluezObexNameOwnerChanged(self, proxy):
             if proxy:
                 self.initialize_obex_agent()
             else:
                 self.remove_obex_agent()
-
-        @log.log_function()
-        def initialize_obex_agent(self):
-            self.obAgent = obexAgent(LEGACY_SYSTEM_BUS, self.obAgentPath)
-            self.obAgent.oe = oe
-            self.obAgent.parent = self.parent
-            dbusBluezObexManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', '/org/bluez/obex'),
-                                                  'org.bluez.obex.AgentManager1')
-            dbusBluezObexManager.RegisterAgent(self.obAgentPath)
-            dbusBluezObexManager = None
-
-        @log.log_function()
-        def remove_obex_agent(self):
-            if hasattr(self, 'obAgent'):
-                self.obAgent.remove_from_connection(LEGACY_SYSTEM_BUS, self.obAgentPath)
-                try:
-                    dbusBluezObexManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', '/org/bluez/obex'),
-                                                          'org.bluez.obex.AgentManager1')
-                    dbusBluezObexManager.UnregisterAgent(self.obAgentPath)
-                    dbusBluezObexManager = None
-                except:
-                    dbusBluezObexManager = None
-                    pass
-                del self.obAgent
 
         @log.log_function()
         def InterfacesAdded(self, path, interfaces):
@@ -627,7 +582,11 @@ class bluetooth(modules.Module):
 ## Bluetooth Agent class
 ####################################################################
 
-class Agent(dbus_bluez.Agent):
+class Bluez_Agent(dbus_bluez.Agent):
+
+    @log.log_function(log.INFO)
+    def __init__(self, parent):
+        self.parent = parent
 
     @log.log_function(log.INFO)
     def authorize_service(self, device, uuid):
@@ -694,52 +653,24 @@ class Agent(dbus_bluez.Agent):
 ## Obex Agent class
 ####################################################################
 
-class obexAgent(dbus.service.Object):
+class Obex_Agent(dbus_obex.Agent):
 
-    @dbus.service.method('org.bluez.obex.Agent1', in_signature='', out_signature='')
-    def Release(self):
-        try:
-            oe.dbg_log('bluetooth::obexAgent::Release', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::obexAgent::Release', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::obexAgent::Release', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.obex.Agent1', in_signature='o', out_signature='s')
-    def AuthorizePush(self, path):
-        try:
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush::path=', repr(path), oe.LOGDEBUG)
-            transfer = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', path), 'org.freedesktop.DBus.Properties')
-            properties = transfer.GetAll('org.bluez.obex.Transfer1')
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', f"{oe._(32381)}\n\n{properties['Name']}")
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), oe.LOGDEBUG)
-            if answer != 1:
-                properties = None
-                transfer = None
-                raise dbus.DBusException('org.bluez.obex.Error.Rejected: Not Authorized')
-            self.parent.download_path = path
-            self.parent.download_file = properties['Name']
-            self.parent.download_size = properties['Size'] / 1024
-            if 'Type' in properties:
-                self.parent.download_type = properties['Type']
-            else:
-                self.parent.download_type = None
-            res = properties['Name']
-            properties = None
-            transfer = None
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'exit_function', oe.LOGDEBUG)
-            return res
-        except Exception as e:
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.obex.Agent1', in_signature='', out_signature='')
-    def Cancel(self):
-        try:
-            oe.dbg_log('bluetooth::obexAgent::Cancel', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::obexAgent::Cancel', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::obexAgent::Cancel', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+    def authorize_push(self, path):
+        transfer = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', path), 'org.freedesktop.DBus.Properties')
+        properties = transfer.GetAll('org.bluez.obex.Transfer1')
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', f"{oe._(32381)}\n\n{properties['Name']}")
+        oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), oe.LOGDEBUG)
+        if answer != 1:
+            self.reject('Not Authorized')
+        self.parent.download_path = path
+        self.parent.download_file = properties['Name']
+        self.parent.download_size = properties['Size'] / 1024
+        if 'Type' in properties:
+            self.parent.download_type = properties['Type']
+        else:
+            self.parent.download_type = None
+        return properties['Name']
 
 
 class discoveryThread(threading.Thread):
