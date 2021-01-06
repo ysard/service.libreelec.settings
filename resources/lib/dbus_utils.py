@@ -11,6 +11,41 @@ INTERFACE_AGENT = ''
 PATH_AGENT = ''
 
 
+class Agent(object):
+
+    def __init__(self, bus_name, path_agent):
+        self.bus_name = bus_name
+        self.path_agent = path_agent
+        if self.bus_name in list_names():
+            self.register_agent()
+        self.watch_name()
+
+    @log.log_function(log.INFO)
+    def watch_name(self):
+        BUS.listen_signal(
+            interface=dbussy.DBUS.SERVICE_DBUS,
+            fallback=True,
+            func=self.on_name_owner_changed,
+            path='/',
+            name='NameOwnerChanged')
+
+    @ravel.signal(name='NameOwnerChanged', in_signature='sss', arg_keys=('name', 'old_owner', 'new_owner'))
+    async def on_name_owner_changed(self, name, old_owner, new_owner):
+        if name == self.bus_name and new_owner != '':
+            self.register_agent()
+
+    @log.log_function(log.INFO)
+    def register_agent(self):
+        BUS.request_name(
+            self.bus_name, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
+        BUS.register(
+            path=self.path_agent, interface=self, fallback=True)
+        self.manager_register_agent()
+
+    def manager_register_agent(self):
+        pass
+
+
 class Bool(int):
 
     def __new__(cls, value):
@@ -41,45 +76,6 @@ class LoopThread(threading.Thread):
     def stop(self):
         self.is_stopped = True
         self.join()
-
-
-class Monitor(object):
-
-    def __init__(self, bus_name, path_agent):
-        self.bus_name = bus_name
-        self.path_agent = path_agent
-        if self.bus_name in list_names():
-            self.register_agent()
-        self.watch_name()
-        self.listen_signals()
-
-    @log.log_function(log.INFO)
-    def watch_name(self):
-        BUS.listen_signal(
-            interface=dbussy.DBUS.SERVICE_DBUS,
-            fallback=True,
-            func=self.on_name_owner_changed,
-            path='/',
-            name='NameOwnerChanged')
-
-    @ravel.signal(name='NameOwnerChanged', in_signature='sss', arg_keys=('name', 'old_owner', 'new_owner'))
-    async def on_name_owner_changed(self, name, old_owner, new_owner):
-        if name == self.bus_name and new_owner != '':
-            self.register_agent()
-
-    @log.log_function(log.INFO)
-    def register_agent(self):
-        BUS.request_name(
-            self.bus_name, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
-        BUS.register(
-            path=self.path_agent, interface=self, fallback=True)
-        self.manager_register_agent()
-
-    def listen_signals(self):
-        pass
-
-    def manager_register_agent(self):
-        pass
 
 
 def list_names():

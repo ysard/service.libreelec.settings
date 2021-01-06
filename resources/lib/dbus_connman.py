@@ -19,7 +19,7 @@ PATH_AGENT = '/kodi/agent/connman'
 
 
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
-class Monitor(dbus_utils.Monitor):
+class Agent(dbus_utils.Agent):
 
     @log.log_function(log.INFO)
     def __init__(self):
@@ -78,7 +78,10 @@ class Monitor(dbus_utils.Monitor):
     def agent_abort(self):
         raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
 
-    def listen_signals(self):
+
+class Listener(object):
+
+    def __init__(self):
         dbus_utils.BUS.listen_signal(
             interface=INTERFACE_MANAGER,
             fallback=True,

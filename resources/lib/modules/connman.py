@@ -939,7 +939,8 @@ class connman(modules.Module):
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
-        self.monitor = Monitor(self)
+        self.agent = Agent()
+        self.listemner = Listener(self)
 
     @log.log_function()
     def stop_service(self):
@@ -997,12 +998,7 @@ class connman(modules.Module):
         self.menu_connections(None)
 
 
-class Monitor(dbus_connman.Monitor):
-
-    @log.log_function(log.INFO)
-    def __init__(self, parent):
-        super().__init__()
-        self.parent = parent
+class Agent(dbus_connman.Agent):
 
     def report_error(self, path, error):
         oe.input_request = False
@@ -1033,6 +1029,15 @@ class Monitor(dbus_connman.Monitor):
                 response['wpspin'] = passphrase
         oe.input_request = False
         return response
+
+
+class Listener(dbus_connman.Listener):
+
+    @log.log_function()
+    def __init__(self, parent):
+        self.parent = parent
+        super().__init__()
+
 
     @log.log_function()
     async def on_property_changed(self, name, value, path):
