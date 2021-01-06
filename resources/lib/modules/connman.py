@@ -956,7 +956,8 @@ class connman(modules.Module):
             self.set_value(kwargs['listItem'])
         if self.struct['advanced']['settings']['wait_for_network']['value'] == '0':
             if os.path.exists(self.WAIT_CONF_FILE):
-                os.remove(self.WAIT_CONF_FILE)
+                wait_conf = open(self.WAIT_CONF_FILE, 'w')
+                wait_conf.close()
             return
         else:
             if not os.path.exists(os.path.dirname(self.WAIT_CONF_FILE)):
