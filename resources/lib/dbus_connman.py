@@ -19,35 +19,32 @@ PATH_AGENT = '/kodi/agent/connman'
 
 
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
-class Agent(object):
+class Monitor(dbus_utils.Monitor):
 
-    agent = None
+    @log.log_function(log.INFO)
+    def __init__(self):
+        super().__init__(BUS_NAME, PATH_AGENT)
 
-    @classmethod
-    def register_agent(cls):
-        if cls.agent is not None:
-            raise RuntimeError('An agent is already registered')
-        manager_register_agent()
-        cls.agent = cls()
-        dbus_utils.BUS.request_name(
-            BUS_NAME, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
-        dbus_utils.BUS.register(
-            path=PATH_AGENT, interface=cls.agent, fallback=True)
-        return cls.agent
+    def manager_register_agent(self):
+        dbus_utils.call_method(
+            BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
 
     @ravel.method(
         in_signature='',
         out_signature=''
     )
     def Cancel(self):
-        raise NotImplementedError
+        self.cancel()
+
+    def cancel(self):
+        pass
 
     @ravel.method(
         in_signature='',
         out_signature=''
     )
     def Release(self):
-        raise NotImplementedError
+        pass
 
     @ravel.method(
         in_signature='os',
@@ -78,10 +75,10 @@ class Agent(object):
                  for (k, v) in input.items()}
         reply[0] = input
 
+    def agent_abort(self):
+        raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
 
-class Listener(object):
-
-    def listen(self):
+    def listen_signals(self):
         dbus_utils.BUS.listen_signal(
             interface=INTERFACE_MANAGER,
             fallback=True,
@@ -124,10 +121,6 @@ class Listener(object):
         await self.on_technology_changed(name, value, path)
 
 
-def agent_abort():
-    raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
-
-
 def clock_get_properties():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'GetProperties')
 
@@ -146,10 +139,6 @@ def manager_get_services():
 
 def manager_get_technologies():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetTechnologies')
-
-
-def manager_register_agent():
-    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
 
 
 def service_connect(path):

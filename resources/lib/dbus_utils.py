@@ -2,34 +2,13 @@
 # Copyright (C) 2020-present Team LibreELEC
 import asyncio
 import dbussy
+import log
 import ravel
 import threading
 
-
-class LoopThread(threading.Thread):
-
-    def __init__(self, loop):
-        super().__init__()
-        self.loop = loop
-        self.is_stopped = False
-
-    async def wait(self):
-        while not self.is_stopped:
-            await asyncio.sleep(1)
-
-    def run(self):
-        self.loop.run_until_complete(self.wait())
-        self.loop.close()
-
-    def stop(self):
-        self.is_stopped = True
-        self.join()
-
-
-LOOP = asyncio.get_event_loop()
-BUS = ravel.system_bus()
-BUS.attach_asyncio(LOOP)
-LOOP_THREAD = LoopThread(LOOP)
+BUS_NAME = ''
+INTERFACE_AGENT = ''
+PATH_AGENT = ''
 
 
 class Bool(int):
@@ -39,6 +18,68 @@ class Bool(int):
 
     def __str__(self):
         return '1' if self == True else '0'
+
+
+class LoopThread(threading.Thread):
+
+    def __init__(self, loop):
+        super().__init__()
+        self.loop = loop
+        self.is_stopped = False
+
+    @log.log_function(log.INFO)
+    async def wait(self):
+        while not self.is_stopped:
+            await asyncio.sleep(1)
+
+    @log.log_function(log.INFO)
+    def run(self):
+        self.loop.run_until_complete(self.wait())
+        self.loop.close()
+
+    @log.log_function(log.INFO)
+    def stop(self):
+        self.is_stopped = True
+        self.join()
+
+
+class Monitor(object):
+
+    def __init__(self, bus_name, path_agent):
+        self.bus_name = bus_name
+        self.path_agent = path_agent
+        if self.bus_name in list_names():
+            self.register_agent()
+        self.watch_name()
+        self.listen_signals()
+
+    @log.log_function(log.INFO)
+    def watch_name(self):
+        BUS.listen_signal(
+            interface=dbussy.DBUS.SERVICE_DBUS,
+            fallback=True,
+            func=self.on_name_owner_changed,
+            path='/',
+            name='NameOwnerChanged')
+
+    @ravel.signal(name='NameOwnerChanged', in_signature='sss', arg_keys=('name', 'old_owner', 'new_owner'))
+    async def on_name_owner_changed(self, name, old_owner, new_owner):
+        if name == self.bus_name and new_owner != '':
+            self.register_agent()
+
+    @log.log_function(log.INFO)
+    def register_agent(self):
+        BUS.request_name(
+            self.bus_name, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
+        BUS.register(
+            path=self.path_agent, interface=self, fallback=True)
+        self.manager_register_agent()
+
+    def listen_signals(self):
+        pass
+
+    def manager_register_agent(self):
+        pass
 
 
 def list_names():
@@ -77,3 +118,9 @@ def run_method(bus_name, path, interface, method_name, *args, **kwargs):
     future = asyncio.run_coroutine_threadsafe(call_async_method(
         bus_name, path, interface, method_name, *args, **kwargs), LOOP)
     return future.result()
+
+
+LOOP = asyncio.get_event_loop()
+BUS = ravel.system_bus()
+BUS.attach_asyncio(LOOP)
+LOOP_THREAD = LoopThread(LOOP)
