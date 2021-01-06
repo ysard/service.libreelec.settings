@@ -49,8 +49,8 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_service(self):
-        self.bluez_agent = Bluez_Agent.register_agent(self)
-        #self.obex_agent = Obex_Agent.register_agent(self)
+        self.bluez_agent = dbus_bluez.Agent()
+        self.obex_agent = dbus_obex.Agent()
         self.find_adapter()
 
     @log.log_function()
