@@ -16,21 +16,14 @@ PATH_AGENT = '/kodi/agent/bluez'
 
 
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
-class Agent(object):
+class Agent(dbus_utils.Agent):
 
-    agent = None
+    def __init__(self):
+        super().__init__(BUS_NAME, PATH_AGENT)
 
-    @classmethod
-    def register_agent(cls, *args, **kwargs):
-        if cls.agent is not None:
-            raise RuntimeError('An agent is already registered')
-        manager_register_agent()
-        cls.agent = cls(*args, **kwargs)
-        dbus_utils.BUS.request_name(
-            BUS_NAME, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
-        dbus_utils.BUS.register(
-            path=PATH_AGENT, interface=cls.agent, fallback=True)
-        return cls.agent
+    def manager_register_agent(self):
+        dbus_utils.call_method(BUS_NAME, PATH_BLUEZ, INTERFACE_AGENT_MANAGER,
+                               'RegisterAgent', PATH_AGENT, 'KeyboardDisplay')
 
     @ravel.method(
         in_signature='os',
@@ -172,10 +165,6 @@ def device_set_property(path, name, value):
 
 def device_set_trusted(path, trusted):
     return device_set_property(path, 'Trusted', (dbussy.DBUS.Signature('b'), trusted))
-
-
-def manager_register_agent():
-    return dbus_utils.call_method(BUS_NAME, PATH_BLUEZ, INTERFACE_AGENT_MANAGER, 'RegisterAgent', PATH_AGENT, 'KeyboardDisplay')
 
 
 def find_adapter():
