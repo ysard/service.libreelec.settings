@@ -6,6 +6,7 @@
 import dbus
 import dbus.service
 import dbus_bluez
+import dbus_obex
 import hostname
 import log
 import modules
@@ -48,6 +49,8 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_service(self):
+        self.bluez_agent = dbus_bluez.Agent()
+        self.obex_agent = dbus_obex.Agent()
         self.find_adapter()
 
     @log.log_function()
@@ -104,15 +107,7 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def get_devices(self):
-        devices = {}
-        dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/'), 'org.freedesktop.DBus.ObjectManager')
-        managedObjects = dbusBluezManager.GetManagedObjects()
-        for (path, interfaces) in managedObjects.items():
-            if 'org.bluez.Device1' in interfaces:
-                devices[path] = interfaces['org.bluez.Device1']
-        managedObjects = None
-        dbusBluezManager = None
-        return devices
+        return dbus_bluez.find_devices()
 
     @log.log_function()
     def init_device(self, listItem=None):
@@ -496,58 +491,11 @@ class bluetooth(modules.Module):
                 self.remove_agent()
 
         @log.log_function()
-        def initialize_agent(self):
-            self.btAgent = bluetoothAgent(LEGACY_SYSTEM_BUS, self.btAgentPath)
-            self.btAgent.oe = oe
-            self.btAgent.parent = self.parent
-            dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/org/bluez'), 'org.bluez.AgentManager1')
-            dbusBluezManager.RegisterAgent(self.btAgentPath, 'KeyboardDisplay')
-            dbusBluezManager.RequestDefaultAgent(self.btAgentPath)
-            dbusBluezManager = None
-
-        @log.log_function()
-        def remove_agent(self):
-            if hasattr(self, 'btAgent'):
-                self.btAgent.remove_from_connection(LEGACY_SYSTEM_BUS, self.btAgentPath)
-                try:
-                    dbusBluezManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez', '/org/bluez'), 'org.bluez.AgentManager1')
-                    dbusBluezManager.UnregisterAgent(self.btAgentPath)
-                    dbusBluezManager = None
-                except:
-                    dbusBluezManager = None
-                    pass
-                del self.btAgent
-
-        @log.log_function()
         def bluezObexNameOwnerChanged(self, proxy):
             if proxy:
                 self.initialize_obex_agent()
             else:
                 self.remove_obex_agent()
-
-        @log.log_function()
-        def initialize_obex_agent(self):
-            self.obAgent = obexAgent(LEGACY_SYSTEM_BUS, self.obAgentPath)
-            self.obAgent.oe = oe
-            self.obAgent.parent = self.parent
-            dbusBluezObexManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', '/org/bluez/obex'),
-                                                  'org.bluez.obex.AgentManager1')
-            dbusBluezObexManager.RegisterAgent(self.obAgentPath)
-            dbusBluezObexManager = None
-
-        @log.log_function()
-        def remove_obex_agent(self):
-            if hasattr(self, 'obAgent'):
-                self.obAgent.remove_from_connection(LEGACY_SYSTEM_BUS, self.obAgentPath)
-                try:
-                    dbusBluezObexManager = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', '/org/bluez/obex'),
-                                                          'org.bluez.obex.AgentManager1')
-                    dbusBluezObexManager.UnregisterAgent(self.obAgentPath)
-                    dbusBluezObexManager = None
-                except:
-                    dbusBluezObexManager = None
-                    pass
-                del self.obAgent
 
         @log.log_function()
         def InterfacesAdded(self, path, interfaces):
@@ -634,189 +582,95 @@ class bluetooth(modules.Module):
 ## Bluetooth Agent class
 ####################################################################
 
-class Rejected(dbus.DBusException):
+class Bluez_Agent(dbus_bluez.Agent):
 
-    _dbus_error_name = 'org.bluez.Error.Rejected'
+    @log.log_function(log.INFO)
+    def __init__(self, parent):
+        self.parent = parent
 
+    @log.log_function(log.INFO)
+    def authorize_service(self, device, uuid):
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
+        if answer == 1:
+            oe.dictModules['bluetooth'].trust_device(device)
+        else:
+            self.reject('Connection rejected!')
 
-class bluetoothAgent(dbus.service.Object):
+    @log.log_function(log.INFO)
+    def request_pincode(self, device):
+        xbmcKeyboard = xbmc.Keyboard('', 'Enter PIN code')
+        xbmcKeyboard.doModal()
+        pincode = xbmcKeyboard.getText()
+        return pincode
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='', out_signature='')
-    def Release(self):
-        try:
-            oe.dbg_log('bluetooth::btAgent::Release', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::Release', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::Release', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+    @log.log_function(log.INFO)
+    def request_passkey(self, device):
+        xbmcDialog = xbmcgui.Dialog()
+        passkey = int(xbmcDialog.numeric(0, 'Enter passkey (number in 0-999999)', '0'))
+        return passkey
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='os', out_signature='')
-    def AuthorizeService(self, device, uuid):
-        try:
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService::uuid=', repr(uuid), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService::answer=', repr(answer), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'exit_function', oe.LOGDEBUG)
-            if answer == 1:
-                oe.dictModules['bluetooth'].trust_device(device)
-                return
-            raise Rejected('Connection rejected!')
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::AuthorizeService', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='s')
-    def RequestPinCode(self, device):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode::device=', repr(device), oe.LOGDEBUG)
-            xbmcKeyboard = xbmc.Keyboard('', 'Enter PIN code')
-            xbmcKeyboard.doModal()
-            pincode = xbmcKeyboard.getText()
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'return->' + pincode, oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'exit_function', oe.LOGDEBUG)
-            return dbus.String(pincode)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestPinCode', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='u')
-    def RequestPasskey(self, device):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey::device=', repr(device), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            passkey = int(xbmcDialog.numeric(0, 'Enter passkey (number in 0-999999)', '0'))
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey::passkey=', repr(passkey), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'exit_function', oe.LOGDEBUG)
-            return dbus.UInt32(passkey)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestPasskey', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='ouq', out_signature='')
-    def DisplayPasskey(self, device, passkey, entered):
-        try:
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey::passkey=', repr(passkey), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey::entered=', repr(entered), oe.LOGDEBUG)
-            if not hasattr(self.parent, 'pinkey_window'):
-                self.parent.open_pinkey_window()
-                self.parent.pinkey_window.device = device
-                self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::DisplayPasskey', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.Agent1', in_signature='os', out_signature='')
-    def DisplayPinCode(self, device, pincode):
-        try:
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode::pincode=', repr(pincode), oe.LOGDEBUG)
-            if hasattr(self.parent, 'pinkey_window'):
-                self.parent.close_pinkey_window()
-            self.parent.open_pinkey_window(runtime=30)
+    @log.log_function(log.INFO)
+    def display_passkey(self, device, passkey, entered):
+        if not hasattr(self.parent, 'pinkey_window'):
+            self.parent.open_pinkey_window()
             self.parent.pinkey_window.device = device
-            self.parent.pinkey_window.set_label1(f'PIN code: {pincode}')
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::DisplayPinCode', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+            self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='ou', out_signature='')
-    def RequestConfirmation(self, device, passkey):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation::device=', repr(device), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation::passkey=', repr(passkey), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation::answer=', repr(answer), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'exit_function', oe.LOGDEBUG)
-            if answer == 1:
-                oe.dictModules['bluetooth'].trust_device(device)
-                return
-            raise Rejected("Passkey doesn't match")
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestConfirmation', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+    @log.log_function(log.INFO)
+    def display_pincode(self, device, pincode):
+        if hasattr(self.parent, 'pinkey_window'):
+            self.parent.close_pinkey_window()
+        self.parent.open_pinkey_window(runtime=30)
+        self.parent.pinkey_window.device = device
+        self.parent.pinkey_window.set_label1(f'PIN code: {pincode}')
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='o', out_signature='')
+    @log.log_function(log.INFO)
+    def request_confirmation(self, device, passkey):
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
+        if answer == 1:
+            oe.dictModules['bluetooth'].trust_device(device)
+        else:
+            self.reject('Passkey does not match')
+
+    @log.log_function(log.INFO)
     def RequestAuthorization(self, device):
-        try:
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization::device=', repr(device), oe.LOGDEBUG)
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization::answer=', repr(answer), oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'exit_function', oe.LOGDEBUG)
-            if answer == 1:
-                oe.dictModules['bluetooth'].trust_device(device)
-                return
-            raise Rejected('Pairing rejected')
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::RequestAuthorization', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
+        if answer == 1:
+            oe.dictModules['bluetooth'].trust_device(device)
+        else:
+            self.reject('Pairing rejected')
 
-    @dbus.service.method('org.bluez.Agent1', in_signature='', out_signature='')
+    @log.log_function(log.INFO)
     def Cancel(self):
-        try:
-            oe.dbg_log('bluetooth::btAgent::Cancel', 'enter_function', oe.LOGDEBUG)
-            if hasattr(self.parent, 'pinkey_window'):
-                self.parent.close_pinkey_window()
-            oe.dbg_log('bluetooth::btAgent::Cancel', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::btAgent::Cancel', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+        if hasattr(self.parent, 'pinkey_window'):
+            self.parent.close_pinkey_window()
 
 
 ####################################################################
 ## Obex Agent class
 ####################################################################
 
-class obexAgent(dbus.service.Object):
+class Obex_Agent(dbus_obex.Agent):
 
-    @dbus.service.method('org.bluez.obex.Agent1', in_signature='', out_signature='')
-    def Release(self):
-        try:
-            oe.dbg_log('bluetooth::obexAgent::Release', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::obexAgent::Release', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::obexAgent::Release', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.obex.Agent1', in_signature='o', out_signature='s')
-    def AuthorizePush(self, path):
-        try:
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush::path=', repr(path), oe.LOGDEBUG)
-            transfer = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', path), 'org.freedesktop.DBus.Properties')
-            properties = transfer.GetAll('org.bluez.obex.Transfer1')
-            xbmcDialog = xbmcgui.Dialog()
-            answer = xbmcDialog.yesno('Bluetooth', f"{oe._(32381)}\n\n{properties['Name']}")
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), oe.LOGDEBUG)
-            if answer != 1:
-                properties = None
-                transfer = None
-                raise dbus.DBusException('org.bluez.obex.Error.Rejected: Not Authorized')
-            self.parent.download_path = path
-            self.parent.download_file = properties['Name']
-            self.parent.download_size = properties['Size'] / 1024
-            if 'Type' in properties:
-                self.parent.download_type = properties['Type']
-            else:
-                self.parent.download_type = None
-            res = properties['Name']
-            properties = None
-            transfer = None
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'exit_function', oe.LOGDEBUG)
-            return res
-        except Exception as e:
-            oe.dbg_log('bluetooth::obexAgent::AuthorizePush', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
-
-    @dbus.service.method('org.bluez.obex.Agent1', in_signature='', out_signature='')
-    def Cancel(self):
-        try:
-            oe.dbg_log('bluetooth::obexAgent::Cancel', 'enter_function', oe.LOGDEBUG)
-            oe.dbg_log('bluetooth::obexAgent::Cancel', 'exit_function', oe.LOGDEBUG)
-        except Exception as e:
-            oe.dbg_log('bluetooth::obexAgent::Cancel', 'ERROR: (' + repr(e) + ')', oe.LOGERROR)
+    def authorize_push(self, path):
+        transfer = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', path), 'org.freedesktop.DBus.Properties')
+        properties = transfer.GetAll('org.bluez.obex.Transfer1')
+        xbmcDialog = xbmcgui.Dialog()
+        answer = xbmcDialog.yesno('Bluetooth', f"{oe._(32381)}\n\n{properties['Name']}")
+        oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), oe.LOGDEBUG)
+        if answer != 1:
+            self.reject('Not Authorized')
+        self.parent.download_path = path
+        self.parent.download_file = properties['Name']
+        self.parent.download_size = properties['Size'] / 1024
+        if 'Type' in properties:
+            self.parent.download_type = properties['Type']
+        else:
+            self.parent.download_type = None
+        return properties['Name']
 
 
 class discoveryThread(threading.Thread):

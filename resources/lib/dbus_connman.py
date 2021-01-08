@@ -15,54 +15,49 @@ INTERFACE_SERVICE = 'net.connman.Service'
 INTERFACE_TECHNOLOGY = 'net.connman.Technology'
 PATH_TECH_ETHERNET = '/net/connman/technology/ethernet'
 PATH_TECH_WIFI = '/net/connman/technology/wifi'
-PATH_AGENT = '/kodi/agent'
+PATH_AGENT = '/kodi/agent/connman'
 
 
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
-class Agent(object):
+class Agent(dbus_utils.Agent):
 
-    agent = None
+    @log.log_function(log.INFO)
+    def __init__(self):
+        super().__init__(BUS_NAME, PATH_AGENT)
 
-    @classmethod
-    def register_agent(cls):
-        if cls.agent is not None:
-            raise RuntimeError('An agent is already registered')
-        cls.agent = cls()
-        dbus_utils.BUS.request_name(
-            BUS_NAME, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
-        dbus_utils.BUS.register(
-            path=PATH_AGENT, interface=cls.agent, fallback=True)
-        return cls.agent
+    def manager_register_agent(self):
+        dbus_utils.call_method(
+            BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
 
     @ravel.method(
         in_signature='',
         out_signature=''
     )
     def Cancel(self):
-        raise NotImplementedError
+        self.cancel()
+
+    def cancel(self):
+        pass
 
     @ravel.method(
         in_signature='',
         out_signature=''
     )
     def Release(self):
-        raise NotImplementedError
-
-    @ravel.method(
-        in_signature='os',
-        out_signature='',
-        arg_keys=['path', 'error'],
-    )
-    async def ReportError(self, path, error):
-        self.report_error(path, error)
-
-    def report_error(self, path, error):
         pass
 
     @ravel.method(
         in_signature='os',
         out_signature='',
-        arg_keys=['service', 'url'],
+        arg_keys=['path', 'error']
+    )
+    async def ReportError(self, path, error):
+        self.report_error(path, error)
+
+    @ravel.method(
+        in_signature='os',
+        out_signature='',
+        arg_keys=['service', 'url']
     )
     def RequestBrowser(self, path, url):
         raise NotImplementedError
@@ -71,7 +66,7 @@ class Agent(object):
         in_signature='oa{sv}',
         out_signature='a{sv}',
         args_keyword='request',
-        result_keyword='reply',
+        result_keyword='reply'
     )
     async def RequestInput(self, request, reply):
         request = dbus_utils.convert_from_dbussy(request)
@@ -80,33 +75,33 @@ class Agent(object):
                  for (k, v) in input.items()}
         reply[0] = input
 
-    def request_input(self, request):
-        pass
+    def agent_abort(self):
+        raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
 
 
 class Listener(object):
 
-    def listen(self):
+    def __init__(self):
         dbus_utils.BUS.listen_signal(
-            interface='net.connman.Manager',
+            interface=INTERFACE_MANAGER,
             fallback=True,
             func=self._on_property_changed,
             path='/',
             name='PropertyChanged')
         dbus_utils.BUS.listen_signal(
-            interface='net.connman.Service',
-            fallback=True,
-            func=self._on_property_changed,
-            path='/',
-            name='PropertyChanged')
-        dbus_utils.BUS.listen_signal(
-            interface='net.connman.Manager',
+            interface=INTERFACE_MANAGER,
             fallback=True,
             func=self._on_services_changed,
             path='/',
             name='ServicesChanged')
         dbus_utils.BUS.listen_signal(
-            interface='net.connman.Technology',
+            interface=INTERFACE_SERVICE,
+            fallback=True,
+            func=self._on_property_changed,
+            path='/',
+            name='PropertyChanged')
+        dbus_utils.BUS.listen_signal(
+            interface=INTERFACE_TECHNOLOGY,
             fallback=True,
             func=self._on_technology_changed,
             path='/',
@@ -129,10 +124,6 @@ class Listener(object):
         await self.on_technology_changed(name, value, path)
 
 
-def agent_abort():
-    raise ravel.ErrorReturn(ERROR_AGENT_CANCELLED, 'Input cancelled')
-
-
 def clock_get_properties():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_CLOCK, 'GetProperties')
 
@@ -151,14 +142,6 @@ def manager_get_services():
 
 def manager_get_technologies():
     return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'GetTechnologies')
-
-
-def manager_register_agent():
-    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
-
-
-def manager_unregister_agent():
-    return dbus_utils.call_method(BUS_NAME, '/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT)
 
 
 def service_connect(path):

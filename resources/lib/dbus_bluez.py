@@ -3,10 +3,104 @@
 
 import dbus_utils
 import dbussy
+import ravel
 
 BUS_NAME = 'org.bluez'
+ERROR_REJECTED = 'org.bluez.Error.Rejected'
 INTERFACE_ADAPTER = 'org.bluez.Adapter1'
+INTERFACE_AGENT = 'org.bluez.Agent1'
+INTERFACE_AGENT_MANAGER = 'org.bluez.AgentManager1'
 INTERFACE_DEVICE = 'org.bluez.Device1'
+PATH_BLUEZ = '/org/bluez'
+PATH_AGENT = '/kodi/agent/bluez'
+
+
+@ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
+class Agent(dbus_utils.Agent):
+
+    def __init__(self):
+        super().__init__(BUS_NAME, PATH_AGENT)
+
+    def manager_register_agent(self):
+        dbus_utils.call_method(BUS_NAME, PATH_BLUEZ, INTERFACE_AGENT_MANAGER,
+                               'RegisterAgent', PATH_AGENT, 'KeyboardDisplay')
+
+    @ravel.method(
+        in_signature='os',
+        out_signature='',
+        arg_keys=['device', 'uuid']
+    )
+    def AuthorizeService(self, device, uuid):
+        self.authorize_service(device, uuid)
+
+    @ravel.method(
+        in_signature='',
+        out_signature=''
+    )
+    def Cancel(self):
+        self.cancel()
+
+    @ravel.method(
+        in_signature='ouq',
+        out_signature='',
+        arg_keys=['device', 'passkey', 'entered']
+    )
+    def DisplayPasskey(self, device, passkey, entered):
+        self.display_passkey(device, passkey, entered)
+
+    @ravel.method(
+        in_signature='os',
+        out_signature='',
+        arg_keys=['device', 'pincode']
+    )
+    def DisplayPinCode(self, device, pincode):
+        self.display_pincode(device, pincode)
+
+    @ravel.method(
+        in_signature='',
+        out_signature=''
+    )
+    def Release(self):
+        raise NotImplementedError
+
+    @ravel.method(
+        in_signature='o',
+        out_signature='',
+        arg_keys=['device']
+    )
+    def RequestAuthorization(self, device):
+        self.request_authorization(device)
+
+    @ravel.method(
+        in_signature='ou',
+        out_signature='',
+        arg_keys=['device', 'passkey']
+    )
+    def RequestConfirmation(self, device, passkey):
+        self.request_confirmation(device, passkey)
+
+    @ravel.method(
+        in_signature='o',
+        out_signature='u',
+        arg_keys=['device'],
+        result_keyword='reply'
+    )
+    def RequestPasskey(self, device):
+        passkey = self.request_passkey(device)
+        reply[0] = (dbus.Signature('u'), passkey)
+
+    @ravel.method(
+        in_signature='o',
+        out_signature='s',
+        arg_keys=['device'],
+        result_keyword='reply'
+    )
+    def RequestPinCode(self, device, reply):
+        pincode = self.request_pincode(device)
+        reply[0] = (dbus.Signature('s'), pincode)
+
+    def reject(self, message):
+        raise dbus.DBusError(ERROR_REJECTED, message)
 
 
 def get_managed_objects():
@@ -54,7 +148,7 @@ def device_get_connected(path):
 
 
 def device_connect(path):
-    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_DEVICE, 'Connect')
+    return dbus_utils.run_method(BUS_NAME, path, INTERFACE_DEVICE, 'Connect')
 
 
 def device_disconnect(path):
@@ -62,7 +156,7 @@ def device_disconnect(path):
 
 
 def device_pair(path):
-    return dbus_utils.call_method(BUS_NAME, path, INTERFACE_DEVICE, 'Pair')
+    return dbus_utils.run_method(BUS_NAME, path, INTERFACE_DEVICE, 'Pair')
 
 
 def device_set_property(path, name, value):
@@ -71,10 +165,6 @@ def device_set_property(path, name, value):
 
 def device_set_trusted(path, trusted):
     return device_set_property(path, 'Trusted', (dbussy.DBUS.Signature('b'), trusted))
-
-
-def system_has_bluez():
-    return BUS_NAME in dbus_utils.list_names()
 
 
 def find_adapter():
@@ -94,9 +184,5 @@ def find_devices():
     return devices
 
 
-if __name__ == '__main__':
-    import pprint
-    path = find_adapter()
-    pprint.pprint(path)
-    property = adapter_get_property(path, 'Alias')
-    pprint.pprint(property)
+def system_has_bluez():
+    return BUS_NAME in dbus_utils.list_names()

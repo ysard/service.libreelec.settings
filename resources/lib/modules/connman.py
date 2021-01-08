@@ -939,10 +939,8 @@ class connman(modules.Module):
     def start_service(self):
         self.load_values()
         self.init_netfilter(service=1)
-        dbus_connman.manager_register_agent()
-        self.agent = Agent.register_agent()
-        self.listener = Listener(self)
-        self.listener.listen()
+        self.agent = Agent()
+        self.listemner = Listener(self)
 
     @log.log_function()
     def stop_service(self):
@@ -1003,6 +1001,10 @@ class connman(modules.Module):
 
 class Agent(dbus_connman.Agent):
 
+    def report_error(self, path, error):
+        oe.input_request = False
+        ui_tools.notification(error)
+
     def request_input(self, path, fields):
         oe.input_request = True
         response = {}
@@ -1019,7 +1021,7 @@ class Agent(dbus_connman.Agent):
                 if xbmcKeyboard.isConfirmed() and xbmcKeyboard.getText():
                     response[field] = xbmcKeyboard.getText()
                 else:
-                    dbus_connman.agent_abort()
+                    self.agent_abort()
         passphrase = response.get('Passphrase')
         if passphrase:
             if 'Identity' in fields:
@@ -1029,16 +1031,14 @@ class Agent(dbus_connman.Agent):
         oe.input_request = False
         return response
 
-    def report_error(self, path, error):
-        oe.input_request = False
-        ui_tools.notification(error)
-
 
 class Listener(dbus_connman.Listener):
 
     @log.log_function()
     def __init__(self, parent):
         self.parent = parent
+        super().__init__()
+
 
     @log.log_function()
     async def on_property_changed(self, name, value, path):
