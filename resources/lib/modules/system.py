@@ -15,6 +15,7 @@ import xbmcgui
 import tarfile
 import oeWindows
 from xml.dom import minidom
+import subprocess
 
 xbmcDialog = xbmcgui.Dialog()
 
@@ -393,7 +394,7 @@ class system(modules.Module):
             open(self.XBMC_RESET_FILE, 'a').close()
             oe.winOeMain.close()
             oe.xbmcm.waitForAbort(1)
-            xbmc.executebuiltin('Reboot')
+            subprocess.call(['/usr/bin/systemctl', '--no-block', 'reboot'], close_fds=True)
 
     @log.log_function()
     def reset_oe(self, listItem=None):
@@ -401,7 +402,7 @@ class system(modules.Module):
             open(self.LIBREELEC_RESET_FILE, 'a').close()
             oe.winOeMain.close()
             oe.xbmcm.waitForAbort(1)
-            xbmc.executebuiltin('Reboot')
+            subprocess.call(['/usr/bin/systemctl', '--no-block', 'reboot'], close_fds=True)
 
     @log.log_function()
     def ask_sure_reset(self, part):
@@ -492,7 +493,7 @@ class system(modules.Module):
                     if oe.reboot_counter(10, oe._(32371)) == 1:
                         oe.winOeMain.close()
                         oe.xbmcm.waitForAbort(1)
-                        xbmc.executebuiltin('Reboot')
+                        subprocess.call(['/usr/bin/systemctl', '--no-block', 'reboot'], close_fds=True)
                 else:
                     log.log('User Abort!')
                     oe.execute(f'rm -rf {self.RESTORE_DIR}')

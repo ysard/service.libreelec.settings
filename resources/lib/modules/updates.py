@@ -502,7 +502,7 @@ class updates(modules.Module):
                 if silent == False:
                     oe.winOeMain.close()
                     oe.xbmcm.waitForAbort(1)
-                    xbmc.executebuiltin('Reboot')
+                    subprocess.call(['/usr/bin/systemctl', '--no-block', 'reboot'], close_fds=True)
             else:
                 delattr(self, 'update_in_progress')
 
