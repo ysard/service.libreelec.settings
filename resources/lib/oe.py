@@ -798,8 +798,7 @@ def load_modules():
 
 
 def timestamp():
-    now = time.time()
-    localtime = time.localtime(now)
+    localtime = time.localtime()
     return time.strftime('%Y%m%d%H%M%S', localtime)
 
 
