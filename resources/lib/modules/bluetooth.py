@@ -49,8 +49,9 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_service(self):
-        self.bluez_agent = dbus_bluez.Agent()
+        self.bluez_agent = Bluez_Agent(self)
         self.obex_agent = dbus_obex.Agent()
+        self.bluez_listener = Bluez_Listener(self)
         self.find_adapter()
 
     @log.log_function()
@@ -579,6 +580,53 @@ class bluetooth(modules.Module):
 
 
 ####################################################################
+## Bluez Listener class
+####################################################################
+class Bluez_Listener(dbus_bluez.Listener):
+
+    @log.log_function()
+    def __init__(self, parent):
+        self.parent = parent
+        super().__init__()
+
+    @log.log_function()
+    async def on_interfaces_added(self, path, interfaces):
+        if dbus_bluez.INTERFACE_ADAPTER in interfaces:
+            self.parent.dbusBluezAdapter = path
+            self.parent.init_adapter()
+        if hasattr(self.parent, 'pinkey_window'):
+            if path == self.parent.pinkey_window.device:
+                self.parent.close_pinkey_window()
+        if self.parent.visible:
+            self.parent.menu_connections()
+
+    @log.log_function()
+    async def on_interfaces_removed(self, path, interfaces):
+        if dbus_bluez.INTERFACE_ADAPTER in interfaces:
+            self.parent.dbusBluezAdapter = None
+        if self.parent.visible and not hasattr(self.parent, 'discovery_thread'):
+            self.parent.menu_connections()
+
+    @log.log_function()
+    async def on_properties_changed(self, interface, changed, invalidated, path):
+        if self.parent.visible:
+            properties = [
+                'Paired',
+                'Adapter',
+                'Connected',
+                'Address',
+                'Class',
+                'Trusted',
+                'Icon',
+                ]
+            if path in self.parent.listItems:
+                for prop in changed:
+                    if prop in properties:
+                        self.parent.listItems[path].setProperty(str(prop), str(changed[prop]))
+            else:
+                self.parent.menu_connections()
+
+####################################################################
 ## Bluetooth Agent class
 ####################################################################
 
@@ -587,6 +635,7 @@ class Bluez_Agent(dbus_bluez.Agent):
     @log.log_function(log.INFO)
     def __init__(self, parent):
         self.parent = parent
+        super().__init__()
 
     @log.log_function(log.INFO)
     def authorize_service(self, device, uuid):
