@@ -87,7 +87,7 @@ class Agent(dbus_utils.Agent):
     )
     def RequestPasskey(self, device):
         passkey = self.request_passkey(device)
-        reply[0] = (dbus.Signature('u'), passkey)
+        reply[0] = (dbussy.DBUS.Signature('u'), passkey)
 
     @ravel.method(
         in_signature='o',
@@ -97,11 +97,38 @@ class Agent(dbus_utils.Agent):
     )
     def RequestPinCode(self, device, reply):
         pincode = self.request_pincode(device)
-        reply[0] = (dbus.Signature('s'), pincode)
+        reply[0] = (dbussy.DBUS.Signature('s'), pincode)
 
     def reject(self, message):
-        raise dbus.DBusError(ERROR_REJECTED, message)
+        raise dbussy.DBusError(ERROR_REJECTED, message)
 
+class Listener(object):
+
+    def __init__(self):
+        dbus_utils.BUS.listen_objects_added(func=self._on_interfaces_added)
+        dbus_utils.BUS.listen_objects_removed(func=self._on_interfaces_removed)
+        dbus_utils.BUS.listen_propchanged(
+            interface=dbussy.DBUS.INTERFACE_PROPERTIES,
+            fallback=True,
+            func=self._on_properties_changed,
+            path='/')
+
+    @ravel.signal(name='InterfacesAdded', in_signature='oa{sa{sv}}', arg_keys=('path', 'interfaces'))
+    def _on_interfaces_added(self, path, interfaces):
+        interfaces = dbus_utils.convert_from_dbussy(interfaces)
+        self.on_interfaces_added(path, interfaces)
+
+    @ravel.signal(name='InterfacesRemoved', in_signature='oas', arg_keys=('path', 'interfaces'))
+    def _on_interfaces_removed(self, path, interfaces):
+        interfaces = dbus_utils.convert_from_dbussy(interfaces)
+        self.on_interfaces_removed(path, interfaces)
+
+    @ravel.signal(name='PropertiesChanged', in_signature='sa{sv}as', arg_keys=('interface', 'changed', 'invalidated'), path_keyword='path')
+    def _on_properties_changed(self, interface, changed, invalidated, path):
+        interface = dbus_utils.convert_from_dbussy(interface)
+        changed = dbus_utils.convert_from_dbussy(changed)
+        invalidated = dbus_utils.convert_from_dbussy(invalidated)
+        self.on_properties_changed(interface, changed, invalidated, path)
 
 def get_managed_objects():
     return dbus_utils.call_method(BUS_NAME, '/', dbussy.DBUSX.INTERFACE_OBJECT_MANAGER, 'GetManagedObjects')
