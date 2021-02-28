@@ -90,6 +90,9 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def start_discovery(self):
+        if self.discovering:
+            return
+
         self.discovering = True
         dbus_bluez.adapter_start_discovery(self.dbusBluezAdapter)
 
