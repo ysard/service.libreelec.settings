@@ -114,21 +114,21 @@ class Listener(object):
             path='/')
 
     @ravel.signal(name='InterfacesAdded', in_signature='oa{sa{sv}}', arg_keys=('path', 'interfaces'))
-    async def _on_interfaces_added(self, path, interfaces):
+    def _on_interfaces_added(self, path, interfaces):
         interfaces = dbus_utils.convert_from_dbussy(interfaces)
-        await self.on_interfaces_added(path, interfaces)
+        self.on_interfaces_added(path, interfaces)
 
     @ravel.signal(name='InterfacesRemoved', in_signature='oas', arg_keys=('path', 'interfaces'))
-    async def _on_interfaces_removed(self, path, interfaces):
+    def _on_interfaces_removed(self, path, interfaces):
         interfaces = dbus_utils.convert_from_dbussy(interfaces)
-        await self.on_interfaces_removed(path, interfaces)
+        self.on_interfaces_removed(path, interfaces)
 
     @ravel.signal(name='PropertiesChanged', in_signature='sa{sv}as', arg_keys=('interface', 'changed', 'invalidated'), path_keyword='path')
-    async def _on_properties_changed(self, interface, changed, invalidated, path):
+    def _on_properties_changed(self, interface, changed, invalidated, path):
         interface = dbus_utils.convert_from_dbussy(interface)
         changed = dbus_utils.convert_from_dbussy(changed)
         invalidated = dbus_utils.convert_from_dbussy(invalidated)
-        await self.on_properties_changed(interface, changed, invalidated, path)
+        self.on_properties_changed(interface, changed, invalidated, path)
 
 def get_managed_objects():
     return dbus_utils.call_method(BUS_NAME, '/', dbussy.DBUSX.INTERFACE_OBJECT_MANAGER, 'GetManagedObjects')

@@ -444,7 +444,7 @@ class Bluez_Listener(dbus_bluez.Listener):
         super().__init__()
 
     @log.log_function()
-    async def on_interfaces_added(self, path, interfaces):
+    def on_interfaces_added(self, path, interfaces):
         if dbus_bluez.INTERFACE_ADAPTER in interfaces:
             self.parent.dbusBluezAdapter = path
             self.parent.init_adapter()
@@ -455,14 +455,14 @@ class Bluez_Listener(dbus_bluez.Listener):
             self.parent.menu_connections()
 
     @log.log_function()
-    async def on_interfaces_removed(self, path, interfaces):
+    def on_interfaces_removed(self, path, interfaces):
         if dbus_bluez.INTERFACE_ADAPTER in interfaces:
             self.parent.dbusBluezAdapter = None
         if self.parent.visible and not hasattr(self.parent, 'discovery_thread'):
             self.parent.menu_connections()
 
     @log.log_function()
-    async def on_properties_changed(self, interface, changed, invalidated, path):
+    def on_properties_changed(self, interface, changed, invalidated, path):
         if self.parent.visible:
             properties = [
                 'Paired',
