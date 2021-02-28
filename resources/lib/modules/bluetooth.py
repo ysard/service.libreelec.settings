@@ -50,8 +50,9 @@ class bluetooth(modules.Module):
     @log.log_function()
     def start_service(self):
         self.bluez_agent = Bluez_Agent(self)
-        self.obex_agent = dbus_obex.Agent()
+        self.obex_agent = Obex_Agent(self)
         self.bluez_listener = Bluez_Listener(self)
+        self.obex_listener = Obex_Listener(self)
         self.find_adapter()
 
     @log.log_function()
@@ -627,6 +628,57 @@ class Bluez_Listener(dbus_bluez.Listener):
                 self.parent.menu_connections()
 
 ####################################################################
+## Obex Listener class
+####################################################################
+
+class Obex_Listener(dbus_obex.Listener):
+
+    @log.log_function()
+    def __init__(self, parent):
+        self.parent = parent
+        super().__init__()
+
+    # unused for now
+    # @log.log_function()
+    # def TransferChanged(self, path, interface, dummy):
+    #     if 'Status' in interface:
+    #         if interface['Status'] == 'active':
+    #             self.parent.download_start = time.time()
+    #             self.parent.download = xbmcgui.DialogProgress()
+    #             self.parent.download.create('Bluetooth Filetransfer', f'{oe._(32181)}: {self.parent.download_file}')
+    #         else:
+    #             if hasattr(self.parent, 'download'):
+    #                 self.parent.download.close()
+    #                 del self.parent.download
+    #                 del self.parent.download_path
+    #                 del self.parent.download_size
+    #                 del self.parent.download_start
+    #             if interface['Status'] == 'complete':
+    #                 xbmcDialog = xbmcgui.Dialog()
+    #                 answer = xbmcDialog.yesno('Bluetooth Filetransfer', oe._(32383))
+    #                 if answer == 1:
+    #                     fil = f'{oe.DOWNLOAD_DIR}/{self.parent.download_file}'
+    #                     if 'image' in self.parent.download_type:
+    #                         xbmc.executebuiltin(f'showpicture({fil})')
+    #                     else:
+    #                         xbmc.Player().play(fil)
+    #                 del self.parent.download_type
+    #                 del self.parent.download_file
+    #     if hasattr(self.parent, 'download'):
+    #         if 'Transferred' in interface:
+    #             transferred = int(interface['Transferred'] / 1024)
+    #             speed = transferred / (time.time() - self.parent.download_start)
+    #             percent = int(round(100 / self.parent.download_size * (interface['Transferred'] / 1024), 0))
+    #             message = f'{oe._(32181)}: {self.parent.download_file}\n{oe._(32382)}: {speed} KB/s'
+    #             self.parent.download.update(percent, message)
+    #         if self.parent.download.iscanceled():
+    #             obj = LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', self.parent.download_path)
+    #             itf = dbus.Interface(obj, 'org.bluez.obex.Transfer1')
+    #             itf.Cancel()
+    #             obj = None
+    #             itf = None
+
+####################################################################
 ## Bluetooth Agent class
 ####################################################################
 
@@ -704,15 +756,19 @@ class Bluez_Agent(dbus_bluez.Agent):
 
 class Obex_Agent(dbus_obex.Agent):
 
-    def authorize_push(self, path):
-        transfer = dbus.Interface(LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', path), 'org.freedesktop.DBus.Properties')
-        properties = transfer.GetAll('org.bluez.obex.Transfer1')
+    @log.log_function(log.INFO)
+    def __init__(self, parent):
+        self.parent = parent
+        super().__init__()
+
+    def authorize_push(self, transfer):
         xbmcDialog = xbmcgui.Dialog()
+        properties = self.transfer_get_all_properties(transfer)
         answer = xbmcDialog.yesno('Bluetooth', f"{oe._(32381)}\n\n{properties['Name']}")
         oe.dbg_log('bluetooth::obexAgent::AuthorizePush::answer=', repr(answer), oe.LOGDEBUG)
         if answer != 1:
             self.reject('Not Authorized')
-        self.parent.download_path = path
+        self.parent.download_path = transfer
         self.parent.download_file = properties['Name']
         self.parent.download_size = properties['Size'] / 1024
         if 'Type' in properties:
