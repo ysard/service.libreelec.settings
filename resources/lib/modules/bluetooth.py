@@ -3,8 +3,6 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
-import dbus
-import dbus.service
 import dbus_bluez
 import dbus_obex
 import hostname
@@ -18,8 +16,6 @@ import time
 import xbmc
 import xbmcgui
 from dbussy import DBusError
-
-LEGACY_SYSTEM_BUS = dbus.SystemBus()
 
 class bluetooth(modules.Module):
 
@@ -433,152 +429,6 @@ class bluetooth(modules.Module):
                 for device in devices.split(','):
                     if dbus_bluez.device_get_connected(device):
                         self.disconnect_device_by_path(device)
-
-    # ###################################################################
-    # # Bluetooth monitor and agent subclass
-    # ###################################################################
-
-    class monitor:
-
-        @log.log_function()
-        def __init__(self, oeMain, parent):
-            self.signal_receivers = []
-            self.NameOwnerWatch = None
-            self.ObexNameOwnerWatch = None
-            self.btAgentPath = '/LibreELEC/bt_agent'
-            self.obAgentPath = '/LibreELEC/ob_agent'
-            self.parent = parent
-
-        @log.log_function()
-        def add_signal_receivers(self):
-            self.signal_receivers.append(LEGACY_SYSTEM_BUS.add_signal_receiver(self.InterfacesAdded, bus_name='org.bluez',
-                                         dbus_interface='org.freedesktop.DBus.ObjectManager', signal_name='InterfacesAdded'))
-            self.signal_receivers.append(LEGACY_SYSTEM_BUS.add_signal_receiver(self.InterfacesRemoved, bus_name='org.bluez',
-                                         dbus_interface='org.freedesktop.DBus.ObjectManager', signal_name='InterfacesRemoved'))
-            self.signal_receivers.append(LEGACY_SYSTEM_BUS.add_signal_receiver(self.AdapterChanged,
-                                         dbus_interface='org.freedesktop.DBus.Properties', signal_name='PropertiesChanged',
-                                         arg0='org.bluez.Adapter1', path_keyword='path'))
-            self.signal_receivers.append(LEGACY_SYSTEM_BUS.add_signal_receiver(self.PropertiesChanged,
-                                         dbus_interface='org.freedesktop.DBus.Properties', signal_name='PropertiesChanged',
-                                         arg0='org.bluez.Device1', path_keyword='path'))
-            self.signal_receivers.append(LEGACY_SYSTEM_BUS.add_signal_receiver(self.TransferChanged,
-                                         dbus_interface='org.freedesktop.DBus.Properties', arg0='org.bluez.obex.Transfer1'))
-            self.NameOwnerWatch = LEGACY_SYSTEM_BUS.watch_name_owner('org.bluez', self.bluezNameOwnerChanged)
-            self.ObexNameOwnerWatch = LEGACY_SYSTEM_BUS.watch_name_owner('org.bluez.obex', self.bluezObexNameOwnerChanged)
-
-        @log.log_function()
-        def remove_signal_receivers(self):
-            for signal_receiver in self.signal_receivers:
-                signal_receiver.remove()
-                signal_receiver = None
-
-            # Remove will cause xbmc freeze
-            # bluez bug ?
-            # does this work now ? 2014-01-19 / LUFI
-
-            self.ObexNameOwnerWatch.cancel()
-            self.ObexNameOwnerWatch = None
-            self.NameOwnerWatch.cancel()
-            self.NameOwnerWatch = None
-            if hasattr(self, 'obAgent'):
-                self.remove_obex_agent()
-            if hasattr(self, 'btAgent'):
-                self.remove_agent()
-
-        @log.log_function()
-        def bluezNameOwnerChanged(self, proxy):
-            if proxy:
-                self.initialize_agent()
-            else:
-                self.remove_agent()
-
-        @log.log_function()
-        def bluezObexNameOwnerChanged(self, proxy):
-            if proxy:
-                self.initialize_obex_agent()
-            else:
-                self.remove_obex_agent()
-
-        @log.log_function()
-        def InterfacesAdded(self, path, interfaces):
-            if 'org.bluez.Adapter1' in interfaces:
-                self.parent.dbusBluezAdapter = path
-                self.parent.init_adapter()
-            if hasattr(self.parent, 'pinkey_window'):
-                if path == self.parent.pinkey_window.device:
-                    self.parent.close_pinkey_window()
-            if self.parent.visible:
-                self.parent.menu_connections()
-
-        @log.log_function()
-        def InterfacesRemoved(self, path, interfaces):
-            if 'org.bluez.Adapter1' in interfaces:
-                self.parent.dbusBluezAdapter = None
-            if self.parent.visible and not hasattr(self.parent, 'discovery_thread'):
-                self.parent.menu_connections()
-
-        @log.log_function()
-        def AdapterChanged(self, interface, changed, invalidated, path):
-            pass
-
-        @log.log_function()
-        def PropertiesChanged(self, interface, changed, invalidated, path):
-            if self.parent.visible:
-                properties = [
-                    'Paired',
-                    'Adapter',
-                    'Connected',
-                    'Address',
-                    'Class',
-                    'Trusted',
-                    'Icon',
-                    ]
-                if path in self.parent.listItems:
-                    for prop in changed:
-                        if prop in properties:
-                            self.parent.listItems[path].setProperty(str(prop), str(changed[prop]))
-                else:
-                    self.parent.menu_connections()
-
-        @log.log_function()
-        def TransferChanged(self, path, interface, dummy):
-            if 'Status' in interface:
-                if interface['Status'] == 'active':
-                    self.parent.download_start = time.time()
-                    self.parent.download = xbmcgui.DialogProgress()
-                    self.parent.download.create('Bluetooth Filetransfer', f'{oe._(32181)}: {self.parent.download_file}')
-                else:
-                    if hasattr(self.parent, 'download'):
-                        self.parent.download.close()
-                        del self.parent.download
-                        del self.parent.download_path
-                        del self.parent.download_size
-                        del self.parent.download_start
-                    if interface['Status'] == 'complete':
-                        xbmcDialog = xbmcgui.Dialog()
-                        answer = xbmcDialog.yesno('Bluetooth Filetransfer', oe._(32383))
-                        if answer == 1:
-                            fil = f'{oe.DOWNLOAD_DIR}/{self.parent.download_file}'
-                            if 'image' in self.parent.download_type:
-                                xbmc.executebuiltin(f'showpicture({fil})')
-                            else:
-                                xbmc.Player().play(fil)
-                        del self.parent.download_type
-                        del self.parent.download_file
-            if hasattr(self.parent, 'download'):
-                if 'Transferred' in interface:
-                    transferred = int(interface['Transferred'] / 1024)
-                    speed = transferred / (time.time() - self.parent.download_start)
-                    percent = int(round(100 / self.parent.download_size * (interface['Transferred'] / 1024), 0))
-                    message = f'{oe._(32181)}: {self.parent.download_file}\n{oe._(32382)}: {speed} KB/s'
-                    self.parent.download.update(percent, message)
-                if self.parent.download.iscanceled():
-                    obj = LEGACY_SYSTEM_BUS.get_object('org.bluez.obex', self.parent.download_path)
-                    itf = dbus.Interface(obj, 'org.bluez.obex.Transfer1')
-                    itf.Cancel()
-                    obj = None
-                    itf = None
-
 
 ####################################################################
 ## Bluez Listener class
