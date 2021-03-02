@@ -3,6 +3,7 @@
 import pprint
 import sys
 import traceback
+import os
 
 DEBUG = 0
 INFO = 1
@@ -17,7 +18,10 @@ _HEADER = 'SETTINGS: '
 
 try:
     import xbmc
+    _NO_DEBUG_ENV = os.environ.get('DEBUG', 'no') == 'no'
     def _log(message, level=_DEFAULT):
+        if level == DEBUG and _NO_DEBUG_ENV:
+            return
         xbmc.log(message, level)
 except ModuleNotFoundError:
     def _log(message, level=_DEFAULT):
