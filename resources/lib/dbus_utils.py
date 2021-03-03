@@ -20,7 +20,7 @@ class Agent(object):
             self.register_agent()
         self.watch_name()
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def watch_name(self):
         BUS.listen_signal(
             interface=dbussy.DBUS.SERVICE_DBUS,
@@ -34,7 +34,7 @@ class Agent(object):
         if name == self.bus_name and new_owner != '':
             self.register_agent()
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def register_agent(self):
         BUS.request_name(
             self.bus_name, flags=dbussy.DBUS.NAME_FLAG_DO_NOT_QUEUE)
@@ -62,17 +62,17 @@ class LoopThread(threading.Thread):
         self.loop = loop
         self.is_stopped = False
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     async def wait(self):
         while not self.is_stopped:
             await asyncio.sleep(1)
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def run(self):
         self.loop.run_until_complete(self.wait())
         self.loop.close()
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def stop(self):
         self.is_stopped = True
         self.join()
