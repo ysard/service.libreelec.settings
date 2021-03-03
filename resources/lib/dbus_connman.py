@@ -21,7 +21,7 @@ PATH_AGENT = '/kodi/agent/connman'
 @ravel.interface(ravel.INTERFACE.SERVER, name=INTERFACE_AGENT)
 class Agent(dbus_utils.Agent):
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def __init__(self):
         super().__init__(BUS_NAME, PATH_AGENT)
 

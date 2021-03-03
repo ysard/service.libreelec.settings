@@ -537,12 +537,12 @@ class Obex_Listener(dbus_obex.Listener):
 
 class Bluez_Agent(dbus_bluez.Agent):
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def __init__(self, parent):
         self.parent = parent
         super().__init__()
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def authorize_service(self, device, uuid):
         xbmcDialog = xbmcgui.Dialog()
         answer = xbmcDialog.yesno('Bluetooth', f'Authorize service {uuid}?')
@@ -551,27 +551,27 @@ class Bluez_Agent(dbus_bluez.Agent):
         else:
             self.reject('Connection rejected!')
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def request_pincode(self, device):
         xbmcKeyboard = xbmc.Keyboard('', 'Enter PIN code')
         xbmcKeyboard.doModal()
         pincode = xbmcKeyboard.getText()
         return pincode
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def request_passkey(self, device):
         xbmcDialog = xbmcgui.Dialog()
         passkey = int(xbmcDialog.numeric(0, 'Enter passkey (number in 0-999999)', '0'))
         return passkey
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def display_passkey(self, device, passkey, entered):
         if not hasattr(self.parent, 'pinkey_window'):
             self.parent.open_pinkey_window()
             self.parent.pinkey_window.device = device
             self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def display_pincode(self, device, pincode):
         if hasattr(self.parent, 'pinkey_window'):
             self.parent.close_pinkey_window()
@@ -579,7 +579,7 @@ class Bluez_Agent(dbus_bluez.Agent):
         self.parent.pinkey_window.device = device
         self.parent.pinkey_window.set_label1(f'PIN code: {pincode}')
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def request_confirmation(self, device, passkey):
         xbmcDialog = xbmcgui.Dialog()
         answer = xbmcDialog.yesno('Bluetooth', f'Confirm passkey {passkey}')
@@ -588,7 +588,7 @@ class Bluez_Agent(dbus_bluez.Agent):
         else:
             self.reject('Passkey does not match')
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def RequestAuthorization(self, device):
         xbmcDialog = xbmcgui.Dialog()
         answer = xbmcDialog.yesno('Bluetooth', 'Accept pairing?')
@@ -597,7 +597,7 @@ class Bluez_Agent(dbus_bluez.Agent):
         else:
             self.reject('Pairing rejected')
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def Cancel(self):
         if hasattr(self.parent, 'pinkey_window'):
             self.parent.close_pinkey_window()
@@ -609,7 +609,7 @@ class Bluez_Agent(dbus_bluez.Agent):
 
 class Obex_Agent(dbus_obex.Agent):
 
-    @log.log_function(log.INFO)
+    @log.log_function()
     def __init__(self, parent):
         self.parent = parent
         super().__init__()
