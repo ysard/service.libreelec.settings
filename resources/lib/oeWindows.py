@@ -19,7 +19,6 @@ __scriptid__ = 'service.libreelec.settings'
 __addon__ = xbmcaddon.Addon(id=__scriptid__)
 __cwd__ = __addon__.getAddonInfo('path')
 
-lang_str = ""
 lang_new = ""
 strModule = ""
 prevModule = ""
@@ -492,7 +491,6 @@ class wizard(xbmcgui.WindowXMLDialog):
             oe.dbg_log('oeWindows.wizard::onInit()', f'ERROR: ({repr(e)})')
 
     def wizard_set_language(self):
-        global lang_str
         global lang_new
         try:
             oe.dbg_log('oeWindows::wizard_set_language', 'enter_function', oe.LOGDEBUG)
@@ -513,7 +511,6 @@ class wizard(xbmcgui.WindowXMLDialog):
                     oe.write_setting("system", "language", "")
                 else:
                     oe.write_setting("system", "language", str(lang_new))
-                lang_str = 'SetGUILanguage(' + str(lang_new) + ')'
                 self.getControl(self.wizWinTitle).setLabel(oe._(32300))
                 self.set_wizard_title(oe._(32301))
                 self.set_wizard_text(oe._(32302))
@@ -689,14 +686,15 @@ class wizard(xbmcgui.WindowXMLDialog):
                             break
                 if self.is_last_wizard == True:
                     xbmc.executebuiltin('UpdateAddonRepos')
-                    langAddon = f"InstallAddon({lang_new})"
-                    xbmc.executebuiltin(langAddon)
+                    if lang_new and xbmc.getCondVisibility(f'System.HasAddon({lang_new})') == False:
+                        xbmc.executebuiltin(f'InstallAddon({lang_new})')
                     oe.xbmcm.waitForAbort(0.5)
                     xbmc.executebuiltin('SendClick(10100,11)')
                     oe.write_setting('libreelec', 'wizard_completed', 'True')
                     self.visible = False
                     self.close()
-                    xbmc.executebuiltin(lang_str)
+                    if lang_new:
+                        xbmc.executebuiltin(f'SetGUILanguage({str(lang_new)})')
             oe.dbg_log(f'wizard::onClick({str(controlID)})', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
             oe.dbg_log('oeWindows.wizard::onClick()', f'ERROR: ({repr(e)})')
