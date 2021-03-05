@@ -141,7 +141,7 @@ class mainWindow(xbmcgui.WindowXMLDialog):
                                 dictProperties['InfoText'] = oe._(setting['InfoText'])
                             if 'validate' in setting:
                                 dictProperties['validate'] = setting['validate']
-                            if 'values' in setting:
+                            if 'values' in setting and setting['values'] is not None:
                                 dictProperties['values'] = '|'.join(setting['values'])
                             if isinstance(setting['name'], str):
                                 name = setting['name']
