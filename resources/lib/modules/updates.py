@@ -446,7 +446,11 @@ class updates(modules.Module):
                     if oe.ARCHITECTURE in self.update_json[channel]['project']:
                         for i in sorted(self.update_json[channel]['project'][oe.ARCHITECTURE]['releases'], key=int, reverse=True):
                             if shortname is None:
-                                update_files.append(regex.findall(self.update_json[channel]['project'][oe.ARCHITECTURE]['releases'][i]['file']['name'])[0].strip('.tar'))
+                                matches = regex.findall(self.update_json[channel]['project'][oe.ARCHITECTURE]['releases'][i]['file']['name'])
+                                if matches:
+                                    update_files.append(matches[0].strip('.tar'))
+                                else:
+                                    update_files.append(self.update_json[channel]['project'][oe.ARCHITECTURE]['releases'][i]['file']['name'].strip('.tar'))
                             else:
                                 build = self.update_json[channel]['project'][oe.ARCHITECTURE]['releases'][i]['file']['name']
                                 if shortname in build:
