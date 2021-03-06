@@ -455,6 +455,8 @@ class system(modules.Module):
                 for directory in self.BACKUP_DIRS:
                     self.tar_add_folder(tar, directory)
                 tar.close()
+                self.backup_dlg.update(100, oe._(32401))
+                os.sync()
         finally:
             self.backup_dlg.close()
             self.backup_dlg = None
