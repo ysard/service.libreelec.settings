@@ -1173,4 +1173,4 @@ msgstr "Tiempo de inactividad"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
-msgstr ""
+msgstr "Escribiendo a Discos..."
