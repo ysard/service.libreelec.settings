@@ -663,6 +663,9 @@ class wizard(xbmcgui.WindowXMLDialog):
                 self.set_wizard_list_title('')
                 self.set_wizard_button_title('')
 
+                if strModule == 'connman':
+                    xbmc.executebuiltin('UpdateAddonRepos')
+
                 for module in sorted(oe.dictModules, key=lambda x: list(oe.dictModules[x].menu.keys())):
                     strModule = module
                     if hasattr(oe.dictModules[strModule], 'do_wizard') and oe.dictModules[strModule].ENABLED:
@@ -685,7 +688,6 @@ class wizard(xbmcgui.WindowXMLDialog):
                             self.is_last_wizard = False
                             break
                 if self.is_last_wizard == True:
-                    xbmc.executebuiltin('UpdateAddonRepos')
                     if lang_new and xbmc.getCondVisibility(f'System.HasAddon({lang_new})') == False:
                         xbmc.executebuiltin(f'InstallAddon({lang_new})')
                     oe.xbmcm.waitForAbort(0.5)
