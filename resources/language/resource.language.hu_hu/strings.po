@@ -1170,3 +1170,7 @@ msgstr "Nyilvános"
 msgctxt "#32400"
 msgid "Idle Timeout"
 msgstr "Tétlenségi Időtúllépés"
+
+msgctxt "#32401"
+msgid "Syncing Disks..."
+msgstr ""

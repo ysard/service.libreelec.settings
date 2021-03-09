@@ -44,6 +44,10 @@ class system(modules.Module):
         super().__init__()
         self.keyboard_layouts = False
         self.nox_keyboard_layouts = False
+        self.backup_dlg = None
+        self.backup_file = None
+        self.total_backup_size = 0
+        self.done_backup_size = 0
         self.arrVariants = {}
         self.struct = {
             'ident': {
@@ -446,15 +450,16 @@ class system(modules.Module):
                 self.backup_dlg.create('LibreELEC', oe._(32375))
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
-                self.backup_file = oe.timestamp() + '.tar'
+                self.backup_file = f'{oe.timestamp()}.tar'
                 tar = tarfile.open(bckDir + self.backup_file, 'w')
                 for directory in self.BACKUP_DIRS:
                     self.tar_add_folder(tar, directory)
                 tar.close()
-                self.backup_dlg.close()
-                del self.backup_dlg
+                self.backup_dlg.update(100, oe._(32401))
+                os.sync()
         finally:
             self.backup_dlg.close()
+            self.backup_dlg = None
 
     @log.log_function()
     def do_restore(self, listItem=None):
@@ -548,8 +553,9 @@ class system(modules.Module):
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
                         self.backup_dlg.update(int(progress), f'{folder}\n{item}')
-        finally:
+        except:
             self.backup_dlg.close()
+            raise
 
     @log.log_function()
     def get_folder_size(self, folder):

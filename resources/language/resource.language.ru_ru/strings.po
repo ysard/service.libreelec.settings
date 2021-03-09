@@ -1170,3 +1170,7 @@ msgstr "Общественные"
 msgctxt "#32400"
 msgid "Idle Timeout"
 msgstr "Таймаут неактивности"
+
+msgctxt "#32401"
+msgid "Syncing Disks..."
+msgstr ""
