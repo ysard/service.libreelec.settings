@@ -171,7 +171,7 @@ class system(modules.Module):
                     'xbmc_reset': {
                         'name': 32324,
                         'value': '0',
-                        'action': 'reset_xbmc',
+                        'action': 'reset_soft',
                         'type': 'button',
                         'InfoText': 724,
                         'order': 1,
@@ -179,7 +179,7 @@ class system(modules.Module):
                     'oe_reset': {
                         'name': 32325,
                         'value': '0',
-                        'action': 'reset_oe',
+                        'action': 'reset_hard',
                         'type': 'button',
                         'InfoText': 725,
                         'order': 2,
@@ -394,7 +394,7 @@ class system(modules.Module):
         oe.execute(f'{self.SET_CLOCK_CMD} 2>/dev/null')
 
     @log.log_function()
-    def reset_xbmc(self, listItem=None):
+    def reset_soft(self, listItem=None):
         if self.ask_sure_reset('Soft') == 1:
             open(self.XBMC_RESET_FILE, 'a').close()
             oe.winOeMain.close()
@@ -402,7 +402,7 @@ class system(modules.Module):
             subprocess.call(['/usr/bin/systemctl', '--no-block', 'reboot'], close_fds=True)
 
     @log.log_function()
-    def reset_oe(self, listItem=None):
+    def reset_hard(self, listItem=None):
         if self.ask_sure_reset('Hard') == 1:
             open(self.LIBREELEC_RESET_FILE, 'a').close()
             oe.winOeMain.close()
