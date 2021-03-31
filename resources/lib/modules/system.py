@@ -452,7 +452,7 @@ class system(modules.Module):
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
                 self.backup_file = f'{oe.timestamp()}.tar'
-                tar = tarfile.open(bckDir + self.backup_file, 'w')
+                tar = tarfile.open(bckDir + self.backup_file, 'w', format=tarfile.GNU_FORMAT)
                 for directory in self.BACKUP_DIRS:
                     self.tar_add_folder(tar, directory)
                 tar.close()
