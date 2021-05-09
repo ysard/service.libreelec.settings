@@ -65,9 +65,12 @@ CANCEL = (
 ########################## initialize module ##################################
 ## set default encoding
 
-encoding = locale.getpreferredencoding(do_setlocale=True)
-imp.reload(sys)
-# sys.setdefaultencoding(encoding)
+try:
+    encoding = locale.getpreferredencoding(do_setlocale=True)
+    imp.reload(sys)
+    # sys.setdefaultencoding(encoding)
+except Exception as e:
+    xbmc.log(f'## LibreELEC Addon ## oe:encoding: ERROR: ({repr(e)})', LOGERROR)
 
 ## load oeSettings modules
 
