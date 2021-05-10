@@ -94,8 +94,6 @@ updates = {
 
 about = {'ENABLED': True}
 
-xdbus = {'ENABLED': True}
-
 _services = {
     'sshd': ['sshd.service'],
     'avahi': ['avahi-daemon.service'],
