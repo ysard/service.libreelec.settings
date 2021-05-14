@@ -8,12 +8,10 @@ import modules
 import oe
 import os
 import re
-import glob
 import time
 import json
 import xbmc
 import xbmcgui
-import tarfile
 import oeWindows
 import threading
 import subprocess
@@ -406,7 +404,7 @@ class updates(modules.Module):
         if url is None:
             url = self.UPDATE_DOWNLOAD_URL % ('releases', 'releases.json')
         if url.split('/')[-1] != 'releases.json':
-            url = url + '/releases.json'
+            url = f'{url}/releases.json'
         data = oe.load_url(url)
         if not data is None:
             update_json = json.loads(data)
@@ -420,7 +418,7 @@ class updates(modules.Module):
         if self.struct['update']['settings']['ShowCustomChannels']['value'] == '1':
             custom_urls = []
             for i in 1,2,3:
-                custom_urls.append(self.struct['update']['settings']['CustomChannel' + str(i)]['value'])
+                custom_urls.append(self.struct['update']['settings'][f'CustomChannel{str(i)}']['value'])
             for custom_url in custom_urls:
                 if custom_url != '':
                     custom_update_json = self.get_json(custom_url)
@@ -429,7 +427,7 @@ class updates(modules.Module):
                             update_json[channel] = custom_update_json[channel]
                     elif notify_error:
                         ok_window = xbmcgui.Dialog()
-                        answer = ok_window.ok(oe._(32191), f'Custom URL is not valid, or currently inaccessible.\n\n{custom_url}')
+                        answer = ok_window.ok(oe._(32191), f'Custom URL is invalid, or currently inaccessible.\n\n{custom_url}')
                         if not answer:
                             return
         return update_json
@@ -502,7 +500,7 @@ class updates(modules.Module):
                 if self.struct['update']['settings']['UpdateNotify']['value'] == '1':
                     oe.notify(oe._(32363), oe._(32366))
                 shutil.move(oe.TEMP + 'update_file', self.LOCAL_UPDATE_DIR + self.update_file)
-                subprocess.call('sync', shell=True, stdin=None, stdout=None, stderr=None)
+                os.sync()
                 if silent == False:
                     oe.winOeMain.close()
                     oe.xbmcm.waitForAbort(1)
