@@ -696,7 +696,14 @@ class wizard(xbmcgui.WindowXMLDialog):
                     self.visible = False
                     self.close()
                     if lang_new:
-                        xbmc.executebuiltin(f'SetGUILanguage({str(lang_new)})')
+                        for _ in range(20):
+                            if xbmc.getCondVisibility(f'System.HasAddon({lang_new})'):
+                                break
+                            oe.xbmcm.waitForAbort(0.5)
+                        if xbmc.getCondVisibility(f'System.HasAddon({lang_new})') == True:
+                            xbmc.executebuiltin(f'SetGUILanguage({str(lang_new)})')
+                        else:
+                            oe.dbg_log(f'wizard::onClick({str(controlID)})', f"ERROR: Unable to switch language to: {lang_new}. Language addon is not installed.")
             oe.dbg_log(f'wizard::onClick({str(controlID)})', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
             oe.dbg_log('oeWindows.wizard::onClick()', f'ERROR: ({repr(e)})')
