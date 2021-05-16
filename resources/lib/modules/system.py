@@ -426,6 +426,7 @@ class system(modules.Module):
             try:
                 for directory in self.BACKUP_DIRS:
                     self.get_folder_size(directory)
+                log.log(f'Uncompressed backup size: {total_backup_size}', log.DEBUG)
             except:
                 pass
             bckDir = xbmcDialog.browse( 0,
@@ -435,23 +436,27 @@ class system(modules.Module):
                                         False,
                                         False,
                                         self.BACKUP_DESTINATION )
+            log.log(f'Directory for backup: {bckDir}', log.INFO)
 
             if bckDir and os.path.exists(bckDir):
                 # free space check
                 try:
                     folder_stat = os.statvfs(bckDir)
                     free_space = folder_stat.f_frsize * folder_stat.f_bavail
+                    log.log(f'Available free space for backup: {free_space}', log.DEBUG)
                     if self.total_backup_size > free_space:
                         txt = oe.split_dialog_text(oe._(32379))
                         answer = xbmcDialog.ok('Backup', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
                         return 0
                 except:
+                    log.log('Unable to determine free space available for backup.', log.DEBUG)
                     pass
                 self.backup_dlg = xbmcgui.DialogProgress()
                 self.backup_dlg.create('LibreELEC', oe._(32375))
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
                 self.backup_file = f'{oe.timestamp()}.tar'
+                log.log(f'Backup file: {bckDir + self.backup_file}', log.INFO)
                 tar = tarfile.open(bckDir + self.backup_file, 'w', format=tarfile.GNU_FORMAT)
                 for directory in self.BACKUP_DIRS:
                     self.tar_add_folder(tar, directory)
@@ -552,6 +557,7 @@ class system(modules.Module):
                         self.tar_add_folder(tar, itempath)
                 else:
                     self.done_backup_size += os.path.getsize(itempath)
+                    log.log(f'Adding to backup: {itempath}', log.DEBUG)
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
