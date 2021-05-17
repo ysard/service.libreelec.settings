@@ -464,7 +464,11 @@ class system(modules.Module):
                 self.backup_dlg.update(100, oe._(32401))
                 os.sync()
         finally:
-            self.backup_dlg.close()
+            # possibly already closed by tar_add_folder if an error occurred
+            try:
+                self.backup_dlg.close()
+            except:
+                pass
             self.backup_dlg = None
 
     @log.log_function()
@@ -567,6 +571,7 @@ class system(modules.Module):
                         self.backup_dlg.update(int(progress), f'{folder}\n{item}')
         except:
             self.backup_dlg.close()
+            self.backup_dlg = xbmcDialog.ok('Backup', 'Backup incomplete; an error occurred. See log for details.')
             raise
 
     @log.log_function()
