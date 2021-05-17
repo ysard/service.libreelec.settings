@@ -480,9 +480,10 @@ class system(modules.Module):
             # Do nothing if the dialog is cancelled - path will be the backup destination
             if not os.path.isfile(restore_file_path):
                 return
+            log.log(f'Restore file: {restore_file_path}', log.INFO)
             restore_file_name = restore_file_path.split('/')[-1]
             if os.path.exists(self.RESTORE_DIR):
-                oe.execute('rm -rf %s' % self.RESTORE_DIR)
+                oe.execute(f'rm -rf {self.RESTORE_DIR}')
             os.makedirs(self.RESTORE_DIR)
             folder_stat = os.statvfs(self.RESTORE_DIR)
             file_size = os.path.getsize(restore_file_path)
@@ -492,7 +493,9 @@ class system(modules.Module):
                     os.remove(self.RESTORE_DIR + restore_file_name)
                 if oe.copy_file(restore_file_path, self.RESTORE_DIR + restore_file_name) != None:
                     copy_success = 1
+                    log.log('Restore file successfully copied.', log.INFO)
                 else:
+                    log.log(f'Failed to copy restore file to: {self.RESTORE_DIR}', log.ERROR)
                     oe.execute(f'rm -rf {self.RESTORE_DIR}')
             else:
                 txt = oe.split_dialog_text(oe._(32379))
