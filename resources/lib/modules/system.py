@@ -571,7 +571,7 @@ class system(modules.Module):
                         self.backup_dlg.update(int(progress), f'{folder}\n{item}')
         except:
             self.backup_dlg.close()
-            self.backup_dlg = xbmcDialog.ok('Backup', 'Backup incomplete; an error occurred. See log for details.')
+            self.backup_dlg = xbmcDialog.ok(oe._(32371), oe._(32402))
             raise
 
     @log.log_function()

@@ -1174,3 +1174,7 @@ msgstr "Таймаут неактивности"
 msgctxt "#32401"
 msgid "Syncing Disks..."
 msgstr ""
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
