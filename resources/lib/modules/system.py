@@ -568,7 +568,7 @@ class system(modules.Module):
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), f'{folder}\n{item}')
+                        self.backup_dlg.update(int(progress), f'{folder}')
         except:
             self.backup_dlg.close()
             self.backup_dlg = xbmcDialog.ok(oe._(32371), oe._(32402))
