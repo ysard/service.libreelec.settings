@@ -50,3 +50,6 @@ def log_function(level=_DEFAULT):
                 _log(traceback.format_exc(), ERROR)
         return _log_function_2
     return _log_function_1
+
+def utf8ify(pstr):
+    return pstr.encode('utf-8', 'replace').decode('utf-8')
