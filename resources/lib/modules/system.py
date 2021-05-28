@@ -460,8 +460,16 @@ class system(modules.Module):
                 tar = tarfile.open(bckDir + self.backup_file, 'w', format=tarfile.GNU_FORMAT)
                 for directory in self.BACKUP_DIRS:
                     self.tar_add_folder(tar, directory)
+                    if self.backup_dlg is None or self.backup_dlg.iscanceled():
+                        break
                 tar.close()
-                self.backup_dlg.update(100, oe._(32401))
+                if self.backup_dlg is None or self.backup_dlg.iscanceled():
+                    try:
+                        os.remove(self.BACKUP_DESTINATION + self.backup_file)
+                    except:
+                        pass
+                else:
+                    self.backup_dlg.update(100, oe._(32401))
                 os.sync()
         finally:
             # possibly already closed by tar_add_folder if an error occurred
@@ -541,15 +549,12 @@ class system(modules.Module):
     @log.log_function()
     def tar_add_folder(self, tar, folder):
         try:
+            print_folder = log.utf8ify(folder)
             for item in os.listdir(folder):
                 if item == self.backup_file:
                     continue
                 if self.backup_dlg.iscanceled():
-                    try:
-                        os.remove(self.BACKUP_DESTINATION + self.backup_file)
-                    except:
-                        pass
-                    return 0
+                    return
                 itempath = os.path.join(folder, item)
                 if itempath in self.BACKUP_FILTER:
                     continue
@@ -562,16 +567,19 @@ class system(modules.Module):
                         tar.add(itempath)
                     else:
                         self.tar_add_folder(tar, itempath)
+                        if self.backup_dlg is None:
+                            return
                 else:
                     self.done_backup_size += os.path.getsize(itempath)
-                    log.log(f'Adding to backup: {itempath}', log.DEBUG)
+                    log.log(f'Adding to backup: {log.utf8ify(itempath)}', log.DEBUG)
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), f'{folder}')
+                        self.backup_dlg.update(int(progress), f'{print_folder}\n{log.utf8ify(item)}')
         except:
             self.backup_dlg.close()
-            self.backup_dlg = xbmcDialog.ok(oe._(32371), oe._(32402))
+            self.backup_dlg = None
+            xbmcDialog.ok(oe._(32371), oe._(32402))
             raise
 
     @log.log_function()
