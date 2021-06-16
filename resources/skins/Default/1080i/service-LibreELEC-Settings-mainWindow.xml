@@ -716,7 +716,7 @@
                     <height>602</height>
                     <info />
                     <align>center</align>
-                    <visible>String.IsEqual(Container(1000).ListItem.Property(listTyp), 1300) + String.IsEqual(Container(1300).NumItems, 0)</visible>
+                    <visible>String.IsEqual(Container(1000).ListItem.Property(listTyp), 1300) + String.IsEqual(Window.Property(show_bt_label), true)</visible>
                 </control>
                 <control type="list" id="1300">
                     <left>22</left>
