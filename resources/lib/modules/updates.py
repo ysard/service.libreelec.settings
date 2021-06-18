@@ -352,7 +352,17 @@ class updates(modules.Module):
         b_builder = b_items[0]
 
         if (a_builder == b_builder):
-          return (float(b_items[1]) - float(a_items[1]))
+          try:
+            a_float = float(a_items[1])
+          except:
+            oe.dbg_log('updates::custom_sort_train', f"invalid channel name: '{a}'", oe.LOGWARNING)
+            a_float = 0
+          try:
+            b_float = float(b_items[1])
+          except:
+            oe.dbg_log('updates::custom_sort_train', f"invalid channel name: '{b}'", oe.LOGWARNING)
+            b_float = 0
+          return (b_float - a_float)
         elif (a_builder < b_builder):
           return -1
         elif (a_builder > b_builder):
