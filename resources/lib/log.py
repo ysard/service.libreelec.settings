@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2020-present Team LibreELEC
+import inspect
+import os
 import pprint
 import sys
-import traceback
-import os
+from functools import wraps
+
+from debug_utils import get_exception_message, format_stack_trace, inspect_object
 
 DEBUG = 0
 INFO = 1
@@ -32,9 +35,30 @@ def log(message, level=_DEFAULT):
     _log(f'{_HEADER}{sys._getframe().f_back.f_code.co_name} # {message}', level)
 
 
+def log_stack_trace(message='', level=_DEFAULT):
+    """
+    Log extended stack trace from the point of execution to the starting frame
+
+    The stack trace includes code fragments (if available) and local variables for each frame.
+    """
+    message = _HEADER + message
+    frame_stack = list(reversed(inspect.stack(5)))[:-1]
+    stack_trace_string = format_stack_trace(frame_stack)
+    if message:
+        message += '\n' + stack_trace_string
+    _log(_HEADER + message, level)
+
+
+def log_object_state(obj, level=_DEFAULT):
+    """Log all object attributes"""
+    object_info_string = inspect_object(obj)
+    _log(_HEADER + object_info_string, level)
+
+
 def log_function(level=_DEFAULT):
     def _log_function_1(function):
         header = f'{_HEADER}{function.__qualname__} '
+        @wraps(function)
         def _log_function_2(*args, **kwargs):
             try:
                 _log(f'{header}-', level)
@@ -47,9 +71,17 @@ def log_function(level=_DEFAULT):
                 return result
             except Exception as e:
                 _log(f'{header}# {repr(e)}', ERROR)
-                _log(traceback.format_exc(), ERROR)
+                outer_stack = list(reversed(inspect.stack(5)))[:-1]
+                exception_message = get_exception_message(e, outer_stack)
+                _log(header + exception_message, ERROR)
+                if 'self' in inspect.getfullargspec(function).args and args:
+                    obj = args[0]
+                    object_state = inspect_object(obj)
+                    _log(header + object_state, ERROR)
+                e.__traceback__ = None
         return _log_function_2
     return _log_function_1
+
 
 def utf8ify(pstr):
     return pstr.encode('utf-8', 'replace').decode('utf-8')
