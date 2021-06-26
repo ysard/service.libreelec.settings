@@ -5,6 +5,7 @@
 
 import threading
 import time
+import weakref
 
 import xbmc
 import xbmcgui
@@ -32,6 +33,38 @@ class bluetooth(modules.Module):
     OBEX_DAEMON = None
     BLUETOOTH_DAEMON = None
     D_OBEXD_ROOT = None
+
+    # type 1=int, 2=string, 3=array, 4=bool
+    properties = {
+        0: {
+            'type': 4,
+            'value': 'Paired',
+        },
+        1: {
+            'type': 2,
+            'value': 'Adapter',
+        },
+        2: {
+            'type': 4,
+            'value': 'Connected',
+        },
+        3: {
+            'type': 2,
+            'value': 'Address',
+        },
+        5: {
+            'type': 1,
+            'value': 'Class',
+        },
+        6: {
+            'type': 4,
+            'value': 'Trusted',
+        },
+        7: {
+            'type': 2,
+            'value': 'Icon',
+        },
+    }
 
     @log.log_function()
     def __init__(self, oeMain):
@@ -143,7 +176,7 @@ class bluetooth(modules.Module):
     @log.log_function()
     def enable_device_standby(self, listItem=None):
         devices = oe.read_setting('bluetooth', 'standby')
-        if not devices == None:
+        if devices is not None:
             devices = devices.split(',')
         else:
             devices = []
@@ -154,7 +187,7 @@ class bluetooth(modules.Module):
     @log.log_function()
     def disable_device_standby(self, listItem=None):
         devices = oe.read_setting('bluetooth', 'standby')
-        if not devices == None:
+        if devices is not None:
             devices = devices.split(',')
         else:
             devices = []
@@ -238,10 +271,20 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def menu_connections(self, focusItem=None):
+        self.discover_devices()
+        if not hasattr(self, 'discovery_thread') or self.discovery_thread.stopped:
+            if hasattr(self, 'discovery_thread') and self.discovery_thread.stopped:
+                del self.discovery_thread
+            self.start_discovery()
+            self.discovery_thread = discoveryThread(self)
+            self.discovery_thread.start()
+
+    @log.log_function()
+    def discover_devices(self):
         if not hasattr(oe, 'winOeMain'):
-            return 0
+            return
         if not oe.winOeMain.visible:
-            return 0
+            return
         if not dbus_bluez.system_has_bluez():
             self.found_devices = frozenset()
             oe.winOeMain.getControl(1301).setLabel(oe._(32346))
@@ -266,49 +309,6 @@ class bluetooth(modules.Module):
             oe.winOeMain.setProperty('show_bt_label', 'true')
             oe.dbg_log('bluetooth::menu_connections', 'exit_function (No Adapter Powered)', oe.LOGDEBUG)
             return
-        if not hasattr(self, 'discovery_thread'):
-            self.start_discovery()
-            self.discovery_thread = discoveryThread(oe)
-            self.discovery_thread.start()
-        else:
-            if self.discovery_thread.stopped:
-                del self.discovery_thread
-                self.start_discovery()
-                self.discovery_thread = discoveryThread(oe)
-                self.discovery_thread.start()
-
-        # type 1=int, 2=string, 3=array, 4=bool
-
-        properties = {
-            0: {
-                'type': 4,
-                'value': 'Paired',
-                },
-            1: {
-                'type': 2,
-                'value': 'Adapter',
-                },
-            2: {
-                'type': 4,
-                'value': 'Connected',
-                },
-            3: {
-                'type': 2,
-                'value': 'Address',
-                },
-            5: {
-                'type': 1,
-                'value': 'Class',
-                },
-            6: {
-                'type': 4,
-                'value': 'Trusted',
-                },
-            7: {
-                'type': 2,
-                'value': 'Icon',
-                },
-            }
 
         rebuildList = False
         self.dbusDevices = self.get_devices()
@@ -325,32 +325,32 @@ class bluetooth(modules.Module):
             self.found_devices = frozenset()
             oe.winOeMain.getControl(1301).setLabel(oe._(32339))
             oe.winOeMain.setProperty('show_bt_label', 'true')
-        for dbusDevice in self.dbusDevices:
+        for dbusDevice, device_properties in self.dbusDevices.items():
             dictProperties = {}
             apName = ''
             dictProperties['entry'] = dbusDevice
             dictProperties['modul'] = self.__class__.__name__
             dictProperties['action'] = 'open_context_menu'
-            if 'Name' in self.dbusDevices[dbusDevice]:
-                apName = self.dbusDevices[dbusDevice]['Name']
-            if not 'Icon' in self.dbusDevices[dbusDevice]:
+            if 'Name' in device_properties:
+                apName = device_properties['Name']
+            if not 'Icon' in device_properties:
                 dictProperties['Icon'] = 'default'
-            for prop in properties:
-                name = properties[prop]['value']
-                if name in self.dbusDevices[dbusDevice]:
-                    value = self.dbusDevices[dbusDevice][name]
+            for prop in self.properties:
+                name = self.properties[prop]['value']
+                if name in device_properties:
+                    value = device_properties[name]
                     if name == 'Connected':
                         if value:
                             dictProperties['ConnectedState'] = oe._(32334)
                         else:
                             dictProperties['ConnectedState'] = oe._(32335)
-                    if properties[prop]['type'] == 1:
+                    if self.properties[prop]['type'] == 1:
                         value = str(int(value))
-                    if properties[prop]['type'] == 2:
+                    if self.properties[prop]['type'] == 2:
                         value = str(value)
-                    if properties[prop]['type'] == 3:
+                    if self.properties[prop]['type'] == 3:
                         value = str(len(value))
-                    if properties[prop]['type'] == 4:
+                    if self.properties[prop]['type'] == 4:
                         value = str(int(value))
                     dictProperties[name] = value
             if rebuildList:
@@ -382,7 +382,7 @@ class bluetooth(modules.Module):
                 'action': 'disconnect_device',
                 }
             devices = oe.read_setting('bluetooth', 'standby')
-            if not devices == None:
+            if devices is not None:
                 devices = devices.split(',')
             else:
                 devices = []
@@ -461,7 +461,7 @@ class Bluez_Listener(dbus_bluez.Listener):
 
     @log.log_function()
     def __init__(self, parent):
-        self.parent = parent
+        self.parent = weakref.proxy(parent)
         super().__init__()
 
     @log.log_function()
@@ -473,14 +473,14 @@ class Bluez_Listener(dbus_bluez.Listener):
             if path == self.parent.pinkey_window.device:
                 self.parent.close_pinkey_window()
         if self.parent.visible:
-            self.parent.menu_connections()
+            self.parent.discover_devices()
 
     @log.log_function()
     def on_interfaces_removed(self, path, interfaces):
         if dbus_bluez.INTERFACE_ADAPTER in interfaces:
             self.parent.dbusBluezAdapter = None
         if self.parent.visible and not hasattr(self.parent, 'discovery_thread'):
-            self.parent.menu_connections()
+            self.parent.discover_devices()
 
     @log.log_function()
     def on_properties_changed(self, interface, changed, invalidated, path):
@@ -499,7 +499,7 @@ class Bluez_Listener(dbus_bluez.Listener):
                     if prop in properties:
                         self.parent.listItems[path].setProperty(str(prop), str(changed[prop]))
             else:
-                self.parent.menu_connections()
+                self.parent.discover_devices()
 
 
 ####################################################################
@@ -510,7 +510,7 @@ class Obex_Listener(dbus_obex.Listener):
 
     @log.log_function()
     def __init__(self, parent):
-        self.parent = parent
+        self.parent = weakref.proxy(parent)
         super().__init__()
 
     # unused for now
@@ -562,7 +562,7 @@ class Bluez_Agent(dbus_bluez.Agent):
 
     @log.log_function()
     def __init__(self, parent):
-        self.parent = parent
+        self.parent = weakref.proxy(parent)
         super().__init__()
 
     @log.log_function()
@@ -592,7 +592,7 @@ class Bluez_Agent(dbus_bluez.Agent):
         if not hasattr(self.parent, 'pinkey_window'):
             self.parent.open_pinkey_window()
             self.parent.pinkey_window.device = device
-            self.parent.pinkey_window.set_label1('Passkey: %06u' % (passkey))
+            self.parent.pinkey_window.set_label1('Passkey: %06u' % passkey)
 
     @log.log_function()
     def display_pincode(self, device, pincode):
@@ -634,7 +634,7 @@ class Obex_Agent(dbus_obex.Agent):
 
     @log.log_function()
     def __init__(self, parent):
-        self.parent = parent
+        self.parent = weakref.proxy(parent)
         super().__init__()
 
     def authorize_push(self, transfer):
@@ -656,8 +656,9 @@ class Obex_Agent(dbus_obex.Agent):
 
 class discoveryThread(threading.Thread):
 
-    def __init__(self, oeMain):
-        threading.Thread.__init__(self)
+    def __init__(self, parent):
+        super().__init__()
+        self.parent = weakref.proxy(parent)
         self.last_run = 0
         self._stop_event = threading.Event()
         self.stopped = False
@@ -677,18 +678,18 @@ class discoveryThread(threading.Thread):
     @log.log_function()
     def stop(self):
         self.stopped = True
-        oe.dictModules['bluetooth'].stop_discovery()
+        self.parent.stop_discovery()
 
     @log.log_function()
     def run(self):
         self._stop_event.clear()
         while not self.stopped and not oe.xbmcm.abortRequested():
             current_time = time.time()
-            if current_time > self.last_run + 5:
-                if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth' or not hasattr(oe.dictModules['bluetooth'], 'discovery_thread'):
-                    oe.dictModules['bluetooth'].menu_connections()
+            if (self.main_menu.getSelectedItem().getProperty('modul') == 'bluetooth'
+                    and current_time > self.last_run + 5):
+                self.parent.discover_devices()
                 self.last_run = current_time
-            if self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth':
+            elif self.main_menu.getSelectedItem().getProperty('modul') != 'bluetooth':
                 self.stop()
             oe.xbmcm.waitForAbort(1)
 
@@ -697,13 +698,13 @@ class pinkeyTimer(threading.Thread):
 
     @log.log_function()
     def __init__(self, parent, runtime=60):
-        self.parent = parent
+        self.parent = weakref.proxy(parent)
         self.start_time = time.time()
         self.last_run = time.time()
         self._stop_event = threading.Event()
         self.stopped = False
         self.runtime = runtime
-        threading.Thread.__init__(self)
+        super().__init__()
 
     @property
     def stopped(self):
