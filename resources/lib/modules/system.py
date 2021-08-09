@@ -33,6 +33,7 @@ class system(modules.Module):
     BACKUP_DESTINATION = None
     RESTORE_DIR = None
     SET_CLOCK_CMD = None
+    JOURNALD_CONFIG_FILE = None
     menu = {'1': {
         'name': 32002,
         'menuLoader': 'load_menu',
@@ -208,7 +209,49 @@ class system(modules.Module):
                         },
                     },
                 },
-            }
+            'journal': {
+                'order': 10,
+                'name': 32410,
+                'settings': {
+                    'journal_persistent': {
+                        'order': 1,
+                        'name': 32411,
+                        'value': '0',
+                        'action': 'do_journald',
+                        'type': 'bool',
+                        'InfoText': 32412,
+                    },
+                    'journal_size': {
+                        'order': 2,
+                        'name': 32413,
+                        'value': '30 MiB',
+                        'action': 'do_journald',
+                        'type': 'multivalue',
+                        'values': [
+                            '30 MiB', '60 MiB', '100 MiB',
+                            '150 MiB', '200 MiB', '300 MiB'
+                        ],
+                        'InfoText': 32414,
+                        'parent': {
+                            'entry': 'journal_persistent',
+                            'value': ['1'],
+                        },
+                    },
+                    'journal_rate_limit': {
+                        'order': 2,
+                        'name': 32415,
+                        'value': '1',
+                        'action': 'do_journald',
+                        'type': 'bool',
+                        'InfoText': 32416,
+                        'parent': {
+                            'entry': 'journal_persistent',
+                            'value': ['1'],
+                        },
+                    },
+                },
+            },
+        }
 
     @log.log_function()
     def start_service(self):
@@ -265,9 +308,19 @@ class system(modules.Module):
         # PIN Lock
         self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if oe.PIN.isEnabled() else '0'
 
+        # Journal
+        self.get_setting('journal', 'journal_persistent')
+        self.get_setting('journal', 'journal_size')
+        self.get_setting('journal', 'journal_rate_limit')
+
     @log.log_function()
     def load_menu(self, focusItem):
         oe.winOeMain.build_menu(self.struct)
+
+    def get_setting(self, group, setting, allowEmpty=False):
+        value = oe.read_setting('system', setting)
+        if not value is None and not (allowEmpty == False and value is ''):
+            self.struct[group]['settings'][setting]['value'] = value
 
     @log.log_function()
     def set_value(self, listItem):
@@ -621,6 +674,30 @@ class system(modules.Module):
         if oe.PIN.isSet() == False:
             self.struct['pinlock']['settings']['pinlock_enable']['value'] = '0'
             oe.PIN.disable()
+
+    @log.log_function()
+    def do_journald(self, listItem=None):
+        if not listItem == None:
+            self.set_value(listItem)
+            if self.struct['journal']['settings']['journal_persistent']['value'] == '0':
+                try:
+                    os.remove(self.JOURNALD_CONFIG_FILE)
+                except:
+                    pass
+            else:
+                config_file = open(self.JOURNALD_CONFIG_FILE, 'w')
+                config_file.write("# SPDX-License-Identifier: GPL-2.0-or-later\n" +
+                                  "# Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)\n\n" +
+                                  "# This file is generated automatically, don't modify.\n\n" +
+                                  "[Journal]\n")
+
+                size = self.struct['journal']['settings']['journal_size']['value'].replace(' MiB', 'M')
+                config_file.write(f"SystemMaxUse={size}\n" +
+                                  "MaxRetentionSec=0\n")
+                if self.struct['journal']['settings']['journal_rate_limit']['value'] == '1':
+                    config_file.write("RateLimitInterval=0\n" +
+                                      "RateLimitBurst=0\n")
+                config_file.close()
 
     @log.log_function()
     def do_wizard(self):
