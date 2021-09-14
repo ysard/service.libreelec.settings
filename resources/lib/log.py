@@ -85,3 +85,6 @@ def log_function(level=_DEFAULT):
 
 def utf8ify(pstr):
     return pstr.encode('utf-8', 'replace').decode('utf-8')
+
+def asciify(pstr):
+    return pstr.encode('ascii', 'replace').decode('utf-8')

@@ -602,7 +602,7 @@ class system(modules.Module):
     @log.log_function()
     def tar_add_folder(self, tar, folder):
         try:
-            print_folder = log.utf8ify(folder)
+            print_folder = log.asciify(folder)
             for item in os.listdir(folder):
                 if item == self.backup_file:
                     continue
@@ -624,11 +624,11 @@ class system(modules.Module):
                             return
                 else:
                     self.done_backup_size += os.path.getsize(itempath)
-                    log.log(f'Adding to backup: {log.utf8ify(itempath)}', log.DEBUG)
+                    log.log(f'Adding to backup: {log.asciify(itempath)}', log.DEBUG)
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), f'{print_folder}\n{log.utf8ify(item)}')
+                        self.backup_dlg.update(int(progress), f'{print_folder}\n{log.asciify(item)}')
         except:
             self.backup_dlg.close()
             self.backup_dlg = None
