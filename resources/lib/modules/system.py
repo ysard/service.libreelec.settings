@@ -319,7 +319,7 @@ class system(modules.Module):
 
     def get_setting(self, group, setting, allowEmpty=False):
         value = oe.read_setting('system', setting)
-        if not value is None and not (allowEmpty == False and value is ''):
+        if not value is None and not (allowEmpty == False and value == ''):
             self.struct[group]['settings'][setting]['value'] = value
 
     @log.log_function()
