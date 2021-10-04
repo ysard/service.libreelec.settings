@@ -9,6 +9,14 @@
   <extension point="xbmc.python.script" library="default.py"></extension>
   <extension point="xbmc.service"       library="service.py"></extension>
   <extension point="xbmc.addon.metadata">
+    <platform>all</platform>
+    <assets>
+      <icon>resources/skins/Default/media/icon.png</icon>
+      <fanart>resources/skins/Default/media/fanart.png</fanart>
+    </assets>
+    <news>
+      https://github.com/LibreELEC/service.libreelec.settings/commits
+    </news>
     <summary lang="af">@DISTRONAME@ Konfigurasie</summary>
     <summary lang="bg">Настройки на @DISTRONAME@</summary>
     <summary lang="ca">Configuració de @DISTRONAME@</summary>
@@ -82,13 +90,5 @@
     <description lang="tr">Bu eklentiyi kullanarak @DISTRONAME@ sisteminizin temelindeki işletim sistemini yönetin. Buradan tüm sistemi yönetebilirsiniz ve bu yüzden sistemin altında neler olduğu hakkında endişelenmenize gerek yok.[CR][CR]Buradan ağ bağlantısı, klavye düzeni ve dilini değiştirip, Samba ve SSH gibi uzaktan erişimi etkinleştirip/devre dışı bırakabilirsiniz.</description>
     <description lang="vi">Sử dụng addon này để quản lý  hệ thống điều hành @DISTRONAME@ cơ bản của bạn.&#10;Từ đây bạn có thể quản lý toàn bộ hệ thống, do đó bạn không cần phải lo lắng về những gì đang chạy . [CR][CR] Từ đây bạn có thể thay đổi kết nối mạng của bạn, bố trí bàn phím của bạn và ngôn ngữ và cho phép / vô hiệu hóa truy cập từ xa bao gồm Samba và SSH.</description>
     <description lang="zh">使用此插件管理你的 @DISTRONAME@ 系统的底层操作系统。它使你可以在无需深入了解的情况下管理整个系统。[CR][CR]在这里，你可以修改网络设置、键盘布局、语言以及启用/禁用 Samba 和 SSH 等远程访问功能。</description>
-    <platform>all</platform>
-    <assets>
-      <icon>resources/skins/Default/media/icon.png</icon>
-      <fanart>resources/skins/Default/media/fanart.png</fanart>
-    </assets>
-    <news>
-      https://github.com/LibreELEC/service.libreelec.settings/commits
-    </news>
   </extension>
 </addon>
