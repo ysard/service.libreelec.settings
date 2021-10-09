@@ -944,6 +944,7 @@ class connman(modules.Module):
 
     @log.log_function()
     def stop_service(self):
+        self.agent.unregister_agent()
         if hasattr(self, 'dbusConnmanManager'):
             self.dbusConnmanManager = None
             del self.dbusConnmanManager

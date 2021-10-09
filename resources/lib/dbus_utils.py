@@ -42,7 +42,15 @@ class Agent(object):
             path=self.path_agent, interface=self, fallback=True)
         self.manager_register_agent()
 
+    @log.log_function()
+    def unregister_agent(self):
+        BUS.unregister(path=self.path_agent)
+        self.manager_unregister_agent()
+
     def manager_register_agent(self):
+        pass
+
+    def manager_unregister_agent(self):
         pass
 
 
