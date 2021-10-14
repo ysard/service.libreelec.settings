@@ -29,6 +29,11 @@ class Agent(dbus_utils.Agent):
         dbus_utils.call_method(
             BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
 
+    def manager_unregister_agent(self):
+        dbus_utils.call_method(
+            BUS_NAME, '/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT
+        )
+
     @ravel.method(
         in_signature='',
         out_signature=''

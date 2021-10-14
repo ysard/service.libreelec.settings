@@ -90,6 +90,7 @@ class bluetooth(modules.Module):
 
     @log.log_function()
     def stop_service(self):
+        self.bluez_agent.unregister_agent()
         if hasattr(self, 'discovery_thread'):
             try:
                 self.discovery_thread.stop()

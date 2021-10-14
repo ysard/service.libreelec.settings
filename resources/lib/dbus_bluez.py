@@ -25,6 +25,10 @@ class Agent(dbus_utils.Agent):
         dbus_utils.call_method(BUS_NAME, PATH_BLUEZ, INTERFACE_AGENT_MANAGER,
                                'RegisterAgent', PATH_AGENT, 'KeyboardDisplay')
 
+    def manager_unregister_agent(self):
+        dbus_utils.call_method(BUS_NAME, PATH_BLUEZ, INTERFACE_AGENT_MANAGER,
+                               'UnregisterAgent', PATH_AGENT)
+
     @ravel.method(
         in_signature='os',
         out_signature='',
