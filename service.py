@@ -3,6 +3,7 @@
 # Copyright (C) 2013 Lutz Fiebach (lufie@openelec.tv)
 # Copyright (C) 2019-present Team LibreELEC (https://libreelec.tv)
 
+import gc
 import syspath
 import dbus_utils
 import oe
@@ -104,6 +105,10 @@ class Monitor(xbmc.Monitor):
         oe.stop_service()
         service_thread.stop()
         dbus_utils.LOOP_THREAD.stop()
+        # Fix crash on shutdown
+        # See https://github.com/LibreELEC/LibreELEC.tv/issues/5645
+        del dbus_utils.BUS
+        gc.collect()
 
 
 if __name__ == '__main__':
