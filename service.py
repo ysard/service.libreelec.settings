@@ -105,8 +105,7 @@ class Monitor(xbmc.Monitor):
         oe.stop_service()
         service_thread.stop()
         dbus_utils.LOOP_THREAD.stop()
-        # Fix crash on shutdown
-        # See https://github.com/LibreELEC/LibreELEC.tv/issues/5645
+        # call garbage collection to workaround a crash on shutdown
         del dbus_utils.BUS
         gc.collect()
 
