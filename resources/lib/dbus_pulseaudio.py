@@ -52,6 +52,6 @@ def call_method(bus_name, path, interface, method_name, *args, **kwargs):
 try:
     conn = dbussy.Connection.open('unix:path=/var/run/pulse/dbus-socket', private=False)
     conn.bus_unique_name = 'PulseAudio'
-    BUS = ravel.Connection(conn)
+    BUS = ravel.Connection(conn, False)
 except Exception as e:
     pass
