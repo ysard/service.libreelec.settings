@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 # Copyright (C) 2020-present Team LibreELEC
 
+import traceback
+import log
 import dbus_utils
 import dbussy
 import ravel
@@ -54,4 +56,5 @@ try:
     conn.bus_unique_name = 'PulseAudio'
     BUS = ravel.Connection(conn, False)
 except Exception as e:
-    pass
+    log.log('pulseaudio module; init fail: ' + str(e), log.ERROR)
+    log.log(traceback.format_exc(), log.ERROR)
