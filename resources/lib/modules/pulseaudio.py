@@ -143,11 +143,10 @@ class pulseaudio(modules.Module):
 
         rebuildList = 0
         self.dbusDevices = self.get_sinks()
-        for dbusDevice in self.dbusDevices:
+        if self.dbusDevices:
             rebuildList = 1
             oe.winOeMain.getControl(int(oe.listObject['palist'])).reset()
             self.clear_list()
-            break
 
         fallbackSink = dbus_pulseaudio.core_get_property('FallbackSink')
 
@@ -177,7 +176,7 @@ class pulseaudio(modules.Module):
                     sinkName = bytearray(self.dbusDevices[dbusDevice]['PropertyList']['device.description']).decode().strip('\x00')
 
             # fallback to the ugly name
-            if sinkName == '':
+            if not sinkName:
                 sinkName = self.dbusDevices[dbusDevice]['Name']
 
             for prop in properties:
@@ -196,7 +195,7 @@ class pulseaudio(modules.Module):
             if rebuildList == 1:
                 self.listItems[dbusDevice] = oe.winOeMain.addConfigItem(sinkName, dictProperties, oe.listObject['palist'])
             else:
-                if self.listItems[dbusDevice] != None:
+                if self.listItems[dbusDevice] is not None:
                     self.listItems[dbusDevice].setLabel(sinkName)
                     for dictProperty in dictProperties:
                         self.listItems[dbusDevice].setProperty(dictProperty, dictProperties[dictProperty])
@@ -206,7 +205,7 @@ class pulseaudio(modules.Module):
         values = {}
         if listItem is None:
             listItem = oe.winOeMain.getControl(oe.listObject['palist']).getSelectedItem()
-        if listItem.getProperty('ActiveProfileName') != '':
+        if listItem.getProperty('ActiveProfileName'):
             values[1] = {
                 'text': oe._(32505),
                 'action': 'change_profile',
@@ -218,9 +217,9 @@ class pulseaudio(modules.Module):
                 }
         items = []
         actions = []
-        for key in list(values.keys()):
-            items.append(values[key]['text'])
-            actions.append(values[key]['action'])
+        for key, value in values.items():
+            items.append(value['text'])
+            actions.append(value['action'])
         select_window = xbmcgui.Dialog()
         title = oe._(32012)
         result = select_window.select(title, items)
