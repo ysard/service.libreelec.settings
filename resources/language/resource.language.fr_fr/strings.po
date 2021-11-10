@@ -1225,3 +1225,39 @@ msgstr ""
 msgctxt "#32416"
 msgid "Reboot to apply changes."
 msgstr ""
+
+msgctxt "#32500"
+msgid "Pulseaudio"
+msgstr "Pulseaudio"
+
+msgctxt "#32501"
+msgid "Configure pulseaudio devices"
+msgstr "Configurer les périphériques Pulseaudio"
+
+msgctxt "#32502"
+msgid "Select Profile"
+msgstr "Sélectionner un profil"
+
+msgctxt "#32503"
+msgid "Pulseaudio is disabled"
+msgstr "Pulseaudio est désactivé"
+
+msgctxt "#32504"
+msgid "No Pulseaudio device found."
+msgstr "Aucun périphérique Pulseaudio trouvé"
+
+msgctxt "#32505"
+msgid "Change Profile"
+msgstr "Changer le profil"
+
+msgctxt "#32506"
+msgid "Driver"
+msgstr "Pilote"
+
+msgctxt "#32507"
+msgid "Current Profile"
+msgstr "Profil actuel"
+
+msgctxt "#32508"
+msgid "Set as Default"
+msgstr "Définir en tant que profil par défaut"
