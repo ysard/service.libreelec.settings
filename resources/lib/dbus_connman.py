@@ -166,7 +166,7 @@ def service_remove(path):
 
 
 def service_set_autoconnect(path, autoconnect):
-    autoconnect = True if autoconnect == True else False
+    autoconnect = True if autoconnect == '1' else False
     return service_set_property(path, 'AutoConnect', (dbussy.DBUS.Signature('b'), autoconnect))
 
 
