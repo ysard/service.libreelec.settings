@@ -2,13 +2,26 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# Dag Wieers <dag@wieers.com>, 2019
+# Erik Stevens <erikstevens79137@gmail.com>, 2018
+# Koos van Klojum, 2018-2020
+# Koos van Klojum, 2021
+# Leon Gijse <lgijse@gmail.com>, 2016
+# Namerp, 2018
+# TRaSH <forums1971+transifex@gmail.com>, 2016,2018
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-10-05 08:46+0000\n"
+"Last-Translator: Christian Gade <gade@kodi.tv>\n"
+"Language-Team: Dutch <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/nl_nl/>\n"
+"Language: nl_nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl_NL\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -140,7 +153,7 @@ msgstr "Verstuur opstartconfiguratiebestanden vanuit /flash, kodi_crash.logs, ke
 
 msgctxt "#720"
 msgid "Set to ON to enable the Bluetooth service"
-msgstr ""
+msgstr "Zet AAN om de Bluetooth-service in te schakelen"
 
 msgctxt "#722"
 msgid ""
@@ -366,7 +379,7 @@ msgstr "Interface"
 
 msgctxt "#32005"
 msgid "Updates"
-msgstr "Updates"
+msgstr ""
 
 msgctxt "#32009"
 msgid "Keyboard"
@@ -936,7 +949,7 @@ msgid ""
 " @DISTRONAME@ as much as we've enjoyed building it. If you need any more "
 "help, you can find links to our support forum along with latest news at our "
 "website."
-msgstr "Jouw @DISTRONAME@-installatie is nu afgerond en je kunt  nu binnen Kodi je mediabibliotheken opzetten. Heb je hierbij hulp nodig, dan is er uitleg beschikbaar op wiki.kodi.tv[CR][CR]@DISTRONAME@ wordt ontwikkeld door een toegewijd team van programmeurs, die hier alleen in hun vrije tijd aan werken. Zelfs bij een vrijwilligersproject moeten we voor ons internetgebruik en ontwikkelingskosten betalen, dus als je @DISTRONAME@ nuttig vindt, dan zullen we altijd een donatie van welk bedrag dan ook zeer op prijs stellen.[CR][CR]Tot slot hopen we dat je @DISTRONAME@ net zo zult waarderen als dat wij doen bij het maken en verbeteren ervan. Als je hulp nodig hebt, dan kun je links naar ons supportforum alsook het laatste nieuws op onze website vinden."
+msgstr "Jouw @DISTRONAME@-installatie is nu afgerond en je kunt nu binnen Kodi je mediabibliotheken opzetten. Heb je hierbij hulp nodig, dan is er uitleg beschikbaar op wiki.kodi.tv[CR][CR]@DISTRONAME@ wordt ontwikkeld door een toegewijd team van programmeurs, die hier alleen in hun vrije tijd aan werken. Zelfs bij een vrijwilligersproject moeten we voor ons internetgebruik en ontwikkelingskosten betalen, dus als je @DISTRONAME@ nuttig vindt, dan zullen we altijd een donatie van welk bedrag dan ook zeer op prijs stellen.[CR][CR]Tot slot hopen we dat je @DISTRONAME@ net zo zult waarderen als dat wij doen bij het maken en verbeteren ervan. Als je hulp nodig hebt, dan kun je links naar ons supportforum alsook het laatste nieuws op onze website vinden."
 
 msgctxt "#32319"
 msgid "Cron"
@@ -1173,4 +1186,38 @@ msgstr "Idle Timeout"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
-msgstr ""
+msgstr "Schijven worden gesynced...."
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr "Backup is niet compleet. Een fout is opgetreden. Bekijk het Kodi-logbestand voor details."
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr "Log aanmaken"
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr "Gebruik blijvende logbestanden"
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr "Gebruik blijvende journaal- en logbestanden in plaats van tijdelijke bestanden. Herstart de machine om de wijzigingen door te voeren."
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr "Journaalgrootte"
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr "Stel de maximum grootte van het journaal in. Herstart om wijzigingen door te voeren."
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr "Uitschakelen journald rate limit"
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
+msgstr "Herstart om wijzigingen door te voeren."

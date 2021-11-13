@@ -2,13 +2,24 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# David Vukovic <davu@kodi.tv>, 2019
+# Dongkai Xie, 2018
+# Meano Lee <meanocat@gmail.com>, 2021
+# Namerp, 2018
+# Yan Zhu <tianmotrue@163.com>, 2018
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-10-18 04:30+0000\n"
+"Last-Translator: taxigps <taxigps@sina.com>\n"
+"Language-Team: Chinese (China) <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/zh_cn/>\n"
+"Language: zh_cn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -36,15 +47,15 @@ msgstr "地址"
 
 msgctxt "#606"
 msgid "Distribution: "
-msgstr "分配："
+msgstr "分配： "
 
 msgctxt "#607"
 msgid "Version: "
-msgstr "版本："
+msgstr "版本： "
 
 msgctxt "#608"
 msgid "Architecture: "
-msgstr "硬件结构："
+msgstr "硬件结构： "
 
 msgctxt "#609"
 msgid ""
@@ -140,7 +151,7 @@ msgstr "将启动配置文件从/flash，kodi_crash.log，内核日志和Samba�
 
 msgctxt "#720"
 msgid "Set to ON to enable the Bluetooth service"
-msgstr ""
+msgstr "设为开以使能蓝牙服务"
 
 msgctxt "#722"
 msgid ""
@@ -257,18 +268,18 @@ msgstr "为SSH设定密码"
 
 msgctxt "#747"
 msgid "Enable a PIN for @DISTRONAME@ Settings access"
-msgstr ""
+msgstr "使能访问 @DISTRONAME@ 设置的 PIN 码"
 
 msgctxt "#748"
 msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
-msgstr ""
+msgstr "修改访问 @DISTRONAME@ 设置的 PIN 码"
 
 msgctxt "#749"
 msgid ""
 "Overrride the Wireless Regulatory Domain so radio properties (channels and "
 "transmit power) comply with local laws or match the country configuration of"
 " your router."
-msgstr ""
+msgstr "覆盖无线监管领域，使无线电属性（频道和发射功率）符合当地法律或与路由器的国家/地区配置相匹配。"
 
 msgctxt "#750"
 msgid "750"
@@ -350,7 +361,7 @@ msgid ""
 "Set the idle timeout (in minutes) before devices will be disconnected "
 "(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
 "has been activated in the LibreELEC device connection context menu."
-msgstr ""
+msgstr "在断开设备之前设置空闲超时（分钟，默认为0表示无超时）。适用于已在 LibreELEC 设备连接上下文菜单中激活“启用待机”的设备。"
 
 msgctxt "#32001"
 msgid "Services"
@@ -382,7 +393,7 @@ msgstr "选择操作"
 
 msgctxt "#32013"
 msgid "OS Updates"
-msgstr ""
+msgstr "系统更新"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -398,15 +409,15 @@ msgstr "显示自定义渠道"
 
 msgctxt "#32017"
 msgid "  - Custom Channel 1"
-msgstr "-自定义渠道 1"
+msgstr "  - 自定义渠道 1"
 
 msgctxt "#32018"
 msgid "  - Custom Channel 2"
-msgstr "-自定义渠道 2"
+msgstr "  - 自定义渠道 2"
 
 msgctxt "#32019"
 msgid "  - Custom Channel 3"
-msgstr "-自定义渠道 3"
+msgstr "  - 自定义渠道 3"
 
 msgctxt "#32020"
 msgid "Available Versions"
@@ -418,41 +429,41 @@ msgstr "提交系统统计信息"
 
 msgctxt "#32022"
 msgid "Firmware Updates"
-msgstr ""
+msgstr "固件升级"
 
 msgctxt "#32023"
 msgid "Updating will occur once the system is rebooted."
-msgstr ""
+msgstr "将在系统重启时更新。"
 
 msgctxt "#32024"
 msgid "Bootloader EEPROM"
-msgstr ""
+msgstr "EEPROM 引导加载程序"
 
 msgctxt "#32025"
 msgid ""
 "Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
 " is automatically disabled after rebooting. Reboot the system to apply the "
 "update."
-msgstr ""
+msgstr "更新树莓派 Bootloader EEPROM 到最新版本。此选项将再重启后自动禁用。重启系统以应用此更新。"
 
 msgctxt "#32026"
 msgid "VIA USB3 Firmware"
-msgstr ""
+msgstr "VIA USB3 固件"
 
 msgctxt "#32027"
 msgid ""
 "Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
 " is automatically disabled after rebooting. Reboot the system to apply the "
 "update."
-msgstr ""
+msgstr "更新树莓派 VIA USB3 固件到最新版本。此选项将再重启后自动禁用。重启系统以应用此更新。"
 
 msgctxt "#32028"
 msgid "update from %s to %s"
-msgstr ""
+msgstr "从 %s 更新到 %s"
 
 msgctxt "#32029"
 msgid "up to date: %s"
-msgstr ""
+msgstr "更新到: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -664,15 +675,15 @@ msgstr "不可用的URL"
 
 msgctxt "#32192"
 msgid "PIN lock"
-msgstr ""
+msgstr "PIN 锁"
 
 msgctxt "#32193"
 msgid "Enable @DISTRONAME@ Settings PIN Lock"
-msgstr ""
+msgstr "使能 @DISTRONAME@ 设置 PIN 锁"
 
 msgctxt "#32194"
 msgid "Change @DISTRONAME@ Settings PIN Lock"
-msgstr ""
+msgstr "修改 @DISTRONAME@ 设置 PIN 锁"
 
 msgctxt "#32196"
 msgid "About"
@@ -726,7 +737,7 @@ msgctxt "#32210"
 msgid ""
 "The default SSH password is widely known and considered "
 "insecure.[CR][CR]Setting a personal password is recommended."
-msgstr "默认的SSH密码已广为人知，因此它并不安全[CR][CR]建议为SSH设定一个自己的密码"
+msgstr "默认的 SSH 密码众所周知，因而不安全。[CR][CR]建议为 SSH 设置一个专有密码。"
 
 msgctxt "#32212"
 msgid "Cancel"
@@ -762,7 +773,7 @@ msgstr "密码太弱！"
 
 msgctxt "#32221"
 msgid "The entered password is too weak.[CR]SSH password is unchanged."
-msgstr "您输入的密码太弱[CR]SSH的密码没有更改"
+msgstr "您输入的密码太弱。[CR]SSH 密码没有更改。"
 
 msgctxt "#32222"
 msgid "Password changed!"
@@ -770,7 +781,7 @@ msgstr "密码已更改！"
 
 msgctxt "#32223"
 msgid "The SSH password has been successfully changed."
-msgstr "成功更改SSH密码"
+msgstr "成功更改 SSH 密码。"
 
 msgctxt "#32224"
 msgid "Unknown error!"
@@ -778,67 +789,67 @@ msgstr "出现未知错误！"
 
 msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
-msgstr "出现错误[CR]SSH密码尚未更改"
+msgstr "执行过程出现错误。[CR]SSH 密码未更改。"
 
 msgctxt "#32226"
 msgid "Enter new 4 digit PIN"
-msgstr ""
+msgstr "输入 4 位数 PIN 码"
 
 msgctxt "#32227"
 msgid "Re-enter PIN"
-msgstr ""
+msgstr "重新输入 PIN 码"
 
 msgctxt "#32228"
 msgid "Error - PIN codes did not match!"
-msgstr ""
+msgstr "错误 - PIN 码不匹配！"
 
 msgctxt "#32229"
 msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
-msgstr ""
+msgstr "@DISTRONAME@ 设置 PIN 锁未设定。[CR][CR]请重试。"
 
 msgctxt "#32230"
 msgid "@DISTRONAME@ Settings PIN lock set."
-msgstr ""
+msgstr "@DISTRONAME@ 设置 PIN 锁设定。"
 
 msgctxt "#32231"
 msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
-msgstr ""
+msgstr "你的 @DISTRONAME@ 设置 PIN 锁已设定为："
 
 msgctxt "#32232"
 msgid "Error - PIN code not 4 digits!"
-msgstr ""
+msgstr "错误 - PIN 码非 4 位数字！"
 
 msgctxt "#32233"
 msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
-msgstr ""
+msgstr "@DISTRONAME@ 设置已锁定[CR]输入 4 位数字 PIN"
 
 msgctxt "#32234"
 msgid "Incorrect PIN!"
-msgstr ""
+msgstr "错误的 PIN！"
 
 msgctxt "#32235"
 msgid " attempts remaining."
-msgstr ""
+msgstr " 次可尝试。"
 
 msgctxt "#32236"
 msgid ""
 "You have entered an incorrect PIN too many times.[CR][CR]You will need to "
 "wait 5 minutes before trying again."
-msgstr ""
+msgstr "输入错误 PIN 的次数太多。[CR][CR]需等待五分钟后重试。"
 
 msgctxt "#32237"
 msgid "@DISTRONAME@ Settings Locked!"
-msgstr ""
+msgstr "@DISTRONAME@ 设置已锁定！"
 
 msgctxt "#32238"
 msgid ""
 "Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
 " failed attempts."
-msgstr ""
+msgstr "可输入PIN 需等待时间：%02d:%02d[CR][CR]之前失败次数过多。"
 
 msgctxt "#32240"
 msgid "Wireless Regulatory Domain"
-msgstr ""
+msgstr "无线监管域"
 
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
@@ -882,7 +893,7 @@ msgstr "为了下载电影和电视节目的背景，横幅和缩略图，以及
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "上一个"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -894,7 +905,7 @@ msgstr "以下网络当前可用："
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "语言:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -936,7 +947,7 @@ msgid ""
 " @DISTRONAME@ as much as we've enjoyed building it. If you need any more "
 "help, you can find links to our support forum along with latest news at our "
 "website."
-msgstr ""
+msgstr "您的 @DISTRONAME@ 现已安装完成，您将进入 Kodi，可以设置媒体资料库。相关帮助，请访问 wiki.kodi.tv[CR][CR]@DISTRONAME@ 由专门的团队开发，他们纯粹在业余时间工作。作为一个志愿者项目，我们仍然需要为互联网带宽和开发资源付费。因此，如果您觉得 @DISTRONAME@ 有用，期待并感谢您捐赠支持。[CR][CR]最后，我们希望您喜欢使用 @DISTRONAME@ 就像我们喜欢创建它一样。可以通过我们网站的支持论坛获取更多帮助以及最新消息。"
 
 msgctxt "#32319"
 msgid "Cron"
@@ -980,7 +991,7 @@ msgstr "蓝牙"
 
 msgctxt "#32333"
 msgid "Connected: "
-msgstr "已连接："
+msgstr "已连接： "
 
 msgctxt "#32334"
 msgid "Yes"
@@ -1169,8 +1180,42 @@ msgstr "公共"
 
 msgctxt "#32400"
 msgid "Idle Timeout"
-msgstr ""
+msgstr "空闲超时"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
-msgstr ""
+msgstr "正在同步磁盘..."
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr "备份不完整。发生了一个错误。详细信息见 Kodi 日志。"
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr "登录中"
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr "使用持久日志"
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr "使用持久日志和日志文件，而不是默认的易失性日志和日志文件。重新启动以应用更改。"
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr "日志大小"
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr "设置持久日志文件最大值。重新启动以应用更改。"
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr "禁用日志速率限制"
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
+msgstr "重新启动以应用更改。"

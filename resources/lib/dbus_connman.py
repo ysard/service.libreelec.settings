@@ -29,6 +29,11 @@ class Agent(dbus_utils.Agent):
         dbus_utils.call_method(
             BUS_NAME, '/', INTERFACE_MANAGER, 'RegisterAgent', PATH_AGENT)
 
+    def manager_unregister_agent(self):
+        dbus_utils.call_method(
+            BUS_NAME, '/', INTERFACE_MANAGER, 'UnregisterAgent', PATH_AGENT
+        )
+
     @ravel.method(
         in_signature='',
         out_signature=''
@@ -161,7 +166,7 @@ def service_remove(path):
 
 
 def service_set_autoconnect(path, autoconnect):
-    autoconnect = True if autoconnect == True else False
+    autoconnect = True if autoconnect == '1' else False
     return service_set_property(path, 'AutoConnect', (dbussy.DBUS.Signature('b'), autoconnect))
 
 

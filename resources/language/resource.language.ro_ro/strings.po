@@ -2,8 +2,16 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# Alexandru-Razvan Olariu <olariu.alexandru@protonmail.ch>, 2020
+# Alexandru-Razvan Olariu <olariu.alexandru@protonmail.ch>, 2020-2021
+# Ciprian Constantinescu <c.ciprian@gmail.com>, 2019
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-08-09 10:14+0000\n"
+"Last-Translator: Transifex Bot <>\n"
+"Language-Team: Romanian (Romania) (http://www.transifex.com/libreelec/service_libreelec_settings/language/ro_RO/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -51,7 +59,7 @@ msgid ""
 "LibreELEC is created by a global team of Linux and Kodi enthusiasts who "
 "contribute time and effort to manage the project, write code, and provide "
 "support. We have fun making it. We hope you have fun using it!"
-msgstr ""
+msgstr "LibreELEC este creat de o echipă globala de oameni pasionați de Linux și Kodi care contribuie la managementul acestui proiect, scriu cod și oferă suport. Ne distrăm lucrând la acest proiect. Sperăm că și tu te distrezi folosindu-l!"
 
 msgctxt "#610"
 msgid ""
@@ -75,11 +83,11 @@ msgstr ""
 msgctxt "#702"
 msgid ""
 "Manage the Ethernet, Wireless and VPN connections available to the system"
-msgstr ""
+msgstr "Verifică conexiunile prin cablu, fără fir cât și cele de VPN suportate de acest sistem"
 
 msgctxt "#703"
 msgid "Configure system services like Samba, SSH, Cron, Avahi and Syslog"
-msgstr ""
+msgstr "Configurează servicii de sistem precum Samba, SSH, Cron, Avahi și Syslog"
 
 msgctxt "#704"
 msgid "Configure and pair Bluetooth devices"
@@ -93,7 +101,7 @@ msgstr ""
 
 msgctxt "#707"
 msgid "Configure updates"
-msgstr ""
+msgstr "Configurează actualizările."
 
 msgctxt "#710"
 msgid ""
@@ -140,7 +148,7 @@ msgstr ""
 
 msgctxt "#720"
 msgid "Set to ON to enable the Bluetooth service"
-msgstr ""
+msgstr "Setează pe ON pentru a activa serviciul Bluetooth"
 
 msgctxt "#722"
 msgid ""
@@ -169,7 +177,7 @@ msgstr ""
 
 msgctxt "#726"
 msgid "Enable or disable support for Wireless (WLAN) networks"
-msgstr ""
+msgstr "Permite sau blochează suportul pentru rețelele wireless (fără fir)"
 
 msgctxt "#727"
 msgid ""
@@ -180,7 +188,7 @@ msgstr ""
 
 msgctxt "#728"
 msgid "Configure the Access Point SSID"
-msgstr ""
+msgstr "Configurează SSID-ul Punctului de Acces"
 
 msgctxt "#729"
 msgid "Configure the Access Point Passphrase"
@@ -207,7 +215,7 @@ msgid ""
 "Set to ON to delay Kodi startup until the network is available. Use this if "
 "the OS is booting into Kodi before the network is up and central MySQL "
 "databases are accessible."
-msgstr ""
+msgstr "Setează pe ON pentru a întârzia startul lui Kodi până când apare o rețea de internet. Folosește această opțiune dacă sistemul de operare bootează în Kodi înainte să se conecteze la rețea și bazele de date MYSQL sunt accesibile."
 
 msgctxt "#737"
 msgid "Time in seconds to wait for an established network connection."
@@ -249,11 +257,11 @@ msgstr ""
 
 msgctxt "#745"
 msgid "Set to ON to enable the cron daemon"
-msgstr ""
+msgstr "Setează pe ON pentru a permite daemon-ul cron"
 
 msgctxt "#746"
 msgid "Set the password for SSH"
-msgstr ""
+msgstr "Setează parola pentru SSH"
 
 msgctxt "#747"
 msgid "Enable a PIN for @DISTRONAME@ Settings access"
@@ -315,11 +323,11 @@ msgstr ""
 
 msgctxt "#760"
 msgid "Select an update channel"
-msgstr ""
+msgstr "Selectează un canal pentru actualizări"
 
 msgctxt "#761"
 msgid "Enable to allow entering a custom update url"
-msgstr ""
+msgstr "Bifează pentru a permite modificarea URL-ului pentru actualizare"
 
 msgctxt "#762"
 msgid "Enter a custom update url (url should be the root of the update files)"
@@ -327,7 +335,7 @@ msgstr ""
 
 msgctxt "#770"
 msgid "Select an available version"
-msgstr ""
+msgstr "Selectează o versiune disponibilă"
 
 msgctxt "#771"
 msgid ""
@@ -366,7 +374,7 @@ msgstr "Interafață"
 
 msgctxt "#32005"
 msgid "Updates"
-msgstr ""
+msgstr "Actualizări"
 
 msgctxt "#32009"
 msgid "Keyboard"
@@ -382,7 +390,7 @@ msgstr ""
 
 msgctxt "#32013"
 msgid "OS Updates"
-msgstr ""
+msgstr "Actualizări de sistem"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -394,35 +402,35 @@ msgstr ""
 
 msgctxt "#32016"
 msgid "Show Custom Channels"
-msgstr ""
+msgstr "Afișează canale personalizate"
 
 msgctxt "#32017"
 msgid "  - Custom Channel 1"
-msgstr ""
+msgstr "- Canal personalizat 1"
 
 msgctxt "#32018"
 msgid "  - Custom Channel 2"
-msgstr ""
+msgstr "- Canal personalizat 2"
 
 msgctxt "#32019"
 msgid "  - Custom Channel 3"
-msgstr ""
+msgstr "- Canal personalizat 3"
 
 msgctxt "#32020"
 msgid "Available Versions"
-msgstr ""
+msgstr "Versiuni disponibile"
 
 msgctxt "#32021"
 msgid "Submit Statistics"
-msgstr ""
+msgstr "Trimite statistici"
 
 msgctxt "#32022"
 msgid "Firmware Updates"
-msgstr ""
+msgstr "Actualizări de firmware"
 
 msgctxt "#32023"
 msgid "Updating will occur once the system is rebooted."
-msgstr ""
+msgstr "Actualizarea se va întâmpla atunci când sistemul va fi restartat."
 
 msgctxt "#32024"
 msgid "Bootloader EEPROM"
@@ -437,7 +445,7 @@ msgstr ""
 
 msgctxt "#32026"
 msgid "VIA USB3 Firmware"
-msgstr ""
+msgstr "VIA USB3 Firmware"
 
 msgctxt "#32027"
 msgid ""
@@ -464,11 +472,11 @@ msgstr "Rețea"
 
 msgctxt "#32102"
 msgid "Wireless Networks"
-msgstr ""
+msgstr "Conexiuni fără fir"
 
 msgctxt "#32103"
 msgid "Wired Networks"
-msgstr ""
+msgstr "Conexiuni cu fir"
 
 msgctxt "#32105"
 msgid "Active"
@@ -488,7 +496,7 @@ msgstr ""
 
 msgctxt "#32109"
 msgid "Connect Automatically"
-msgstr ""
+msgstr "Conectează-te automat"
 
 msgctxt "#32110"
 msgid "Connection"
@@ -520,11 +528,11 @@ msgstr ""
 
 msgctxt "#32117"
 msgid "Prefix Length"
-msgstr ""
+msgstr "Lungimea prefixului"
 
 msgctxt "#32118"
 msgid "Privacy"
-msgstr ""
+msgstr "Confidențialitate"
 
 msgctxt "#32119"
 msgid "DNS Servers"
@@ -560,7 +568,7 @@ msgstr ""
 
 msgctxt "#32127"
 msgid "DNS Domains"
-msgstr ""
+msgstr "Domenii DNS"
 
 msgctxt "#32128"
 msgid "Domain #1"
@@ -664,7 +672,7 @@ msgstr "URL invalid"
 
 msgctxt "#32192"
 msgid "PIN lock"
-msgstr ""
+msgstr "Cod PIN"
 
 msgctxt "#32193"
 msgid "Enable @DISTRONAME@ Settings PIN Lock"
@@ -720,7 +728,7 @@ msgstr "Wlan ascuns"
 
 msgctxt "#32209"
 msgid "SSH Password"
-msgstr ""
+msgstr "Parola SSH"
 
 msgctxt "#32210"
 msgid ""
@@ -738,11 +746,11 @@ msgstr ""
 
 msgctxt "#32214"
 msgid "Set Password"
-msgstr ""
+msgstr "Setează parola"
 
 msgctxt "#32215"
 msgid "Workgroup name"
-msgstr ""
+msgstr "Numele grupului de muncă"
 
 msgctxt "#32216"
 msgid "Auto-Share External Drives"
@@ -750,15 +758,15 @@ msgstr ""
 
 msgctxt "#32217"
 msgid "Minimum supported protocol"
-msgstr ""
+msgstr "Protocolul minim suportat"
 
 msgctxt "#32218"
 msgid "Maximum supported protocol"
-msgstr ""
+msgstr "Protocolul maxim suportat"
 
 msgctxt "#32220"
 msgid "Bad password!"
-msgstr ""
+msgstr "Parolă greșită!"
 
 msgctxt "#32221"
 msgid "The entered password is too weak.[CR]SSH password is unchanged."
@@ -766,15 +774,15 @@ msgstr ""
 
 msgctxt "#32222"
 msgid "Password changed!"
-msgstr ""
+msgstr "Parolă schimbată!"
 
 msgctxt "#32223"
 msgid "The SSH password has been successfully changed."
-msgstr ""
+msgstr "Parola SSH a fost schimbată cu succes."
 
 msgctxt "#32224"
 msgid "Unknown error!"
-msgstr ""
+msgstr "Eroare necunoscută!"
 
 msgctxt "#32225"
 msgid "There was an error during the process.[CR]SSH password is unchanged."
@@ -782,15 +790,15 @@ msgstr ""
 
 msgctxt "#32226"
 msgid "Enter new 4 digit PIN"
-msgstr ""
+msgstr "Introdu un cod nou PIN de 4 cifre"
 
 msgctxt "#32227"
 msgid "Re-enter PIN"
-msgstr ""
+msgstr "Introdu PIN-ul din nou"
 
 msgctxt "#32228"
 msgid "Error - PIN codes did not match!"
-msgstr ""
+msgstr "Eroare - Codurile PIN nu sunt identice!"
 
 msgctxt "#32229"
 msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
@@ -806,7 +814,7 @@ msgstr ""
 
 msgctxt "#32232"
 msgid "Error - PIN code not 4 digits!"
-msgstr ""
+msgstr "Eroare - Codul PIN nu are 4 cifre!"
 
 msgctxt "#32233"
 msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
@@ -814,11 +822,11 @@ msgstr ""
 
 msgctxt "#32234"
 msgid "Incorrect PIN!"
-msgstr ""
+msgstr "Cod PIN incorect!"
 
 msgctxt "#32235"
 msgid " attempts remaining."
-msgstr ""
+msgstr "încercări rămase."
 
 msgctxt "#32236"
 msgid ""
@@ -870,7 +878,7 @@ msgstr ""
 
 msgctxt "#32305"
 msgid "Networking"
-msgstr ""
+msgstr "Rețelistică"
 
 msgctxt "#32306"
 msgid ""
@@ -882,11 +890,11 @@ msgstr ""
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 msgctxt "#32308"
 msgid "Hostname:"
-msgstr ""
+msgstr "Nume gazdă:"
 
 msgctxt "#32309"
 msgid "The following Networks are currently available:"
@@ -952,11 +960,11 @@ msgstr "Revino la setările implicite"
 
 msgctxt "#32324"
 msgid "Reset System Settings to defaults"
-msgstr ""
+msgstr "Resetează setările de sistem la normal"
 
 msgctxt "#32325"
 msgid "Reset @DISTRONAME@ to defaults"
-msgstr ""
+msgstr "Resetează @DISTRONAME@ la setările din fabrică"
 
 msgctxt "#32326"
 msgid "Are you sure?"
@@ -1002,7 +1010,7 @@ msgstr ""
 
 msgctxt "#32343"
 msgid "Enter the following Key on your Device."
-msgstr ""
+msgstr "Introdu următoarea cheie în dispozitivul tău."
 
 msgctxt "#32344"
 msgid "Enable Bluetooth"
@@ -1014,7 +1022,7 @@ msgstr "Bluetooth-ul este inactiv"
 
 msgctxt "#32358"
 msgid "Trust and Connect"
-msgstr ""
+msgstr "Adaugă dispozitiv la lista de dispozitive de încredere și permite conectarea"
 
 msgctxt "#32362"
 msgid "Check for updates now:"
@@ -1026,7 +1034,7 @@ msgstr "@DISTRONAME@"
 
 msgctxt "#32364"
 msgid "Update available"
-msgstr ""
+msgstr "Actualizare disponibilă"
 
 msgctxt "#32365"
 msgid "Show Update Notifications"
@@ -1034,43 +1042,43 @@ msgstr ""
 
 msgctxt "#32366"
 msgid "Update Download Completed"
-msgstr ""
+msgstr "Actualizarea a fost descărcată"
 
 msgctxt "#32367"
 msgid "Update Extract Complete"
-msgstr ""
+msgstr "Actualizarea a fost dezarhivată"
 
 msgctxt "#32368"
 msgid "Advanced Network Settings"
-msgstr ""
+msgstr "Setări avansate de rețea"
 
 msgctxt "#32369"
 msgid "Wait for network before starting Kodi"
-msgstr ""
+msgstr "Așteaptă pentru o conexiune de rețea înainte să pornești Kodi"
 
 msgctxt "#32370"
 msgid "Maximum Wait Time (Sec.)"
-msgstr ""
+msgstr "Timp maxim de așteptare (secunde)"
 
 msgctxt "#32371"
 msgid "Backup"
-msgstr ""
+msgstr "Rezervă"
 
 msgctxt "#32372"
 msgid "Create System and Kodi Backup"
-msgstr ""
+msgstr "Creează rezervă de sistem și de Kodi"
 
 msgctxt "#32373"
 msgid "Restore Backup"
-msgstr ""
+msgstr "Restaurează rezerva"
 
 msgctxt "#32375"
 msgid "Backup Progress"
-msgstr ""
+msgstr "Progres rezervă"
 
 msgctxt "#32376"
 msgid "Submit Log"
-msgstr ""
+msgstr "Trimite logs (înregistrări)"
 
 msgctxt "#32377"
 msgid "Upload latest Kodi log and configs, and view the short URL"
@@ -1082,7 +1090,7 @@ msgstr ""
 
 msgctxt "#32379"
 msgid "There is not enough free storage space to continue!"
-msgstr ""
+msgstr "Nu există suficient spațiu liber pentru a continua!"
 
 msgctxt "#32380"
 msgid ""
@@ -1092,7 +1100,7 @@ msgstr ""
 
 msgctxt "#32381"
 msgid "Accept incoming Bluetooth Filetransfer ?"
-msgstr ""
+msgstr "Acceptă următorul transfer de fișiere prin Bluetooth?"
 
 msgctxt "#32382"
 msgid "Speed"
@@ -1100,7 +1108,7 @@ msgstr "Viteză"
 
 msgctxt "#32383"
 msgid "Play Files ?"
-msgstr ""
+msgstr "Rulează fișiere?"
 
 msgctxt "#32384"
 msgid "OBEX Enabled"
@@ -1120,11 +1128,11 @@ msgstr ""
 
 msgctxt "#32388"
 msgid "Enable Standby"
-msgstr ""
+msgstr "Pornește modul Standby"
 
 msgctxt "#32389"
 msgid "Disable Standby"
-msgstr ""
+msgstr "Închide modul Standby"
 
 msgctxt "#32390"
 msgid "Settings addon is not yet ready, please try again later."
@@ -1149,7 +1157,7 @@ msgstr ""
 
 msgctxt "#32395"
 msgid "Firewall"
-msgstr ""
+msgstr "Firewall"
 
 msgctxt "#32396"
 msgid "Custom"
@@ -1173,4 +1181,38 @@ msgstr ""
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
+msgstr ""
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
 msgstr ""

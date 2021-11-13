@@ -2,13 +2,28 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# Andrés Krüger <andreskru@gmail.com>, 2017
+# Axel Bayerl <axel.bayerl@gmail.com>, 2017
+# David Vukovic <davu@kodi.tv>, 2019
+# Josu Lazkano <josu.lazkano@gmail.com>, 2016-2017
+# MS-PC, 2019-2021
+# Rafael Linux User <rafael.linux.user@gmail.com>, 2018
+# Rafa Oliveros, 2017
+# Rafa Oliveros, 2018
+# Rafa Oliveros, 2020
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-10-05 08:46+0000\n"
+"Last-Translator: Christian Gade <gade@kodi.tv>\n"
+"Language-Team: Spanish (Spain) <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/es_es/>\n"
+"Language: es_es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es_ES\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -60,13 +75,13 @@ msgid ""
 " in our wiki:[CR]https://libreelec.wiki[CR][CR][B]Code[/B] can be found on "
 "GitHub:[CR]https://github.com/LibreELEC[CR][CR][B]Donations[/B] towards "
 "project expenses are accepted via PayPal:[CR]donations@libreelec.tv"
-msgstr "El [B]soporte[/B] se proporciona a través de nuestro foro:[CR]https://forum.libreelec.tv[CR][CR]La [B]documentación[/B] se puede leer en nuestro wiki:[CR]https://libreelec.wiki[CR][CR]El [B]código[/B] se puede encontrar en GitHub:[CR]https://github.com/LibreELEC[CR][CR][B]Donaciones[/B] para los gastos del proyecto se aceptan a través de PayPal:[CR]donations@libreelec.tv"
+msgstr "El [B]soporte[/B] se proporciona a través de nuestro foro:[CR]https://forum.libreelec.tv[CR][CR]La [B]documentación[/B] se puede leer en nuestro wiki:[CR]https://libreelec.wiki[CR][CR]El [B]código[/B] se puede encontrar en GitHub:[CR]https://github.com/LibreELEC[CR][CR]Las [B]donaciones[/B] para los gastos del proyecto se aceptan a través de PayPal:[CR]donations@libreelec.tv"
 
 msgctxt "#700"
 msgid ""
 "Configure a hostname, keyboard type, perform a reset, update, or backups and"
 " restores"
-msgstr "Configure el nombre del equipo, tipo de teclado, restaurar valores de fábrica, actualizar o respaldar y restaurar."
+msgstr "Configura el nombre del equipo, tipo de teclado, restaurar valores de fábrica, actualizar o respaldar y restaurar."
 
 msgctxt "#701"
 msgid "Configure network startup options, NTP and VPNs"
@@ -99,19 +114,19 @@ msgctxt "#710"
 msgid ""
 "Configure the Hostname of your @DISTRONAME@ system. This will be used for "
 "the HTPC \\\\hostname in Windows and SMB server name in the Mac OS Finder"
-msgstr "Configura el nombre del equipo de tu sistema @DISTRONAME@. Este será usado por el HTPC \\\\nombredeequipo en Windows y en el servidor de nombres SMB de macOS Finder"
+msgstr "Configura el nombre del equipo de tu sistema @DISTRONAME@. Este será usado por el HTPC \\\\nombredelequipo en Windows y en el servidor de nombres SMB de macOS Finder"
 
 msgctxt "#711"
 msgid "Configure the 1st keyboard software layout"
-msgstr "Configura la primera disposición de teclado"
+msgstr "Configurar la primera disposición de teclado"
 
 msgctxt "#712"
 msgid "Configure the 2nd keyboard software layout"
-msgstr "Configura la segunda disposición de teclado"
+msgstr "Configurar la segunda disposición de teclado"
 
 msgctxt "#713"
 msgid "Configure the physical keyboard type"
-msgstr "Configure el tipo de teclado físico"
+msgstr "Configurar el tipo de teclado físico"
 
 msgctxt "#714"
 msgid ""
@@ -124,19 +139,19 @@ msgctxt "#715"
 msgid ""
 "Set to ON and an on-screen notification will be displayed when a new update "
 "is available"
-msgstr "Habilite esta función y se mostrará una notificación cuando una nueva versión esté disponible."
+msgstr "Habilita esta función y se mostrará una notificación cuando una nueva versión esté disponible."
 
 msgctxt "#718"
 msgid ""
 "Send boot config files from /flash, kodi.log, kernel log and Samba configs "
 "to http://ix.io, and display the short URL"
-msgstr "Envía los archivos de la configuración de arranque de /flash, archivo kodi.log, registro kernel y configuraciones Samba a http://ix.io, y muestra una URL corta"
+msgstr "Envía los archivos de la configuración de arranque de /flash, archivo kodi.log, registro del kernel y configuraciones de Samba a http://ix.io, y muestra una URL corta"
 
 msgctxt "#719"
 msgid ""
 "Send boot config files from /flash, kodi_crash.log, kernel log and Samba "
 "configs to http://ix.io, and display the short URL"
-msgstr "Envía los archivos de la configuración de arranque de /flash, archivo kodi_crash.log, registro kernel y configuraciones Samba a http://ix.io, y muestra una URL corta"
+msgstr "Envía los archivos de la configuración de arranque de /flash, archivo kodi_crash.log, registro del kernel y configuraciones de Samba a http://ix.io, y muestra una URL corta"
 
 msgctxt "#720"
 msgid "Set to ON to enable the Bluetooth service"
@@ -153,7 +168,7 @@ msgctxt "#723"
 msgid ""
 "Restore a tar archive backup previously created using the backup option "
 "above"
-msgstr "Restaurar un respaldo tar previamente creado con la opción anterior"
+msgstr "Restaurar un archivo tar de respaldo previamente creado con la opción anterior"
 
 msgctxt "#724"
 msgid ""
@@ -180,11 +195,11 @@ msgstr "Habilita un punto de acceso inalámbrico. Esto requiere que tu placa ina
 
 msgctxt "#728"
 msgid "Configure the Access Point SSID"
-msgstr "Configure el SSID del Punto de acceso"
+msgstr "Configurar el SSID del Punto de acceso"
 
 msgctxt "#729"
 msgid "Configure the Access Point Passphrase"
-msgstr "Configure la contraseña del Punto de acceso"
+msgstr "Configurar la contraseña del Punto de acceso"
 
 msgctxt "#730"
 msgid "Enable or disable support for Wired (Ethernet) networks"
@@ -220,7 +235,7 @@ msgstr "Habilita esta función para habilitar el servicio de compartición de ar
 msgctxt "#739"
 msgid ""
 "Set to ON to require username/password access to local Samba fileshares"
-msgstr "Habilite esta función para solicitar usuario y contraseña para acceder a los archivos compartidos por Samba"
+msgstr "Habilita esta función para solicitar usuario y contraseña para acceder a los archivos compartidos por Samba"
 
 msgctxt "#740"
 msgid "Set the username for Samba sharing"
@@ -288,11 +303,11 @@ msgstr "Aquí puedes configurar la ubicación en donde se almacenarán los archi
 
 msgctxt "#753"
 msgid "Configure the 1st keyboard software Variant"
-msgstr "Configure la primera disposición de teclado"
+msgstr "Configurar la primera disposición de teclado"
 
 msgctxt "#754"
 msgid "Configure the 2nd keyboard software Variant"
-msgstr "Configure la segunda disposición de teclado"
+msgstr "Configurar la segunda disposición de teclado"
 
 msgctxt "#755"
 msgid "Auto share external drives / partitions"
@@ -335,7 +350,7 @@ msgid ""
 "from private network ranges (192.168.x.x, 172.16.x.x and 10.x.x.x) only. "
 "Public blocks all traffic from all networks. Custom uses rules in "
 "/storage/.config/iptables. Off disables the firewall."
-msgstr "El cortafuegos bloquea el tráfico de red no deseado. Hogar (predeterminado) solo permite el tráfico de rangos de red privada (192.168.x.x, 172.16.x.x y 10.x.x.x). Público bloquea todo el tráfico de todas las redes. Personalizado usa reglas en /storage/.config/iptables. Desactivado deshabilita el cortafuegos."
+msgstr "El cortafuegos bloquea el tráfico de red no deseado. Hogar (predeterminado) solo permite el tráfico de rangos de red privada (192.168.x.x, 172.16.x.x y 10.x.x.x). Público bloquea todo el tráfico de todas las redes. Personalizado usa reglas en /storage/.config/iptables. Apagado deshabilita el cortafuegos."
 
 msgctxt "#772"
 msgid ""
@@ -343,14 +358,14 @@ msgid ""
 "CPU Arch and Version to the update server. This data is also used to report "
 "basic statistics for the project. To continue checking for updates while "
 "opting-out of stats reporting, disable this option."
-msgstr "Al comprobar si hay una nueva versión se enviará al servidor de actualización información como la distribución Linux instalada, proyecto, arquitectura de la CPU y la versión de KODI. Dicha información también se usa con fines estadísticos básicos sobre el proyecto. Para continuar comprobando actualizaciones sin que su información forme parte de las estadísticas, deshabilite esta opción."
+msgstr "Al comprobar si hay una nueva versión se enviará al servidor de actualización información como la distribución Linux instalada, proyecto, arquitectura de la CPU y la versión de KODI. Dicha información también se usa con fines estadísticos básicos sobre el proyecto. Para continuar comprobando actualizaciones sin que tu información forme parte de las estadísticas, deshabilita esta opción."
 
 msgctxt "#773"
 msgid ""
 "Set the idle timeout (in minutes) before devices will be disconnected "
 "(defaults to 0 for no timeout). Applies to devices where \"Enable Standby\" "
 "has been activated in the LibreELEC device connection context menu."
-msgstr "Establezca el tiempo de inactividad (en minutos) antes de que se desconecten los dispositivos (el valor por defecto es 0 para que no haya tiempo de espera). Se aplica a los dispositivos en los que se ha activado \"Habilitar modo espera\" en el menú contextual de conexión del dispositivo LibreELEC."
+msgstr "Establece el tiempo de inactividad (en minutos) antes de que se desconecten los dispositivos (el valor por defecto es 0 para que no haya tiempo de espera). Se aplica a los dispositivos en los que se ha activado \"Habilitar modo espera\" en el menú contextual de conexión del dispositivo LibreELEC."
 
 msgctxt "#32001"
 msgid "Services"
@@ -422,7 +437,7 @@ msgstr "Actualizaciones de firmware"
 
 msgctxt "#32023"
 msgid "Updating will occur once the system is rebooted."
-msgstr "La actualización se ocurrirá una vez reiniciado el sistema."
+msgstr "La actualización ocurrirá una vez reiniciado el sistema."
 
 msgctxt "#32024"
 msgid "Bootloader EEPROM"
@@ -433,7 +448,7 @@ msgid ""
 "Update the Raspberry Pi Bootloader EEPROM to the latest version. This option"
 " is automatically disabled after rebooting. Reboot the system to apply the "
 "update."
-msgstr "Actualizar el cargador de arranque EEPROM de la Raspberry Pi a la última versión. Esta opción se deshabilita automáticamente después de reiniciar. Reinicie el sistema para aplicar la actualización."
+msgstr "Actualizar el cargador de arranque EEPROM de la Raspberry Pi a la última versión. Esta opción se deshabilita automáticamente después de reiniciar. Reiniciar el sistema para aplicar la actualización."
 
 msgctxt "#32026"
 msgid "VIA USB3 Firmware"
@@ -444,7 +459,7 @@ msgid ""
 "Update the Raspberry Pi VIA USB3 firmware to the latest version. This option"
 " is automatically disabled after rebooting. Reboot the system to apply the "
 "update."
-msgstr "Actualizar el firmware VIA USB3 de la Raspberry Pi a la última versión. Esta opción se deshabilita automáticamente después de reiniciar. Reinicie el sistema para aplicar la actualización."
+msgstr "Actualizar el firmware VIA USB3 de la Raspberry Pi a la última versión. Esta opción se deshabilita automáticamente después de reiniciar. Reiniciar el sistema para aplicar la actualización."
 
 msgctxt "#32028"
 msgid "update from %s to %s"
@@ -692,7 +707,7 @@ msgstr "SSH"
 
 msgctxt "#32202"
 msgid "Use Samba Password Authentication"
-msgstr "Utilizar autenticación por contraseña para Samba"
+msgstr "Usar autenticación por contraseña para Samba"
 
 msgctxt "#32203"
 msgid "Disable SSH Password"
@@ -726,7 +741,7 @@ msgctxt "#32210"
 msgid ""
 "The default SSH password is widely known and considered "
 "insecure.[CR][CR]Setting a personal password is recommended."
-msgstr "La contraseña SSH que se usa por omisión es ampliamente conocida y por tanto considerada insegura.[CR][CR]Se recomienda que asigne una nueva contraseña personal."
+msgstr "La contraseña SSH que se usa por omisión es ampliamente conocida y por tanto considerada insegura.[CR][CR]Se recomienda asignar una nueva contraseña personal."
 
 msgctxt "#32212"
 msgid "Cancel"
@@ -878,7 +893,7 @@ msgid ""
 "TV shows and to stream online content from sites like YouTube, @DISTRONAME@ "
 "needs to be connected the Internet.[CR][CR]An Internet connection is also "
 "required for @DISTRONAME@ to automatically update itself."
-msgstr "Para la descarga de fondos, carteles y miniaturas de tus películas, series y para el contenido de streaming de sitios como YouTube, @DISTRONAME@ necesita conectar a Internet.[CR][CR]Además, @DISTRONAME@ requiere conexión a Internet para las actualizaciones automáticas. "
+msgstr "Para la descarga de fondos, carteles y miniaturas de tus películas, series y para el contenido de streaming de sitios como YouTube, @DISTRONAME@ necesita estar conectado a Internet.[CR][CR]Además, @DISTRONAME@ requiere conexión a Internet para las actualizaciones automáticas."
 
 msgctxt "#32307"
 msgid "Previous"
@@ -964,7 +979,7 @@ msgstr "¿Estás seguro?"
 
 msgctxt "#32328"
 msgid "The system must reboot."
-msgstr "El sistema se debe de reiniciar."
+msgstr "El sistema se debe reiniciar."
 
 msgctxt "#32329"
 msgid "Rebooting in %d seconds"
@@ -1092,7 +1107,7 @@ msgstr "La restauración del sistema requiere reiniciar. ¿Estás seguro que des
 
 msgctxt "#32381"
 msgid "Accept incoming Bluetooth Filetransfer ?"
-msgstr "¿Desea aceptar una transferencia de archivo por Bluetooth?"
+msgstr "¿Deseas aceptar una transferencia de archivo por Bluetooth?"
 
 msgctxt "#32382"
 msgid "Speed"
@@ -1157,7 +1172,7 @@ msgstr "Personalizado"
 
 msgctxt "#32397"
 msgid "Off"
-msgstr "Desactivado"
+msgstr "Apagado"
 
 msgctxt "#32398"
 msgid "Home"
@@ -1173,4 +1188,38 @@ msgstr "Tiempo de inactividad"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
-msgstr "Escribiendo a Discos..."
+msgstr "Sincronizando discos..."
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr "El respaldo está incompleto. Se ha producido un error. Ver el registro de Kodi para más detalles."
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
+msgstr ""

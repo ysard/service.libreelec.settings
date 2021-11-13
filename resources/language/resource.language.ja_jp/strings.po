@@ -2,13 +2,22 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# David Vukovic <davu@kodi.tv>, 2019
+# Namerp, 2018
+# 鬼きり○ <onikiriusa@gmail.com>, 2018
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-10-05 08:46+0000\n"
+"Last-Translator: Christian Gade <gade@kodi.tv>\n"
+"Language-Team: Japanese <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/ja_jp/>\n"
+"Language: ja_jp\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja_JP\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -60,7 +69,7 @@ msgid ""
 " in our wiki:[CR]https://libreelec.wiki[CR][CR][B]Code[/B] can be found on "
 "GitHub:[CR]https://github.com/LibreELEC[CR][CR][B]Donations[/B] towards "
 "project expenses are accepted via PayPal:[CR]donations@libreelec.tv"
-msgstr "[B]サポート[/B]は私たちのフォーラムで提供されています：[CR] https://forum.libreelec.tv[CR][CR][B]ドキュメント[/B]はウィキで読むことができます：[CR]https://libreelec.wiki[CR][CR][B]コード[/B]はGitHubで見つけることができます。[CR]https://github.com/LibreELEC[CR][CR][B]寄付[B]プロジェクト経費に対する支払いはPayPal経由で受け付けます。[CR]donations@libreelec.tv"
+msgstr "[B]サポート[/B]は私たちのフォーラムで提供されています：[CR] https://forum.libreelec.tv[CR][CR][B]ドキュメント[/B]はウィキで読むことができます：[CR]https://libreelec.wiki[CR][CR][B]コード[/B]はGitHubで見つけることができます。[CR]https://github.com/LibreELEC[CR][CR][B]寄付[/B]プロジェクト経費に対する支払いはPayPal経由で受け付けます。[CR]donations@libreelec.tv"
 
 msgctxt "#700"
 msgid ""
@@ -245,7 +254,7 @@ msgstr "SSH秘密鍵のコピーを持っており、SSHユーザ名とパスワ
 msgctxt "#744"
 msgid ""
 "Set to ON to enable the Avahi (Zeroconf/Bonjour) network discovery service"
-msgstr "ONにすると、Avahi  (Zeroconf/Bonjour) ネットワーク発見サービスを有効にします"
+msgstr "ONにすると、Avahi (Zeroconf/Bonjour) ネットワーク発見サービスを有効にします"
 
 msgctxt "#745"
 msgid "Set to ON to enable the cron daemon"
@@ -1173,4 +1182,38 @@ msgstr ""
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
+msgstr ""
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
 msgstr ""

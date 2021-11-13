@@ -2,13 +2,31 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# David Vukovic <davu@kodi.tv>, 2019
+# Jakub Teska <jakub.teska93@gmail.com>, 2019
+# jseliga <seliga.honza@gmail.com>, 2019
+# Jaromír Kokeš <kokes@czech.systems>, 2016
+# Jaromír Kokeš <kokes@czech.systems>, 2016
+# Koos van Klojum, 2016
+# Michal Kuncl <michal.kuncl@gmail.com>, 2017-2018
+# N0stalgeek <n0vy0ndr4@gmail.com>, 2019
+# Namerp, 2017-2018
+# N0stalgeek <n0vy0ndr4@gmail.com>, 2019
+# R3gi, 2020-2021
+# Vendula Durakova, 2017
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-11-05 00:25+0000\n"
+"Last-Translator: HansCR <h.vanek@gmail.com>\n"
+"Language-Team: Czech <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/cs_cz/>\n"
+"Language: cs_cz\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs_CZ\n"
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"X-Generator: Weblate 4.8.1\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -118,7 +136,7 @@ msgid ""
 "@DISTRONAME@ can be configured for automatic or manual updates. Automatic "
 "updates are available on stable releases and stable release candidates. "
 "Automatic update self-disables on beta and development builds"
-msgstr "@DISTRONAME@ může být nakonfigurován pro automatické nebo ruční stažení aktualizace. Automatické aktualizace jsou k dispozici na stable a RC verzích systému. Automatické aktualizace jsou v betaverzích a ve vývojových sestaveních vypnuté"
+msgstr "@DISTRONAME@ může být nakonfigurován pro automatické nebo ruční stažení aktualizace. Automatické aktualizace jsou k dispozici na stable a RC verzích systému. V betaverzích a ve vývojových sestaveních jsou automatické aktualizace vypnuté."
 
 msgctxt "#715"
 msgid ""
@@ -268,7 +286,7 @@ msgid ""
 "Overrride the Wireless Regulatory Domain so radio properties (channels and "
 "transmit power) comply with local laws or match the country configuration of"
 " your router."
-msgstr ""
+msgstr "Přepsat Wireless Regulatory Domain tak, aby vlastnosti rádia (kanály a vysílací výkon) byly v souladu s místními zákony nebo odpovídaly konfiguraci směrovače v dané zemi."
 
 msgctxt "#750"
 msgid "750"
@@ -378,7 +396,7 @@ msgstr "Rozložení klávesnice"
 
 msgctxt "#32012"
 msgid "Select Action"
-msgstr "Vyberte akci "
+msgstr "Vyberte akci"
 
 msgctxt "#32013"
 msgid "OS Updates"
@@ -398,15 +416,15 @@ msgstr "Ukázat vlastní kanály"
 
 msgctxt "#32017"
 msgid "  - Custom Channel 1"
-msgstr "- Vlastní kanál 1 "
+msgstr "  – Vlastní kanál 1"
 
 msgctxt "#32018"
 msgid "  - Custom Channel 2"
-msgstr "- Vlastní kanál 2"
+msgstr "– Vlastní kanál 2"
 
 msgctxt "#32019"
 msgid "  - Custom Channel 3"
-msgstr "- Vlastní kanál 3"
+msgstr "– Vlastní kanál 3"
 
 msgctxt "#32020"
 msgid "Available Versions"
@@ -488,7 +506,7 @@ msgstr "Povolit „tetherovaný“ bezdrátový přístupový bod"
 
 msgctxt "#32109"
 msgid "Connect Automatically"
-msgstr "Připojovat automaticky "
+msgstr "Připojovat automaticky"
 
 msgctxt "#32110"
 msgid "Connection"
@@ -676,7 +694,7 @@ msgstr "Změnit zámek PIN pro vstup do Nastavení @DISTRONAME@"
 
 msgctxt "#32196"
 msgid "About"
-msgstr "O programu"
+msgstr "O aplikaci"
 
 msgctxt "#32198"
 msgid "SSID"
@@ -782,7 +800,7 @@ msgstr "Během procesu došlo k chybě.[CR]Heslo SSH zůstává nezměněno."
 
 msgctxt "#32226"
 msgid "Enter new 4 digit PIN"
-msgstr "Zadejte nový 4číselný PIN "
+msgstr "Zadejte nový 4číselný PIN"
 
 msgctxt "#32227"
 msgid "Re-enter PIN"
@@ -802,7 +820,7 @@ msgstr "Zámek PIN pro vstup do Nastavení @DISTRONAME@ byl nastaven."
 
 msgctxt "#32231"
 msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
-msgstr ""
+msgstr "Váš @DISTRONAME@ zámek PIN pro Nastavení:"
 
 msgctxt "#32232"
 msgid "Error - PIN code not 4 digits!"
@@ -810,7 +828,7 @@ msgstr "Chyba – PIN není 4číselný!"
 
 msgctxt "#32233"
 msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
-msgstr ""
+msgstr "@DISTRONAME@ nastavení uzamčeno[CR]Zadejte 4místný PIN"
 
 msgctxt "#32234"
 msgid "Incorrect PIN!"
@@ -834,11 +852,11 @@ msgctxt "#32238"
 msgid ""
 "Time remaining before PIN can be entered: %02d:%02d[CR][CR]Too many previous"
 " failed attempts."
-msgstr ""
+msgstr "Zbývající čas před možností zadat PIN: %02d:%02d[CR][CR]Příliš mnoho nezdařených předchozích pokusů."
 
 msgctxt "#32240"
 msgid "Wireless Regulatory Domain"
-msgstr ""
+msgstr "Wireless Regulatory Domain"
 
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
@@ -936,7 +954,7 @@ msgid ""
 " @DISTRONAME@ as much as we've enjoyed building it. If you need any more "
 "help, you can find links to our support forum along with latest news at our "
 "website."
-msgstr "Instalace @DISTRONAME@ byla dokončena a nyní můžete pokračovat do Kodi, kde si můžete nastavit vaše mediální knihovny. Pokud s tím potřebujete pomoct, můžete si projít návod, který je k dispozici na adrese wiki.kodi.tv.[CR][CR]@DISTRONAME@ je vyvíjen obětavým týmem vývojářů, kteří na něm pracují ve svém volném čase. Přestože jde o dobrovolnický projekt, i tak musíme platit za udržení síťové infrastruktury v chodu a za náklady na vývoj. Pokud se vám @DISTRONAME@ líbí a shledáváte ho užitečným, my pak zase vždy vděčně oceníme finanční příspěvek v jakékoliv výši.[CR][CR]Závěrem doufáme, že vás @DISTRONAME@ baví stejně, jako nás baví ho dávat dohromady. Jestliže s něčím potřebujete dále pomoci, odkazy na naše fórum podpory naleznete na našem webu  společně s aktuálními novinkami."
+msgstr "Instalace @DISTRONAME@ byla dokončena a nyní můžete pokračovat do Kodi, kde si můžete nastavit vaše mediální knihovny. Pokud s tím potřebujete pomoct, můžete si projít návod, který je k dispozici na adrese wiki.kodi.tv.[CR][CR]@DISTRONAME@ je vyvíjen obětavým týmem vývojářů, kteří na něm pracují ve svém volném čase. Přestože jde o dobrovolnický projekt, i tak musíme platit za udržení síťové infrastruktury v chodu a za náklady na vývoj. Pokud se vám @DISTRONAME@ líbí a shledáváte ho užitečným, my pak zase vždy vděčně oceníme finanční příspěvek v jakékoliv výši.[CR][CR]Závěrem doufáme, že vás @DISTRONAME@ baví stejně, jako nás baví ho dávat dohromady. Jestliže s něčím potřebujete dále pomoci, odkazy na naše fórum podpory naleznete na našem webu společně s aktuálními novinkami."
 
 msgctxt "#32319"
 msgid "Cron"
@@ -956,7 +974,7 @@ msgstr "Obnovit výchozí nastavení systému"
 
 msgctxt "#32325"
 msgid "Reset @DISTRONAME@ to defaults"
-msgstr "Obnovit výchozí nastavení @DISTRONAME@ "
+msgstr "Obnovit výchozí nastavení @DISTRONAME@"
 
 msgctxt "#32326"
 msgid "Are you sure?"
@@ -1173,4 +1191,38 @@ msgstr "Časový limit nečinnosti"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
-msgstr ""
+msgstr "Synchronizace disků…"
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr "Zálohování je neúplné. Došlo k chybě. Podrobnosti najdete v logu Kodi."
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr "Protokolování"
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr "Použít trvalé logy"
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr "Použít trvalé logy a žurnály místo výchozích dočasných logů. Restartujte pro použití změny."
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr "Velikost žurnálu"
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr "Nastavte max. velikost trvalého žurnálu. Restartujte pro použití změny."
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr "Zrušit journald Rate Limit"
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
+msgstr "Restartovat pro použití změny."

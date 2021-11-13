@@ -2,8 +2,18 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# David Vukovic <davu@kodi.tv>, 2019
+# gabrownx <gabrielima.si@gmail.com>, 2021
+# Namerp, 2018
+# Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2016
+# Rodrigo de Almeida Sottomaior Macedo <rmsolucoeseminformatica@protonmail.com>, 2016
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-08-09 10:14+0000\n"
+"Last-Translator: Transifex Bot <>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/libreelec/service_libreelec_settings/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -140,7 +150,7 @@ msgstr "Envie arquivos de configuração de inicialização de /flash, kodi_cras
 
 msgctxt "#720"
 msgid "Set to ON to enable the Bluetooth service"
-msgstr ""
+msgstr "Defina como ON para ativar o serviço Bluetooth"
 
 msgctxt "#722"
 msgid ""
@@ -257,11 +267,11 @@ msgstr "Definir a senha para o SSH"
 
 msgctxt "#747"
 msgid "Enable a PIN for @DISTRONAME@ Settings access"
-msgstr ""
+msgstr "Ative um PIN para @DISTRONAME@ acesso as configurações"
 
 msgctxt "#748"
 msgid "Change the PIN Lock for @DISTRONAME@ Settings access"
-msgstr ""
+msgstr "Mude o bloqueio do PIN para @DISTRONAME@ acesso as configurações"
 
 msgctxt "#749"
 msgid ""
@@ -382,7 +392,7 @@ msgstr "Selecionar Ação"
 
 msgctxt "#32013"
 msgid "OS Updates"
-msgstr ""
+msgstr "Atualizações do SO"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -418,15 +428,15 @@ msgstr "Enviar estatísticas"
 
 msgctxt "#32022"
 msgid "Firmware Updates"
-msgstr ""
+msgstr "Atualizações de Firmware"
 
 msgctxt "#32023"
 msgid "Updating will occur once the system is rebooted."
-msgstr ""
+msgstr "A atualização ocorrerá quando o sistema reiniciar"
 
 msgctxt "#32024"
 msgid "Bootloader EEPROM"
-msgstr ""
+msgstr "Bootloader EEPROM"
 
 msgctxt "#32025"
 msgid ""
@@ -437,7 +447,7 @@ msgstr ""
 
 msgctxt "#32026"
 msgid "VIA USB3 Firmware"
-msgstr ""
+msgstr "VIA USB3 Firmware"
 
 msgctxt "#32027"
 msgid ""
@@ -448,11 +458,11 @@ msgstr ""
 
 msgctxt "#32028"
 msgid "update from %s to %s"
-msgstr ""
+msgstr "atualizado de %s para %s"
 
 msgctxt "#32029"
 msgid "up to date: %s"
-msgstr ""
+msgstr "Atualizado: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -664,7 +674,7 @@ msgstr "URL Inválida"
 
 msgctxt "#32192"
 msgid "PIN lock"
-msgstr ""
+msgstr "Bloqueio PIN"
 
 msgctxt "#32193"
 msgid "Enable @DISTRONAME@ Settings PIN Lock"
@@ -782,15 +792,15 @@ msgstr "Houve um erro durante o processo.[CR]A senha do SSH não foi alterada."
 
 msgctxt "#32226"
 msgid "Enter new 4 digit PIN"
-msgstr ""
+msgstr "Insira um novo PIN de 4 dígitos"
 
 msgctxt "#32227"
 msgid "Re-enter PIN"
-msgstr ""
+msgstr "Reinsira o PIN"
 
 msgctxt "#32228"
 msgid "Error - PIN codes did not match!"
-msgstr ""
+msgstr "Erro - Códigos PIN não coincidem!"
 
 msgctxt "#32229"
 msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
@@ -798,7 +808,7 @@ msgstr ""
 
 msgctxt "#32230"
 msgid "@DISTRONAME@ Settings PIN lock set."
-msgstr ""
+msgstr "Bloqueio por PIN das configurações do @DISTRONAME@ definido."
 
 msgctxt "#32231"
 msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
@@ -806,7 +816,7 @@ msgstr ""
 
 msgctxt "#32232"
 msgid "Error - PIN code not 4 digits!"
-msgstr ""
+msgstr "Erro - Código PIN não possui 4 dígitos!"
 
 msgctxt "#32233"
 msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
@@ -814,11 +824,11 @@ msgstr ""
 
 msgctxt "#32234"
 msgid "Incorrect PIN!"
-msgstr ""
+msgstr "PIN Incorreto!"
 
 msgctxt "#32235"
 msgid " attempts remaining."
-msgstr ""
+msgstr "tentativas restantes."
 
 msgctxt "#32236"
 msgid ""
@@ -828,7 +838,7 @@ msgstr ""
 
 msgctxt "#32237"
 msgid "@DISTRONAME@ Settings Locked!"
-msgstr ""
+msgstr "Configurações do @DISTRONAME@ bloqueadas!"
 
 msgctxt "#32238"
 msgid ""
@@ -882,7 +892,7 @@ msgstr "Para transferir backdrops, banners e miniaturas para os seus filmes e pr
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -894,7 +904,7 @@ msgstr "As seguintes redes estão disponíveis atualmente"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Idioma:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -1169,8 +1179,42 @@ msgstr "Público"
 
 msgctxt "#32400"
 msgid "Idle Timeout"
-msgstr ""
+msgstr "Tempo limite ocioso"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
+msgstr "Sincronizando Discos..."
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
 msgstr ""

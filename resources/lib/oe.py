@@ -66,9 +66,12 @@ CANCEL = (
 ########################## initialize module ##################################
 ## set default encoding
 
-encoding = locale.getpreferredencoding(do_setlocale=True)
-imp.reload(sys)
-# sys.setdefaultencoding(encoding)
+try:
+    encoding = locale.getpreferredencoding(do_setlocale=True)
+    imp.reload(sys)
+    # sys.setdefaultencoding(encoding)
+except Exception as e:
+    xbmc.log(f'## LibreELEC Addon ## oe:encoding: ERROR: ({repr(e)})', LOGERROR)
 
 ## load oeSettings modules
 
@@ -953,18 +956,7 @@ BOOT_STATUS = load_file('/storage/.config/boot.status')
 try:
     configFile = f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings/oe_settings.xml'
     if not os.path.exists(f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings'):
-        if os.path.exists(f'{XBMC_USER_HOME}/userdata/addon_data/service.openelec.settings'):
-            shutil.copytree((f'{XBMC_USER_HOME}/userdata/addon_data/service.openelec.settings'),
-                    (f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings'))
-            with open(configFile,'r+') as f:
-                xml = f.read()
-                xml = xml.replace("<openelec>","<libreelec>")
-                xml = xml.replace("</openelec>","</libreelec>")
-                f.seek(0)
-                f.write(xml)
-                f.truncate()
-        else:
-            os.makedirs(f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings')
+        os.makedirs(f'{XBMC_USER_HOME}/userdata/addon_data/service.libreelec.settings')
     if not os.path.exists(f'{CONFIG_CACHE}/services'):
         os.makedirs(f'{CONFIG_CACHE}/services')
 except:

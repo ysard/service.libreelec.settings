@@ -665,6 +665,9 @@ class wizard(xbmcgui.WindowXMLDialog):
                 self.set_wizard_list_title('')
                 self.set_wizard_button_title('')
 
+                if strModule == 'connman':
+                    xbmc.executebuiltin('UpdateAddonRepos')
+
                 for module in sorted(oe.dictModules, key=lambda x: list(oe.dictModules[x].menu.keys())):
                     strModule = module
                     if hasattr(oe.dictModules[strModule], 'do_wizard') and oe.dictModules[strModule].ENABLED:
@@ -687,7 +690,6 @@ class wizard(xbmcgui.WindowXMLDialog):
                             self.is_last_wizard = False
                             break
                 if self.is_last_wizard == True:
-                    xbmc.executebuiltin('UpdateAddonRepos')
                     if lang_new and xbmc.getCondVisibility(f'System.HasAddon({lang_new})') == False:
                         xbmc.executebuiltin(f'InstallAddon({lang_new})')
                     oe.xbmcm.waitForAbort(0.5)
@@ -696,7 +698,14 @@ class wizard(xbmcgui.WindowXMLDialog):
                     self.visible = False
                     self.close()
                     if lang_new:
-                        xbmc.executebuiltin(f'SetGUILanguage({str(lang_new)})')
+                        for _ in range(20):
+                            if xbmc.getCondVisibility(f'System.HasAddon({lang_new})'):
+                                break
+                            oe.xbmcm.waitForAbort(0.5)
+                        if xbmc.getCondVisibility(f'System.HasAddon({lang_new})') == True:
+                            xbmc.executebuiltin(f'SetGUILanguage({str(lang_new)})')
+                        else:
+                            oe.dbg_log(f'wizard::onClick({str(controlID)})', f"ERROR: Unable to switch language to: {lang_new}. Language addon is not installed.")
             oe.dbg_log(f'wizard::onClick({str(controlID)})', 'exit_function', oe.LOGDEBUG)
         except Exception as e:
             oe.dbg_log('oeWindows.wizard::onClick()', f'ERROR: ({repr(e)})')

@@ -2,13 +2,23 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# Andrea De Camilli <decagrog@gmail.com>, 2016
+# David Vukovic <davu@kodi.tv>, 2019
+# Fabio Ancona, 2018
+# Steve Roger <spaccapirlin@gmail.com>, 2016,2018,2021
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-10-05 08:46+0000\n"
+"Last-Translator: Christian Gade <gade@kodi.tv>\n"
+"Language-Team: Italian <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/it_it/>\n"
+"Language: it_it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it_IT\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -130,13 +140,13 @@ msgctxt "#718"
 msgid ""
 "Send boot config files from /flash, kodi.log, kernel log and Samba configs "
 "to http://ix.io, and display the short URL"
-msgstr "Invia i file di configurazione di boot da /flash, kodi.log, log del kernel e le configurazioni di Samba a http://ix.io e visualizza l'URL breve "
+msgstr "Invia i file di configurazione di boot da /flash, kodi.log, log del kernel e le configurazioni di Samba a http://ix.io e visualizza l'URL breve"
 
 msgctxt "#719"
 msgid ""
 "Send boot config files from /flash, kodi_crash.log, kernel log and Samba "
 "configs to http://ix.io, and display the short URL"
-msgstr "Invia i file di configurazione di boot da /flash, kodi_crash.log, log del kernel e le configurazioni di Samba a http://ix.io e visualizza l'URL breve "
+msgstr "Invia i file di configurazione di boot da /flash, kodi_crash.log, log del kernel e le configurazioni di Samba a http://ix.io e visualizza l'URL breve"
 
 msgctxt "#720"
 msgid "Set to ON to enable the Bluetooth service"
@@ -207,7 +217,7 @@ msgid ""
 "Set to ON to delay Kodi startup until the network is available. Use this if "
 "the OS is booting into Kodi before the network is up and central MySQL "
 "databases are accessible."
-msgstr "Imposta su ON per ritardare l'avvio di Kodi fino ad avere una connessione di rete disponibile. Da utilizzare nel caso un cui Kodi si avvii prima che la connessione al database MySQL centrale sia disponibile "
+msgstr "Imposta su ON per ritardare l'avvio di Kodi fino ad avere una connessione di rete disponibile. Da utilizzare nel caso un cui Kodi si avvii prima che la connessione al database MySQL centrale sia disponibile"
 
 msgctxt "#737"
 msgid "Time in seconds to wait for an established network connection."
@@ -448,11 +458,11 @@ msgstr ""
 
 msgctxt "#32028"
 msgid "update from %s to %s"
-msgstr ""
+msgstr "aggiornato da %s a %s"
 
 msgctxt "#32029"
 msgid "up to date: %s"
-msgstr ""
+msgstr "aggiornato: %s"
 
 msgctxt "#32100"
 msgid "Connections"
@@ -664,15 +674,15 @@ msgstr "URL non valida"
 
 msgctxt "#32192"
 msgid "PIN lock"
-msgstr ""
+msgstr "Blocco con PIN"
 
 msgctxt "#32193"
 msgid "Enable @DISTRONAME@ Settings PIN Lock"
-msgstr ""
+msgstr "Abilitare il PIN di blocco impostazioni di @DISTRONAME@"
 
 msgctxt "#32194"
 msgid "Change @DISTRONAME@ Settings PIN Lock"
-msgstr ""
+msgstr "Cambiare il PIN di blocco impostazioni di @DISTRONAME@"
 
 msgctxt "#32196"
 msgid "About"
@@ -782,49 +792,49 @@ msgstr "Si è verificato un errore durante il processo.[CR]La password SSH non �
 
 msgctxt "#32226"
 msgid "Enter new 4 digit PIN"
-msgstr ""
+msgstr "Inserire il nuovo PIN di 4 cifre"
 
 msgctxt "#32227"
 msgid "Re-enter PIN"
-msgstr ""
+msgstr "Reinserire il PIN"
 
 msgctxt "#32228"
 msgid "Error - PIN codes did not match!"
-msgstr ""
+msgstr "Errore - I PIN non corrispondono!"
 
 msgctxt "#32229"
 msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
-msgstr ""
+msgstr "Impostazioni di @DISTRONAME@ non bloccate da PIN.[CR][CR]Provare di nuovo."
 
 msgctxt "#32230"
 msgid "@DISTRONAME@ Settings PIN lock set."
-msgstr ""
+msgstr "Impostazioni di @DISTRONAME@ bloccate da PIN."
 
 msgctxt "#32231"
 msgid "Your @DISTRONAME@ Settings PIN lock has been set to:"
-msgstr ""
+msgstr "Il PIN per le impostazioni di @DISTRONAME@ è stato impostato a:"
 
 msgctxt "#32232"
 msgid "Error - PIN code not 4 digits!"
-msgstr ""
+msgstr "Errore - Il PIN non è di 4 cifre!"
 
 msgctxt "#32233"
 msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
-msgstr ""
+msgstr "Impostazioni di @DISTRONAME@ protette[CR]Inserire il PIN di 4 cifre"
 
 msgctxt "#32234"
 msgid "Incorrect PIN!"
-msgstr ""
+msgstr "PIN errato!"
 
 msgctxt "#32235"
 msgid " attempts remaining."
-msgstr ""
+msgstr "tentativi rimasti."
 
 msgctxt "#32236"
 msgid ""
 "You have entered an incorrect PIN too many times.[CR][CR]You will need to "
 "wait 5 minutes before trying again."
-msgstr ""
+msgstr "È stato inserito troppe volte un PIN errato.[CR][CR]Attendere 5 minuti per poter riprovare."
 
 msgctxt "#32237"
 msgid "@DISTRONAME@ Settings Locked!"
@@ -882,7 +892,7 @@ msgstr "Per scaricare gli sfondi, i banner e le locandine dei film e serie TV e 
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Precedente"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -894,7 +904,7 @@ msgstr "Sono attualmente disponibili le seguenti reti:"
 
 msgctxt "#32310"
 msgid "Language:"
-msgstr ""
+msgstr "Lingua:"
 
 msgctxt "#32311"
 msgid "Sharing and Remote Access"
@@ -1145,7 +1155,7 @@ msgid ""
 " assistance. When posting to the forum include the link to your crash log "
 "which can be viewed by clicking the crash log option in Settings > LibreELEC"
 " > System > Submit Log."
-msgstr "@DISTRONAME@ è stato temporaneamente avviato in modalità provvisoria a causa di ripetuti arresti di Kodi.[CR][CR]Ora puoi indagare sulla causa degli arresti attivando ssh o Samba.[CR][CR]Puoi accedere all'installazione originale di Kodi tramite \"/storage/.kodi.FAILED\" e la condivisione \"Kodi-Failed\" di Samba.[CR][CR]Il riavvio tornerà all'installazione originale di Kodi.[CR][CR] Vai su https://forum.libreelec.tv se hai bisogno di ulteriore assistenza. Quando pubblichi sul forum, includi il link del log degli arresti anomali che può essere visualizzato facendo clic sull'opzione log degli arresti anomali in Impostazioni > LibreELEC > Sistema>  Invia log."
+msgstr "@DISTRONAME@ è stato temporaneamente avviato in modalità provvisoria a causa di ripetuti arresti di Kodi.[CR][CR]Ora puoi indagare sulla causa degli arresti attivando ssh o Samba.[CR][CR]Puoi accedere all'installazione originale di Kodi tramite \"/storage/.kodi.FAILED\" e la condivisione \"Kodi-Failed\" di Samba.[CR][CR]Il riavvio tornerà all'installazione originale di Kodi.[CR][CR] Vai su https://forum.libreelec.tv se hai bisogno di ulteriore assistenza. Quando pubblichi sul forum, includi il link del log degli arresti anomali che può essere visualizzato facendo clic sull'opzione log degli arresti anomali in Impostazioni > LibreELEC > Sistema> Invia log."
 
 msgctxt "#32395"
 msgid "Firewall"
@@ -1173,4 +1183,38 @@ msgstr ""
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
+msgstr ""
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
 msgstr ""

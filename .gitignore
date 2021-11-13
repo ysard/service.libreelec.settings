@@ -8,3 +8,7 @@ build/
 # backup files
 *.orig
 
+# Python development ignores
+.idea/*
+.vscode/*
+.venv/*

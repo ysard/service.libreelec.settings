@@ -91,6 +91,7 @@ system = {
         ],
     'BACKUP_DESTINATION': '/storage/backup/',
     'RESTORE_DIR': '/storage/.restore/',
+    'JOURNALD_CONFIG_FILE': '/storage/.cache/journald.conf.d/00_settings.conf'
     }
 
 updates = {
@@ -103,8 +104,6 @@ updates = {
     }
 
 about = {'ENABLED': True}
-
-xdbus = {'ENABLED': True}
 
 _services = {
     'sshd': ['sshd.service'],

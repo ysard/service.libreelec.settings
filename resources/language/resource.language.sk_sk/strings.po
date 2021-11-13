@@ -2,8 +2,19 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# Alexander Kulumbeg <kulumbeg@gmail.com>, 2016,2018
+# David Vukovic <davu@kodi.tv>, 2019
+# Grgo Pitic, 2021
+# Jose Riha <jose1711@gmail.com>, 2020
+# Namerp, 2018
+# Vladimir Lehkoziv <lehkoziv@gmail.com>, 2019
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-08-09 10:14+0000\n"
+"Last-Translator: Transifex Bot <>\n"
+"Language-Team: Slovak (Slovakia) (http://www.transifex.com/libreelec/service_libreelec_settings/language/sk_SK/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -382,7 +393,7 @@ msgstr "Zvoliť akciu"
 
 msgctxt "#32013"
 msgid "OS Updates"
-msgstr ""
+msgstr "OS Aktualizácie"
 
 msgctxt "#32014"
 msgid "Automatic Updates"
@@ -418,7 +429,7 @@ msgstr "Odoslať štatistiku"
 
 msgctxt "#32022"
 msgid "Firmware Updates"
-msgstr ""
+msgstr "Firmware Aktualizácie"
 
 msgctxt "#32023"
 msgid "Updating will occur once the system is rebooted."
@@ -426,7 +437,7 @@ msgstr ""
 
 msgctxt "#32024"
 msgid "Bootloader EEPROM"
-msgstr ""
+msgstr "Bootloader EEPROM"
 
 msgctxt "#32025"
 msgid ""
@@ -664,7 +675,7 @@ msgstr "Neplatné URL"
 
 msgctxt "#32192"
 msgid "PIN lock"
-msgstr ""
+msgstr "PIN zámok"
 
 msgctxt "#32193"
 msgid "Enable @DISTRONAME@ Settings PIN Lock"
@@ -782,15 +793,15 @@ msgstr "Počas procesu sa vyskytla chyba.[CR]SSH heslo ostáva nezmenené."
 
 msgctxt "#32226"
 msgid "Enter new 4 digit PIN"
-msgstr ""
+msgstr "Zadajte nový 4-ciferný PIN"
 
 msgctxt "#32227"
 msgid "Re-enter PIN"
-msgstr ""
+msgstr "Znova zadajte PIN"
 
 msgctxt "#32228"
 msgid "Error - PIN codes did not match!"
-msgstr ""
+msgstr "Chyba - PIN kódy nie sú zhodné!"
 
 msgctxt "#32229"
 msgid "@DISTRONAME@ Settings PIN lock not set.[CR][CR]Please try again."
@@ -806,15 +817,15 @@ msgstr ""
 
 msgctxt "#32232"
 msgid "Error - PIN code not 4 digits!"
-msgstr ""
+msgstr "Chyba - PIN kód nemá 4 číslice!"
 
 msgctxt "#32233"
 msgid "@DISTRONAME@ Settings Locked[CR]Enter 4 digit PIN"
-msgstr ""
+msgstr "@DISTRONAME@ Nastavenia sú uzamknuté[CR]Zadajte 4-ciferný PIN"
 
 msgctxt "#32234"
 msgid "Incorrect PIN!"
-msgstr ""
+msgstr "Nesprávny PIN!"
 
 msgctxt "#32235"
 msgid " attempts remaining."
@@ -828,7 +839,7 @@ msgstr ""
 
 msgctxt "#32237"
 msgid "@DISTRONAME@ Settings Locked!"
-msgstr ""
+msgstr "@DISTRONAME@ Nastavenia sú uzamknuté!"
 
 msgctxt "#32238"
 msgid ""
@@ -838,7 +849,7 @@ msgstr ""
 
 msgctxt "#32240"
 msgid "Wireless Regulatory Domain"
-msgstr ""
+msgstr "Bezdrôtová Regulačná Doména"
 
 msgctxt "#32300"
 msgid "Welcome to @DISTRONAME@"
@@ -882,7 +893,7 @@ msgstr "Ak chcete prevziať pozadia, bannery a náhľady pre vaše filmy a telev
 
 msgctxt "#32307"
 msgid "Previous"
-msgstr ""
+msgstr "Predchádzajúce"
 
 msgctxt "#32308"
 msgid "Hostname:"
@@ -1169,8 +1180,42 @@ msgstr "Verejné"
 
 msgctxt "#32400"
 msgid "Idle Timeout"
-msgstr ""
+msgstr "Časový limit nečinnosti"
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
+msgstr ""
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
 msgstr ""

@@ -33,6 +33,7 @@ class system(modules.Module):
     BACKUP_DESTINATION = None
     RESTORE_DIR = None
     SET_CLOCK_CMD = None
+    JOURNALD_CONFIG_FILE = None
     menu = {'1': {
         'name': 32002,
         'menuLoader': 'load_menu',
@@ -171,7 +172,7 @@ class system(modules.Module):
                     'xbmc_reset': {
                         'name': 32324,
                         'value': '0',
-                        'action': 'reset_xbmc',
+                        'action': 'reset_soft',
                         'type': 'button',
                         'InfoText': 724,
                         'order': 1,
@@ -179,7 +180,7 @@ class system(modules.Module):
                     'oe_reset': {
                         'name': 32325,
                         'value': '0',
-                        'action': 'reset_oe',
+                        'action': 'reset_hard',
                         'type': 'button',
                         'InfoText': 725,
                         'order': 2,
@@ -208,7 +209,49 @@ class system(modules.Module):
                         },
                     },
                 },
-            }
+            'journal': {
+                'order': 10,
+                'name': 32410,
+                'settings': {
+                    'journal_persistent': {
+                        'order': 1,
+                        'name': 32411,
+                        'value': '0',
+                        'action': 'do_journald',
+                        'type': 'bool',
+                        'InfoText': 32412,
+                    },
+                    'journal_size': {
+                        'order': 2,
+                        'name': 32413,
+                        'value': '30 MiB',
+                        'action': 'do_journald',
+                        'type': 'multivalue',
+                        'values': [
+                            '30 MiB', '60 MiB', '100 MiB',
+                            '150 MiB', '200 MiB', '300 MiB'
+                        ],
+                        'InfoText': 32414,
+                        'parent': {
+                            'entry': 'journal_persistent',
+                            'value': ['1'],
+                        },
+                    },
+                    'journal_rate_limit': {
+                        'order': 2,
+                        'name': 32415,
+                        'value': '1',
+                        'action': 'do_journald',
+                        'type': 'bool',
+                        'InfoText': 32416,
+                        'parent': {
+                            'entry': 'journal_persistent',
+                            'value': ['1'],
+                        },
+                    },
+                },
+            },
+        }
 
     @log.log_function()
     def start_service(self):
@@ -265,9 +308,19 @@ class system(modules.Module):
         # PIN Lock
         self.struct['pinlock']['settings']['pinlock_enable']['value'] = '1' if oe.PIN.isEnabled() else '0'
 
+        # Journal
+        self.get_setting('journal', 'journal_persistent')
+        self.get_setting('journal', 'journal_size')
+        self.get_setting('journal', 'journal_rate_limit')
+
     @log.log_function()
     def load_menu(self, focusItem):
         oe.winOeMain.build_menu(self.struct)
+
+    def get_setting(self, group, setting, allowEmpty=False):
+        value = oe.read_setting('system', setting)
+        if not value is None and not (allowEmpty == False and value == ''):
+            self.struct[group]['settings'][setting]['value'] = value
 
     @log.log_function()
     def set_value(self, listItem):
@@ -394,7 +447,7 @@ class system(modules.Module):
         oe.execute(f'{self.SET_CLOCK_CMD} 2>/dev/null')
 
     @log.log_function()
-    def reset_xbmc(self, listItem=None):
+    def reset_soft(self, listItem=None):
         if self.ask_sure_reset('Soft') == 1:
             open(self.XBMC_RESET_FILE, 'a').close()
             oe.winOeMain.close()
@@ -402,7 +455,7 @@ class system(modules.Module):
             subprocess.call(['/usr/bin/systemctl', '--no-block', 'reboot'], close_fds=True)
 
     @log.log_function()
-    def reset_oe(self, listItem=None):
+    def reset_hard(self, listItem=None):
         if self.ask_sure_reset('Hard') == 1:
             open(self.LIBREELEC_RESET_FILE, 'a').close()
             oe.winOeMain.close()
@@ -426,6 +479,7 @@ class system(modules.Module):
             try:
                 for directory in self.BACKUP_DIRS:
                     self.get_folder_size(directory)
+                log.log(f'Uncompressed backup size: {total_backup_size}', log.DEBUG)
             except:
                 pass
             bckDir = xbmcDialog.browse( 0,
@@ -435,31 +489,47 @@ class system(modules.Module):
                                         False,
                                         False,
                                         self.BACKUP_DESTINATION )
+            log.log(f'Directory for backup: {bckDir}', log.INFO)
 
             if bckDir and os.path.exists(bckDir):
                 # free space check
                 try:
                     folder_stat = os.statvfs(bckDir)
                     free_space = folder_stat.f_frsize * folder_stat.f_bavail
+                    log.log(f'Available free space for backup: {free_space}', log.DEBUG)
                     if self.total_backup_size > free_space:
                         txt = oe.split_dialog_text(oe._(32379))
                         answer = xbmcDialog.ok('Backup', f'{txt[0]}\n{txt[1]}\n{txt[2]}')
                         return 0
                 except:
+                    log.log('Unable to determine free space available for backup.', log.DEBUG)
                     pass
                 self.backup_dlg = xbmcgui.DialogProgress()
                 self.backup_dlg.create('LibreELEC', oe._(32375))
                 if not os.path.exists(self.BACKUP_DESTINATION):
                     os.makedirs(self.BACKUP_DESTINATION)
                 self.backup_file = f'{oe.timestamp()}.tar'
-                tar = tarfile.open(bckDir + self.backup_file, 'w')
+                log.log(f'Backup file: {bckDir + self.backup_file}', log.INFO)
+                tar = tarfile.open(bckDir + self.backup_file, 'w', format=tarfile.GNU_FORMAT)
                 for directory in self.BACKUP_DIRS:
                     self.tar_add_folder(tar, directory)
+                    if self.backup_dlg is None or self.backup_dlg.iscanceled():
+                        break
                 tar.close()
-                self.backup_dlg.update(100, oe._(32401))
+                if self.backup_dlg is None or self.backup_dlg.iscanceled():
+                    try:
+                        os.remove(self.BACKUP_DESTINATION + self.backup_file)
+                    except:
+                        pass
+                else:
+                    self.backup_dlg.update(100, oe._(32401))
                 os.sync()
         finally:
-            self.backup_dlg.close()
+            # possibly already closed by tar_add_folder if an error occurred
+            try:
+                self.backup_dlg.close()
+            except:
+                pass
             self.backup_dlg = None
 
     @log.log_function()
@@ -475,9 +545,10 @@ class system(modules.Module):
             # Do nothing if the dialog is cancelled - path will be the backup destination
             if not os.path.isfile(restore_file_path):
                 return
+            log.log(f'Restore file: {restore_file_path}', log.INFO)
             restore_file_name = restore_file_path.split('/')[-1]
             if os.path.exists(self.RESTORE_DIR):
-                oe.execute('rm -rf %s' % self.RESTORE_DIR)
+                oe.execute(f'rm -rf {self.RESTORE_DIR}')
             os.makedirs(self.RESTORE_DIR)
             folder_stat = os.statvfs(self.RESTORE_DIR)
             file_size = os.path.getsize(restore_file_path)
@@ -487,7 +558,9 @@ class system(modules.Module):
                     os.remove(self.RESTORE_DIR + restore_file_name)
                 if oe.copy_file(restore_file_path, self.RESTORE_DIR + restore_file_name) != None:
                     copy_success = 1
+                    log.log('Restore file successfully copied.', log.INFO)
                 else:
+                    log.log(f'Failed to copy restore file to: {self.RESTORE_DIR}', log.ERROR)
                     oe.execute(f'rm -rf {self.RESTORE_DIR}')
             else:
                 txt = oe.split_dialog_text(oe._(32379))
@@ -529,15 +602,12 @@ class system(modules.Module):
     @log.log_function()
     def tar_add_folder(self, tar, folder):
         try:
+            print_folder = log.asciify(folder)
             for item in os.listdir(folder):
                 if item == self.backup_file:
                     continue
                 if self.backup_dlg.iscanceled():
-                    try:
-                        os.remove(self.BACKUP_DESTINATION + self.backup_file)
-                    except:
-                        pass
-                    return 0
+                    return
                 itempath = os.path.join(folder, item)
                 if itempath in self.BACKUP_FILTER:
                     continue
@@ -550,14 +620,19 @@ class system(modules.Module):
                         tar.add(itempath)
                     else:
                         self.tar_add_folder(tar, itempath)
+                        if self.backup_dlg is None:
+                            return
                 else:
                     self.done_backup_size += os.path.getsize(itempath)
+                    log.log(f'Adding to backup: {log.asciify(itempath)}', log.DEBUG)
                     tar.add(itempath)
                     if hasattr(self, 'backup_dlg'):
                         progress = round(1.0 * self.done_backup_size / self.total_backup_size * 100)
-                        self.backup_dlg.update(int(progress), f'{folder}\n{item}')
+                        self.backup_dlg.update(int(progress), f'{print_folder}\n{log.asciify(item)}')
         except:
             self.backup_dlg.close()
+            self.backup_dlg = None
+            xbmcDialog.ok(oe._(32371), oe._(32402))
             raise
 
     @log.log_function()
@@ -599,6 +674,30 @@ class system(modules.Module):
         if oe.PIN.isSet() == False:
             self.struct['pinlock']['settings']['pinlock_enable']['value'] = '0'
             oe.PIN.disable()
+
+    @log.log_function()
+    def do_journald(self, listItem=None):
+        if not listItem == None:
+            self.set_value(listItem)
+            if self.struct['journal']['settings']['journal_persistent']['value'] == '0':
+                try:
+                    os.remove(self.JOURNALD_CONFIG_FILE)
+                except:
+                    pass
+            else:
+                config_file = open(self.JOURNALD_CONFIG_FILE, 'w')
+                config_file.write("# SPDX-License-Identifier: GPL-2.0-or-later\n" +
+                                  "# Copyright (C) 2021-present Team LibreELEC (https://libreelec.tv)\n\n" +
+                                  "# This file is generated automatically, don't modify.\n\n" +
+                                  "[Journal]\n")
+
+                size = self.struct['journal']['settings']['journal_size']['value'].replace(' MiB', 'M')
+                config_file.write(f"SystemMaxUse={size}\n" +
+                                  "MaxRetentionSec=0\n")
+                if self.struct['journal']['settings']['journal_rate_limit']['value'] == '1':
+                    config_file.write("RateLimitInterval=0\n" +
+                                      "RateLimitBurst=0\n")
+                config_file.close()
 
     @log.log_function()
     def do_wizard(self):

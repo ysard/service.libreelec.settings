@@ -2,13 +2,21 @@
 # Addon Name: @DISTRONAME@ Configuration
 # Addon id: service.libreelec.settings
 # Addon Provider: LibreELEC
+# Translators:
+# David Vukovic <davu@kodi.tv>, 2019
+# Gints Strupis <gints.strupis@gmail.com>, 2018-2019
 msgid ""
 msgstr ""
+"Project-Id-Version: LibreELEC Settings Add-on\n"
+"PO-Revision-Date: 2021-10-05 08:46+0000\n"
+"Last-Translator: Christian Gade <gade@kodi.tv>\n"
+"Language-Team: Latvian <https://kodi.weblate.cloud/projects/kodi-add-ons-services/service-libreelec-settings/lv_lv/>\n"
+"Language: lv_lv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: lv_LV\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2;\n"
+"X-Generator: Weblate 4.8\n"
 
 msgctxt "#600"
 msgid "@DISTRONAME@ Settings"
@@ -878,7 +886,7 @@ msgid ""
 "TV shows and to stream online content from sites like YouTube, @DISTRONAME@ "
 "needs to be connected the Internet.[CR][CR]An Internet connection is also "
 "required for @DISTRONAME@ to automatically update itself."
-msgstr "Lai lejupielādētu filmu un seriālu fonus, banerus, sīktēlus un straumētu tiešsaistes saturu no tādām vietnēm kā YouTube, @DISTRONAME@ ir jāpievieno internetam.[CR][CR]Tāpat interneta savienojums nepieciešams  @DISTRONAME@ automātiskajai atjaunināšanai."
+msgstr "Lai lejupielādētu filmu un seriālu fonus, banerus, sīktēlus un straumētu tiešsaistes saturu no tādām vietnēm kā YouTube, @DISTRONAME@ ir jāpievieno internetam.[CR][CR]Tāpat interneta savienojums nepieciešams @DISTRONAME@ automātiskajai atjaunināšanai."
 
 msgctxt "#32307"
 msgid "Previous"
@@ -1173,4 +1181,38 @@ msgstr ""
 
 msgctxt "#32401"
 msgid "Syncing Disks..."
+msgstr ""
+
+msgctxt "#32402"
+msgid "Backup is incomplete. An error occurred. See Kodi log for details."
+msgstr ""
+
+msgctxt "#32410"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#32411"
+msgid "Use Persistent Logs"
+msgstr ""
+
+msgctxt "#32412"
+msgid ""
+"Use Persistent Journal and Log files instead of default volatile ones. "
+"Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32413"
+msgid "Journal Size"
+msgstr ""
+
+msgctxt "#32414"
+msgid "Set max. size of persistent journal. Reboot to apply changes."
+msgstr ""
+
+msgctxt "#32415"
+msgid "Disable journald Rate Limit"
+msgstr ""
+
+msgctxt "#32416"
+msgid "Reboot to apply changes."
 msgstr ""
